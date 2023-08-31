@@ -1,0 +1,31 @@
+# build files and packages
+dist
+node_modules
+package-lock.json
+
+# Log files
+npm-debug.log*
+
+# apple stuff
+.DS_Store
+
+# custom code area
+src/apps/*
+!src/apps/apploader.js.sample
+!src/apps/README.md
+!src/apps/web-template
+# !src/apps/web-ddc
+
+# Editor directories and files
+.idea
+.vscode
+
+# environment files
+.env
+.env.*
+!.env.*.sample
+
+# tests
+test-results
+playwright-report
+playwright/.cache

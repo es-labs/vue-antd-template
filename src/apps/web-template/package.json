@@ -1,0 +1,17 @@
+{
+  "name": "apps",
+  "version": "1.0.0",
+  "description": "",
+  "main": "apploader.js",
+  "scripts": {
+    "test": "echo \"Remember to run frontend and backend before test...\" && playwright test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chart.js": "^4.4.0",
+    "leaflet": "^1.9.4",
+    "vue-chartjs": "^5.2.0"
+  }
+}

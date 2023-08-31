@@ -1,0 +1,44 @@
+{
+  "name": "vue-antd-template",
+  "description": "vue SPA + antdv + vite template",
+  "version": "0.0.1",
+  "private": true,
+  "author": "aaronjxz@gmail.com",
+  "license": "MIT",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "lint": "eslint . --ext .js,.vue",
+    "lint:fix": "eslint . --ext .js,.vue --fix",
+    "prettier:check": "prettier --check src/**/*.{js,jsx,json,vue}",
+    "prettier:write": "prettier --write src/**/*.{js,jsx,json,vue}",
+    "test:e2e": "echo \"Remember to run frontend and backend before test...\" && playwright test",
+    "lib:build": "npm i github:@es-labs/esm",
+    "lib:clean": "npm uninstall @es-labs/esm"
+  },
+  "dependencies": {
+    "@ant-design/icons-vue": "^6.1.0",
+    "@es-labs/esm": "^0.0.15",
+    "@sentry/tracing": "^7.66.0",
+    "@sentry/vue": "^7.66.0",
+    "ant-design-vue": "^4.0.2",
+    "pinia": "^2.1.6",
+    "rxjs": "^7.8.1",
+    "vue": "^3.3.4",
+    "vue-router": "^4.2.4"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.37.1",
+    "@vitejs/plugin-vue": "^4.3.4",
+    "dotenv": "^16.3.1",
+    "eslint": "^8.48.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-import": "^2.28.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-vue": "^9.17.0",
+    "msw": "^1.2.5",
+    "prettier": "^3.0.3",
+    "vite": "^4.4.9"
+  }
+}
