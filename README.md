@@ -13,8 +13,8 @@ TBD
 Assumming the application name is called `web-template`
 
 ```bash
-cp src/apps/web-template/deploy/.env.* .
-cp src/apps/web-template/deploy/.apploader.js .
+cp src/apps/app-deploy/deploy/.env.* .
+cp src/apps/app-deploy/deploy/.apploader.js .
 ```
 
 2. Run the following
@@ -60,6 +60,10 @@ Login using one of the following:
   - OTP (if enabled - e.g. USE_OTP=TEST): use 111111 as otp pin, already prefilled, click on OTP button
 - Enterprise SSO (SAML2, OIDC) refer to [https://github.com/ais-one/cookbook]() on sample implementation
 
+
+## 
+
+TBD (doing already in a wiki) create steps of fork/cloning template repo and derived repo
 
 ## Clean up
 
