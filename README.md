@@ -6,6 +6,8 @@ A Template Vue SPA using Ant Design Vue UI and built with Vite
 
 TBD
 
+instructions on working with templates
+
 ## Setup
 
 1. Copy application specific files to project root
