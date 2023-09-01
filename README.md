@@ -95,7 +95,6 @@ rm package-lock.json
 |  |  +- web-<Your-Custom-Frontend>/: folder with prefix "-web" are your custom frontend code (your frontend repo)
 |  |  +- web-template/
 |  |     +- components/
-|  |     +- deploy/ : contains custom deployment info & files see js-node/expressjs/deploy/README.md
 |  |     +- layouts/
 |  |     +- tests/
 |  |     +  +- example.spec.js

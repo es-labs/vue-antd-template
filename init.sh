@@ -7,7 +7,7 @@ UPSTREAM_REPO_URL=https://github.com/es-labs/vue-antd-template.git
 ## template clone or fork
 echo
 echo "init.sh running..."
-echo "You must clone from template or fork"
+echo "You must clone new project from template or fork"
 echo
 echo "add chmod +x flag for this script to work"
 echo
