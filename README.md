@@ -1,10 +1,10 @@
-# Vue-Vite
+# Description
 
 A Template Vue SPA using Ant Design Vue UI and built with Vite
 
 ## Read Me FIRST!
 
-Instructions on working with templates
+TBD... Instructions on working with templates
 
 ## Setup
 
@@ -22,7 +22,6 @@ Instructions on working with templates
 
 # copy the sample environment
 ```bash
-
 # setup your env file
 cp .env.development.sample .env.development
 
@@ -32,7 +31,7 @@ cp src/apps/apploader.js.sample src/apps/apploader.js
 # to make your custom app you can either
 # - 1. continue development in src/apps/web-sample
 # - 2. rename src/apps/web-sample and develop from there
-# - 3. make a copy of apps/web-tamplate and rename it and work from there
+# - 3. make a copy of apps/web-sample and rename it and work from there
 ```
 
 In `src/apps/apploader.js`, change the `web-sample` to the folder you are using for development
