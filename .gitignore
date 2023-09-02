@@ -13,7 +13,7 @@ npm-debug.log*
 src/apps/*
 !src/apps/apploader.js.sample
 !src/apps/README.md
-!src/apps/web-template
+!src/apps/web-sample
 # !src/apps/web-ddc
 
 # Editor directories and files

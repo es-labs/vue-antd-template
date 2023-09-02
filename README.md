@@ -4,49 +4,69 @@ A Template Vue SPA using Ant Design Vue UI and built with Vite
 
 ## Read Me FIRST!
 
-TBD
-
-instructions on working with templates
+Instructions on working with templates
 
 ## Setup
 
-1. Copy application specific files to project root
-
-Assumming the application name is called `web-template`
+1. setup to allow incoming merge from upstream template update
 
 ```bash
-cp src/apps/app-deploy/deploy/.env.* .
-cp src/apps/app-deploy/deploy/.apploader.js .
+# run once only after
+# - clone, or
+# - fork, or
+# - deleting .git and running git init
+./setup-upstream.sh
 ```
 
-2. Run the following
+2. setup for your project
+
+# copy the sample environment
+```bash
+
+# setup your env file
+cp .env.development.sample .env.development
+
+# setup apploader.js to choose folder to use for development in src/apps
+cp src/apps/apploader.js.sample src/apps/apploader.js
+
+# to make your custom app you can either
+# - 1. continue development in src/apps/web-sample
+# - 2. rename src/apps/web-sample and develop from there
+# - 3. make a copy of apps/web-tamplate and rename it and work from there
+```
+
+In `src/apps/apploader.js`, change the `web-sample` to the folder you are using for development
+
+```
+import setup from './web-sample/setup.js'
+```
+
+3. Important notes for development
+
+- change only the package.json in apps/web-sample
+- do note any conflicts to resolve for anything outside the apps folder when merging from upstream
+- feedback for improvement is welcome
+
+4. Updating the template
+
+```bash
+git fetch upstream
+git merge upstream/main
+```
+
+## Install & Run & E2E Test
 
 ```bash
 npm install
-cd src/apps/web-template
+cd src/apps/<your custom development folder> default is `web-sample`
 npm install
 cd ../../..
-npm run dev
+npm run dev # using the dev server
 ```
 
 3. Visit
 
 - http://127.0.0.1:8080/ to view application
-
-4. E2E Testing
-
-Install and run the bakcend application and associated datastore (sqlite) in [https://github.com/es-labs/express-template]()
-
-```bash
-npx playwright install chromium
-npx playwright test --browser=chromium
-
-cd src/apps/web-template
-npm run test:e2e
-```
-
-
-## Development Mode (using dev server)
 
 **Note For Login**
 
@@ -63,16 +83,14 @@ Login using one of the following:
 - Enterprise SSO (SAML2, OIDC) refer to [https://github.com/ais-one/cookbook]() on sample implementation
 
 
-## 
+4. E2E Testing
 
-TBD (doing already in a wiki) create steps of fork/cloning template repo and derived repo
+```bash
+npx playwright install chromium
+npx playwright test --browser=chromium
 
-## Clean up
-
-```
-npm cache clean --force
-rm -rf node_modules
-rm package-lock.json
+cd src/apps/web-sample
+npm run test:e2e
 ```
 
 ## Project Strcuture
@@ -93,7 +111,7 @@ rm package-lock.json
 +- src/
 |  +- apps/
 |  |  +- web-<Your-Custom-Frontend>/: folder with prefix "-web" are your custom frontend code (your frontend repo)
-|  |  +- web-template/
+|  |  +- web-sample/
 |  |     +- components/
 |  |     +- layouts/
 |  |     +- tests/
@@ -130,6 +148,7 @@ rm package-lock.json
 ```
 
 ---
+
 ## Frontend Custom Application Notes
 
 Setting up your custom frontend
@@ -149,8 +168,8 @@ git clone <your frontend project e.g. web-example>
 - see **.env.development** for defining vite.config.js and environment level (eg API URL) related configurations
 - see **apploader.js** for loading custom frontend
 - environment is selected using the --mode property (see package.json)
-- use **src/apps/web-template/** as reference on your custom frontend
-- see **src/apps/web-template/setup.js** on the frontend setup especially the ROUTES property
+- use **src/apps/web-sample/** as reference on your custom frontend
+- see **src/apps/web-sample/setup.js** on the frontend setup especially the ROUTES property
 - ROUTES property
   - use kebab-case, will be converted to Capital Case in menu display
   - only up to 1 submenu level
