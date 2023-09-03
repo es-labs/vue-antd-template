@@ -56,9 +56,9 @@ git merge upstream/main
 ## Install & Run & E2E Test
 
 ```bash
-npm install
+npm i
 cd src/apps/<your custom development folder> default is `web-sample`
-npm install
+npm i
 cd ../../..
 npm run dev # using the dev server
 ```
