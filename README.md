@@ -42,7 +42,7 @@ import setup from './web-sample/setup.js'
 
 3. Important notes for development
 
-- change only the package.json in `src/apps/web-sample`
+- change only the package.json in `src/apps/<your custom code folder>` )(default is web-sample)
 - do note any conflicts to resolve for anything outside the `apps` folder when merging from upstream
 - feedback for improvement is welcome
 
@@ -153,21 +153,8 @@ npm run test:e2e
 Setting up your custom frontend
 
 **Notes:**
-- in **package.json**, default environment for `vite` command is `development`
-- `.env.<environment>` and `apploader.js` files are specific to each application and found in `src/web<your-web-app>/deploy` folder, **they are copied to root folder** when switching app to work on
-- **apploader.js** contains the app setup file to use
 - `.env.[MODE]` indicates the environment file to use (command to use: npx vite build --mode $1)
-- All folders and files prefixed with TBD can be ignored, they are not implemented and used for reference
-
-```bash
-# in src/apps
-# note that project name must start with prefix "web-"
-git clone <your frontend project e.g. web-example>
-```
-- see **.env.development** for defining vite.config.js and environment level (eg API URL) related configurations
-- see **apploader.js** for loading custom frontend
-- environment is selected using the --mode property (see package.json)
-- use **src/apps/web-sample/** as reference on your custom frontend
+- `src/apps/apploader.js` will specify the path to `setup.js` of in your custom code folder
 - see **src/apps/web-sample/setup.js** on the frontend setup especially the ROUTES property
 - ROUTES property
   - use kebab-case, will be converted to Capital Case in menu display
@@ -179,7 +166,7 @@ git clone <your frontend project e.g. web-example>
     - '/xxx.js' from **<project>** folder
 
 
-### Sample Deployment - WIP to test
+### Sample Deployment - WIP NOT READY YET
 
 1. configure .env.production
 2. run the following workflow `.github\workflows\sample-manual-gh-pages.yml`, select env as production
