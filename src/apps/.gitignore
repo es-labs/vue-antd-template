@@ -1,0 +1,7 @@
+# DO NOT EDIT
+!.gitignore
+!apploader.js
+!.env.*
+
+# EDIT BELOW - comment out folders you want in your project
+!web-sample

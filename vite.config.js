@@ -2,7 +2,7 @@
 import vue from '@vitejs/plugin-vue'
 export default ({ command, mode }) => {
   const path = require('path')
-  const env = require('dotenv').config({ path: path.join(__dirname, '.env.' + mode) }).parsed
+  const env = require('dotenv').config({ path: path.join(__dirname, 'src', 'apps', '.env.' + mode) }).parsed
 
   // console.log(__dirname, mode, command, env) // command = serve, build
 

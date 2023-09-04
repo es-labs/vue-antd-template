@@ -1,3 +1,6 @@
+# custom code area - DO NOT EDIT
+src/apps/*
+
 # build files and packages
 dist
 node_modules
@@ -9,21 +12,9 @@ npm-debug.log*
 # apple stuff
 .DS_Store
 
-# custom code area
-src/apps/*
-!src/apps/apploader.js.sample
-!src/apps/README.md
-!src/apps/web-sample
-# !src/apps/web-ddc
-
 # Editor directories and files
 .idea
 .vscode
-
-# environment files
-.env
-.env.*
-!.env.*.sample
 
 # tests
 test-results

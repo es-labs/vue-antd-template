@@ -1,4 +1,0 @@
-// copy this to project root apploader.js
-// import setup from './src/apps/web-ddc/setup.js'
-import setup from './web-sample/setup.js'
-export default setup

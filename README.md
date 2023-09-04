@@ -21,22 +21,21 @@ TBD... Instructions on working with templates
 2. setup for your project
 
 # copy the sample environment
+
 ```bash
 # setup your env file
-cp .env.development.sample .env.development
+cp src/apps/.env.sample src/apps/.env.development
 
-# setup apploader.js to specify web folder (can have ONLY 1) to use
-cp src/apps/apploader.js.sample src/apps/apploader.js
-
-# to make your custom app you can either
-# - 1. continue development in src/apps/web-sample
-# - 2. rename src/apps/web-sample and develop from there
-# - 3. make a copy of src/apps/web-sample and rename it and work from there
 ```
+
+To make your custom app you can either
+- 1. continue development in src/apps/web-sample
+- 2. rename src/apps/web-sample and develop from there
+- 3. make a copy of src/apps/web-sample and rename it and work from there
 
 In `src/apps/apploader.js`, change the `web-sample` to the folder you are using for development
 
-```
+```js
 import setup from './web-sample/setup.js'
 ```
 
