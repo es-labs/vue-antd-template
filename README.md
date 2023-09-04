@@ -50,6 +50,8 @@ import setup from './web-sample/setup.js'
 ```bash
 git fetch upstream
 git merge upstream/main
+# or
+git merge upstream/main -–allow-unrelated-histories
 ```
 
 ## Install & Run & E2E Test
