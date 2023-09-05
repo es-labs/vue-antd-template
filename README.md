@@ -47,12 +47,16 @@ import setup from './web-sample/setup.js'
 
 4. Updating the template
 
+Ensure that you have commited your changes and pushed to remote in case there are issues
+
 ```bash
 git fetch upstream
 git merge upstream/main
 # or
 git merge upstream/main -–allow-unrelated-histories
 ```
+
+There may be some template related merge conflicts to resolve.
 
 ## Install & Run & E2E Test
 
