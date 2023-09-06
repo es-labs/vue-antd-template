@@ -39,7 +39,7 @@ Ensure that you have commited your changes and pushed to remote origin first bef
 git fetch upstream
 git merge upstream/main
 # or
-git merge upstream/main -–allow-unrelated-histories
+git merge upstream/main --allow-unrelated-histories
 ```
 
 There may be some template related merge conflicts to resolve.
