@@ -7,14 +7,12 @@
   "license": "MIT",
   "scripts": {
     "build": "vite build",
-    "dev": "vite",
+    "dev": "vite --config src/apps/vite.config.js",
     "lint": "eslint . --ext .js,.vue",
     "lint:fix": "eslint . --ext .js,.vue --fix",
     "prettier:check": "prettier --check src/**/*.{js,jsx,json,vue}",
     "prettier:write": "prettier --write src/**/*.{js,jsx,json,vue}",
-    "test:e2e": "echo \"Remember to run frontend and backend before test...\" && playwright test",
-    "lib:build": "npm i github:@es-labs/esm",
-    "lib:clean": "npm uninstall @es-labs/esm"
+    "test:e2e": "echo \"Remember to run frontend and backend before test...\" && playwright test"
   },
   "dependencies": {
     "@ant-design/icons-vue": "^6.1.0",
@@ -23,7 +21,6 @@
     "@sentry/vue": "^7.66.0",
     "ant-design-vue": "^4.0.2",
     "pinia": "^2.1.6",
-    "rxjs": "^7.8.1",
     "vue": "^3.3.4",
     "vue-router": "^4.2.4"
   },

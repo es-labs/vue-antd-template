@@ -1,21 +1,21 @@
-# Description
-
-Built from a [Vue SPA + Ant Design Template](https://github.com/es-labs/vue-antd-template)
-
 ## Read Me FIRST!
 
-[https://github.com/ais-one/cookbook#important---read-me-first]()
+> Do NOT edit this README. Go to [src/apps/README.md]() to view and edit user README
+>
+> Built from [https://github.com/es-labs/vue-antd-template]()
+>
+> For template design principles, see [https://github.com/ais-one/cookbook#important---read-me-first]() 
 
-## Setup
+## Template Maintenance
 
-1. setup to allow incoming merge from upstream template update
+1 - setup to allow incoming merge from upstream template update
 
 ```bash
 # run once only after you `clone`, or `fork` or `delete .git and run git init`
 ./setup-upstream.sh
 ```
 
-2. Setup for your custom code
+2 - Setup for your custom code
 
 ```bash
 # setup your env file
@@ -28,7 +28,7 @@ cp src/apps/.env.sample src/apps/.env.development
 - userland changes only in the `apps` folder
 - do note any conflicts to resolve when merging from upstream
 
-3. Updating the template
+3 - Updating the template
 
 ```bash
 # Commit and push to remote before running commands below
@@ -76,7 +76,6 @@ npm run test:e2e
 ## Project Strcuture
 
 ```
-+- nested/ : testing for multi-html
 +- public/
 |  +- img/
 |  |  +- icons/
@@ -99,11 +98,14 @@ npm run test:e2e
 |  |     +- views/
 |  |     +- .gitignore: for your repo
 |  |     +- hookFns.js
-|  |     +- package.json
 |  |     +- playwright.config.js
 |  |     +- setup.js: custom frontend setup (set INITIAL_SECURE_PATH, ROUTES CONSTANTS here)
 |  |     +- store.js: custom frontend store
+|  |  +- .env.sample
+|  |  +- .gitignore
 |  |  +- apploader.js.sample : to create apploader.js from this sample
+|  |  +- package.json
+|  |  +- README.md
 |  +- layouts/
 |  +- mocks/ : for msw later
 |  +- plugins/ : i18n, fetch, ws (websocket), useMediaQuery
@@ -155,6 +157,8 @@ Setting up your custom frontend
 
 ## Notes & Todos
 
+- Handle package.json
+- Handle vite.config.js
 - [Why Use Vite](https://indepth.dev/a-note-on-vite-a-very-fast-dev-build-tool/)
 - Mocks are not ready yet
 - Tests are not ready yet

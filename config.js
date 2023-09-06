@@ -1,5 +1,5 @@
 import setup from './src/apps/apploader.js'
-import { version } from './package.json'
+import { version } from './src/apps/package.json'
 
 // console.log('/config - setup', setup)
 // console.log('/config - env', import.meta.env)
