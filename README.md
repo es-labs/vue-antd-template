@@ -24,11 +24,11 @@ cp src/apps/.env.sample src/apps/.env.development
 ```
 
 - You can develop custom code in `src/apps/web-sample` or rename it or copy it to another folder name
-- In `src/apps/apploader.js`, change `web-sample` to the folder you are using
+- In `src/apps/apploader.js, change `web-sample` to the folder you are using
 
 3. Important notes for development
 
-- change only the package.json in `src/apps/<your custom code folder>` (default is web-sample)
+- userland changes only in the `src/apps` folder
 - do note any conflicts to resolve when merging from upstream
 
 4. Updating the template
