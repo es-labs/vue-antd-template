@@ -54,26 +54,21 @@ cd ../../..
 npm run dev # using the dev server
 ```
 
-3. Visit
-
-- http://127.0.0.1:8080/ to view application
+Visit `http://127.0.0.1:8080` to view application
 
 **Note For Login**
 
-Login using one of the following:
-  
+Login using one of the following:  
 - Mocked [NOTE: API calls to protected Endpoints WILL FAIL!]:
   - Login: fake a user and login, no backend needed, just click button
   - Login Callback: fake a callback and set fake user and login, no backend needed, just click button
 - Login: normal login with OTP, express server needs to be run
   - details already **prefilled** with following values, just click on Login button
-  - User: test
-  - Password: test
+  - User and password is `test`
   - OTP (if enabled - e.g. USE_OTP=TEST): use 111111 as otp pin, already prefilled, click on OTP button
-- Enterprise SSO (SAML2, OIDC) refer to [https://github.com/ais-one/cookbook]() on sample implementation
+- Enterprise SSO (SAML2, OIDC) refer to [https://github.com/es-labs/express-template#saml-oidc-oauth]() for info
 
-
-4. E2E Testing
+E2E Tests:
 
 ```bash
 npx playwright install chromium

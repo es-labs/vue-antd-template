@@ -25,7 +25,7 @@ import { useAppStore } from '../../store.js'
 export default {
   setup() {
     // a-select - allowClear (handle event)
-    // TBD select / clear all
+    // TODO select / clear all
 
     const appStore = useAppStore()
     onMounted(() => {})

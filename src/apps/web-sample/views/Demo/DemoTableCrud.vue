@@ -89,7 +89,7 @@
   </div>
 </template>
 <script>
-// TBD
+// TODO
 // filters
 // update, create, delete (multi select), export to CSV?
 /*
@@ -189,7 +189,7 @@ export default {
     }
     const filterDelete = (index) => {
       table.filters.splice(index, 1)
-      console.log('filterDelete', index) // TBD
+      console.log('filterDelete', index) // TODO
     }
 
     const deleteItems = async () => {
@@ -198,7 +198,7 @@ export default {
 
     const formMode = ref(false) // false, add or edit
     const formOpen = (item) => {
-      // TBD findOne
+      // TODO findOne
       table.formData = {}
       table.formConfig = {}
       const mode = item ? 'edit' : 'add'

@@ -17,7 +17,7 @@ const authGuard = (to, from, next) => {
   const store = useMainStore()
   // console.log('authGuard', store.state.user ? 'user' : 'anon', from.path, to.path)
 
-  // TBD find users from localStorage? // potential security leak
+  // TODO find users from localStorage? // potential security leak
   // const item = localStorage.getItem('session') // survive a refresh - POTENTIAL SECURITY RISK - TO REVIEW AND CHANGE USE HTTPONLY COOKIES
   // if (item) {
   //   const user = JSON.parse(item)

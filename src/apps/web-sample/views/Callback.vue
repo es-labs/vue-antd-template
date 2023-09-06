@@ -39,7 +39,7 @@ export default {
       if (hash.value === 'mocked') {
         alert('re-directing to callback')
         _setMockUser()
-        router.push(INITIAL_SECURE_PATH) // still needed or does _setUser() handle this? TBD!
+        router.push(INITIAL_SECURE_PATH) // still needed or does _setUser() handle this? TODO!
       }
     })
 

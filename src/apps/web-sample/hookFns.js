@@ -11,7 +11,7 @@ const wsDefaultMsgHandler = (e) => {
 
 export const openWs = (msgHandler = wsDefaultMsgHandler) => {
   if (VITE_WS_URL) {
-    // TBD get initial data
+    // TODO get initial data
     const store = useMainStore()
     // ws.setOptions({ endpoint: `${VITE_WS_URL}/${store.user}` })
     // ws.connect()
@@ -20,7 +20,7 @@ export const openWs = (msgHandler = wsDefaultMsgHandler) => {
 }
 
 export const closeWs = () => {
-  // TBD clear data
+  // TODO clear data
   if (VITE_WS_URL) {
     // if (ws) ws.setMessage(null)
     // ws.close()
