@@ -1,0 +1,29 @@
+name: S3 deployment
+
+# on: [push]
+on:
+  workflow_dispatch:
+    # Inputs the workflow accepts.
+    inputs:
+      tag_gr:
+        description: 'git repo branch or tag'
+        default: 'main'
+        required: true
+env:
+  REPO_NAME: ${{ github.event.repository.name }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Setup AWS CLI
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+    - name: Sync files to S3 bucket
+      run: |
+        aws s3 sync build s3://my-bucket-name --delete

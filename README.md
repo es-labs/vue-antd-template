@@ -73,61 +73,9 @@ cd src/apps/web-sample
 npm run test:e2e
 ```
 
-## Project Strcuture
+## Project Structure And Features
 
-```
-+- public/
-|  +- img/
-|  |  +- icons/
-|  |  +- splash/
-|  +- static/
-|  +- favicon.ico
-|  +- manifest.json
-|  +- robots.txt
-|  +- service-worker.js
-|  +- sitemap.xml
-|  +- style.css
-+- src/
-|  +- apps/
-|  |  +- web-<Your-Custom-Frontend>/: folder with prefix "-web" are your custom frontend code (your frontend repo)
-|  |  +- web-sample/
-|  |     +- components/
-|  |     +- layouts/
-|  |     +- tests/
-|  |     +  +- example.spec.js
-|  |     +- views/
-|  |     +- .gitignore: for your repo
-|  |     +- hookFns.js
-|  |     +- playwright.config.js
-|  |     +- setup.js: custom frontend setup (set INITIAL_SECURE_PATH, ROUTES CONSTANTS here)
-|  |     +- store.js: custom frontend store
-|  |  +- .env.sample
-|  |  +- .gitignore
-|  |  +- apploader.js.sample : to create apploader.js from this sample
-|  |  +- package.json
-|  |  +- README.md
-|  +- layouts/
-|  +- mocks/ : for msw later
-|  +- plugins/ : i18n, fetch, ws (websocket), useMediaQuery
-|  +- views/
-|  +- App.vue
-|  +- main.js
-|  +- pwa-init.js
-|  +- router.js
-|  +- services.js
-|  +- store.js
-+- .env.development.sample : to create other envs
-+- .eslintignore
-+- .eslintrc.js
-+- .gitguardian.yml
-+- .gitignore
-+- .prettierrc.js
-+- config.js
-+- index.html
-+- package.json
-+- README.md
-+- vite.config.js
-```
+See [src/apps/README.md]()
 
 ---
 
@@ -149,16 +97,36 @@ Setting up your custom frontend
     - '/xxx.js' from **<project>** folder
 
 
-### Sample Deployment - WIP NOT READY YET
+### Sample Deployment - WIP
 
 1. configure .env.production
 2. run the following workflow `.github\workflows\sample-manual-gh-pages.yml`, select env as production
 
+- https://ideas.digitalocean.com/storage/p/deploy-static-sites-to-spacescdn
+- https://docs.digitalocean.com/products/spaces/reference/s3-compatibility
+- https://es-labs.sgp1-static.digitaloceanspaces.com
+
+
+PUT ?website HTTP/1.1
+Host: example.com.s3.<Region>.amazonaws.com
+Content-Length: 256
+Date: Thu, 27 Jan 2011 12:00:00 GMT
+Authorization: signatureValue
+
+<WebsiteConfiguration xmlns='http://s3.amazonaws.com/doc/2006-03-01/'>
+    <IndexDocument>
+        <Suffix>index.html</Suffix>
+    </IndexDocument>
+    <ErrorDocument>
+        <Key>index.html</Key>
+    </ErrorDocument>
+</WebsiteConfiguration>
 
 ## Notes & Todos
 
-- Handle package.json
-- Handle vite.config.js
+- Move the following files to userland folder if possible
+  - package.json
+  - vite.config.js
 - [Why Use Vite](https://indepth.dev/a-note-on-vite-a-very-fast-dev-build-tool/)
 - Mocks are not ready yet
 - Tests are not ready yet
