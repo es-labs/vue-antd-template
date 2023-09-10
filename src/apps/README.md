@@ -22,6 +22,7 @@
 |  |  +- web-sample/
 |  |     +- components/
 |  |     +- layouts/
+|  |     +- mocks/ : for msw
 |  |     +- tests/
 |  |     +  +- example.spec.js
 |  |     +- views/
@@ -36,7 +37,6 @@
 |  |  +- package.json
 |  |  +- README.md
 |  +- layouts/
-|  +- mocks/ : for msw later
 |  +- plugins/ : i18n, fetch, ws (websocket), useMediaQuery
 |  +- views/
 |  +- App.vue

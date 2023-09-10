@@ -47,6 +47,8 @@ cd src/apps/<your custom development folder> default is `web-sample`
 npm i
 cd ../../..
 npm run dev # using the dev server
+# OR
+npm run dev:mocked # to run with mock service worker (many other API calls will fail because they are not mocked)
 ```
 
 Visit `http://127.0.0.1:8080` to view application

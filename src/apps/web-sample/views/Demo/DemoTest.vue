@@ -20,6 +20,7 @@
       <span>Count is: {{ count }}</span>
       <button @click="count++">increment</button>
     </p>
+    <p><span>Mock Service Worder Test</span> <button @click="callMsw">Call MSW Endpoint</button></p>
     <p><button @click="(e) => testApi('healthcheck')">Test API</button> <button @click="(e) => testApi('health-auth')">Test API Auth</button></p>
     <p>Non-Reactive Data: {{ nonReactiveData }}</p>
     <p>Reactive Data: {{ reactiveData }}</p>
@@ -183,6 +184,15 @@ export default {
       }
     }
 
+    const callMsw = async (test) => {
+      try {
+        const { data } = await http.get('/api/msw/test')
+        alert('MSA returned: ' + data.message.toString())
+      } catch (e) {
+        console.log('callMsw err', e)
+      }
+    }
+
     return {
       testObjectReactive,
       testObjectRef,
@@ -194,6 +204,8 @@ export default {
       nonReactiveData, // non reactive
       reactiveData, // ref reactive
       count, // ref
+
+      callMsw,
 
       store,
       testApi, // test API

@@ -8,6 +8,7 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite --config src/apps/vite.config.js",
+    "dev:mocked": "vite --config src/apps/vite.config.js --mode mocked",
     "lint": "eslint . --ext .js,.vue",
     "lint:fix": "eslint . --ext .js,.vue --fix",
     "prettier:check": "prettier --check src/**/*.{js,jsx,json,vue}",
@@ -37,5 +38,8 @@
     "msw": "^1.3.0",
     "prettier": "^3.0.3",
     "vite": "^4.4.9"
+  },
+  "msw": {
+    "workerDirectory": "public"
   }
 }
