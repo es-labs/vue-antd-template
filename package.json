@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@ant-design/icons-vue": "^6.1.0",
-    "@es-labs/esm": "^0.0.15",
+    "@es-labs/esm": "^0.0.16",
     "@sentry/tracing": "^7.68.0",
     "@sentry/vue": "^7.68.0",
     "ant-design-vue": "^4.0.2",
