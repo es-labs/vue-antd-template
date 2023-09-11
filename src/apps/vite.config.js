@@ -7,6 +7,9 @@ export default ({ command, mode }) => {
   // console.log(__dirname, mode, command, env) // command = serve, build
 
   return {
+    define: {
+      __VUE_PROD_DEVTOOLS__: false
+    },
     base: env.BASE_PATH || '/', // set to '/vite' for dev:build, '/' otherwise
     // build: {
     //   sourcemap: true,
