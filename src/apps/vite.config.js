@@ -15,9 +15,10 @@ export default ({ command, mode }) => {
     //     input: { main: path.resolve(__dirname, 'index.html') }
     //   }
     // },
-    // optimizeDeps: {
-    //   include: ['leaflet']
-    // },
+    optimizeDeps: {
+      include: ['src/apps/node_modules/leaflet']
+    },
+    publicDir: 'public',
     plugins: [
       vue({
         template: {

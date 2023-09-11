@@ -127,9 +127,6 @@ Authorization: signatureValue
 ## Notes & Todos
 
 - Move the following files to userland folder if possible
-  - package.json
-  - vite.config.js
+  - package.json (may not be necessary)
 - [Why Use Vite](https://indepth.dev/a-note-on-vite-a-very-fast-dev-build-tool/)
-- Mocks are not ready yet
-- Tests are not ready yet
 

@@ -6,7 +6,7 @@
   "author": "aaronjxz@gmail.com",
   "license": "MIT",
   "scripts": {
-    "build": "vite build",
+    "build": "vite build --config src/apps/vite.config.js",
     "dev": "vite --config src/apps/vite.config.js",
     "dev:mocked": "vite --config src/apps/vite.config.js --mode mocked",
     "lint": "eslint . --ext .js,.vue",

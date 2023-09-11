@@ -36,6 +36,7 @@
 |  |  +- apploader.js.sample : to create apploader.js from this sample
 |  |  +- package.json
 |  |  +- README.md
+|  |  +- vite.config.js
 |  +- layouts/
 |  +- plugins/ : i18n, fetch, ws (websocket), useMediaQuery
 |  +- views/
@@ -55,5 +56,4 @@
 +- index.html
 +- package.json
 +- README.md
-+- vite.config.js
 ```
