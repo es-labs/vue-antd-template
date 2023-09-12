@@ -9,7 +9,7 @@
           <a-button data-cy="login" @click="login">Login</a-button>
         </div>
         <div class="buttons-box-flex">
-          <a-button @click="$router.push('/signin-fast')">Mock</a-button>
+          <a-button @click="oauthLogin">OAuth</a-button>
         </div>
         <p><router-link to="/signup">Sign Up</router-link></p>
       </div>
@@ -36,10 +36,11 @@ import parseJwt from '@es-labs/esm/parse-jwt.js'
 
 import { http } from '/src/plugins/fetch.js'
 import { useI18n } from '/src/plugins/i18n.js'
+import { AlertFilled } from '@ant-design/icons-vue'
 
 export default {
   setup(props, context) {
-    const { VITE_REFRESH_URL, VERSION } = import.meta.env
+    const { VITE_REFRESH_URL, VERSION, MODE } = import.meta.env
 
     const store = useMainStore()
     const route = useRoute()
@@ -141,6 +142,18 @@ export default {
       store.loading = false
     }
 
+    const oauthLogin = () => {
+      alert('Please set appropriate callback URL at oauth side')
+      if (MODE === 'mocked') {
+        window.location.assign('/callback#mocked')
+      } else {
+        const OAUTH_URL = 'https://github.com/login/oauth/authorize?scope=user:email&client_id'
+        const OAUTH_CLIENT_ID = 'a355948a635c2a2066e2'
+        http.setOptions({ refreshUrl: VITE_REFRESH_URL })
+        window.location.replace(`${OAUTH_URL}=${OAUTH_CLIENT_ID}`)
+      }
+    }
+
     return {
       email, // data
       password,
@@ -150,6 +163,7 @@ export default {
       otp,
       login, // method
       otpLogin,
+      oauthLogin,
       i18n,
       isMobile,
       VERSION
