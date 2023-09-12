@@ -32,7 +32,7 @@
   </a-form>
 </template>
 <script>
-import { ref, reactive, toRaw, watch, onMounted, computed } from 'vue'
+import { ref, reactive, toRaw, onMounted } from 'vue'
 import { SettingOutlined } from '@ant-design/icons-vue'
 import { http } from '/src/plugins/fetch.js'
 const { VITE_API_URL } = import.meta.env

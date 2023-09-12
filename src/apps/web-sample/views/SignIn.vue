@@ -1,6 +1,5 @@
 <template>
   <div class="page-flex">
-    <bwc-loading-overlay v-if="loading"></bwc-loading-overlay>
     <form class="form-box-flex">
       <div v-show="mode === 'login'">
         <h1>{{ i18n.$t('sign_in') }}</h1>
@@ -46,7 +45,7 @@ export default {
     const route = useRoute()
 
     const i18n = useI18n()
-    const loading = ref(false)
+    const loading = store.loading
     const email = ref('test')
     const password = ref('test')
     const errorMessage = ref('')
@@ -71,7 +70,7 @@ export default {
       setToLogin()
       otp.value = '111111'
       errorMessage.value = ''
-      loading.value = false
+      store.loading = false
     })
 
     onBeforeUnmount(() => {
@@ -86,8 +85,8 @@ export default {
 
     const login = async () => {
       console.log('login clicked')
-      if (loading.value) return
-      loading.value = true
+      if (store.value) return
+      store.loading = true
       errorMessage.value = ''
       try {
         const { data } = await http.post('/api/auth/login', {
@@ -112,12 +111,12 @@ export default {
         console.log('login error', e.toString(), e)
         errorMessage.value = e?.data?.message || e.toString()
       }
-      loading.value = false
+      store.loading = false
     }
 
     const otpLogin = async () => {
-      if (loading.value) return
-      loading.value = true
+      if (store.loading) return
+      store.loading = true
       errorMessage.value = ''
       try {
         http.setOptions({ refreshUrl: VITE_REFRESH_URL })
@@ -139,7 +138,7 @@ export default {
           setToLogin()
         }
       }
-      loading.value = false
+      store.loading = false
     }
 
     return {

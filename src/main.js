@@ -15,13 +15,6 @@ import './pwa-init.js'
 // our own web components
 import '@es-labs/esm/bwc-loading-overlay.js'
 
-// NEW MSW - https://www.vuemastery.com/blog/mock-service-worker-api-mocking-for-vuejs-development-testing
-// npx msw init public/ ?
-// if (process.env.NODE_ENV === 'development') {
-//   const { worker } = require('./mocks/browser')
-//   worker.start()
-// }
-
 const app = createApp(App)
 // NOSONAR
 // https://zhuanlan.zhihu.com/p/135280049

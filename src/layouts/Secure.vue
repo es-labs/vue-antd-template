@@ -34,7 +34,7 @@
 
 <script>
 // :key="$route.fullPath" // this is causing problems
-import { onMounted, onUnmounted, onBeforeUnmount, ref, reactive } from 'vue'
+import { onMounted, onUnmounted, onBeforeUnmount, ref, reactive, computed } from 'vue'
 import { useMainStore } from '/src/store'
 import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons-vue'
 import { SECURE_ROUTES, ON_LOGIN, ON_LOGOUT } from '/config.js'
@@ -49,9 +49,10 @@ export default {
   },
   setup(props, context) {
     const store = useMainStore()
+    const loading = store.loading
+
     const mappedRoutes = reactive([])
     const subMenus = reactive({})
-    const loading = ref(false)
 
     const toPascalCase = (str) => {
       str = str.replace(/-\w/g, (x) => ` ${x[1].toUpperCase()}`)
@@ -95,13 +96,13 @@ export default {
 
     const logout = async () => {
       console.time('time-logout')
-      loading.value = true
+      store.loading = true
       await store.doLogin(null)
-      loading.value = false
+      store.loading = false
       console.timeEnd('time-logout')
     }
     return {
-      loading,
+      loading: computed(() => store.loading),
       logout,
       selectedKeys: ref(['1']),
       collapsed: ref(false),

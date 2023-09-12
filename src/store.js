@@ -9,6 +9,8 @@ import { INITIAL_SECURE_PATH, INITIAL_PUBLIC_PATH } from '/config.js'
 // it is used in devtools and allows restoring state
 export const useMainStore = defineStore('main', () => {
   const user = ref(null)
+  const loading = ref(false)
+
   // actions
   async function doLogin(payload) {
     if (payload) {
@@ -41,5 +43,5 @@ export const useMainStore = defineStore('main', () => {
       user.value.id = newName
     }
   }
-  return { user, doLogin, changeUserName }
+  return { user, loading, doLogin, changeUserName }
 })

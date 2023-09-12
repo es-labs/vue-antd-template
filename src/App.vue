@@ -19,7 +19,7 @@ export default {
   },
   setup(props, context) {
     const store = useMainStore()
-    const storeUser = store.state
+    const storeUser = store.user
     const logout = async () => {
       await store.doLogin({ forced: true })
     }

@@ -17,12 +17,16 @@ import { onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { INITIAL_SECURE_PATH } from '/config.js'
 import { useMainStore } from '/src/store'
+// import { skeletonElementProps } from 'ant-design-vue/es/skeleton/Element'
+
+import { sleep } from '@es-labs/esm/sleep'
 
 export default {
   setup() {
     const store = useMainStore()
     const route = useRoute()
     const router = useRouter()
+    const loading = store.loading
 
     onUnmounted(() => console.log('signInFast unmounted'))
     onMounted(async () => {
@@ -38,7 +42,10 @@ export default {
       await store.doLogin(decoded)
     }
     const login = async () => {
+      store.loading = true
+      await sleep(2000)
       _setMockUser()
+      store.loading = false
       router.push(INITIAL_SECURE_PATH) // still needed or does _setMockUser() handle this? TODO!
     }
 
