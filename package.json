@@ -16,17 +16,17 @@
     "test:e2e": "echo \"Remember to run frontend and backend before test...\" && playwright test"
   },
   "dependencies": {
-    "@ant-design/icons-vue": "^6.1.0",
+    "@ant-design/icons-vue": "^7.0.0",
     "@es-labs/esm": "^0.0.16",
-    "@sentry/tracing": "^7.68.0",
-    "@sentry/vue": "^7.68.0",
-    "ant-design-vue": "^4.0.2",
+    "@sentry/tracing": "^7.69.0",
+    "@sentry/vue": "^7.69.0",
+    "ant-design-vue": "^4.0.3",
     "pinia": "^2.1.6",
     "vue": "^3.3.4",
     "vue-router": "^4.2.4"
   },
   "devDependencies": {
-    "@playwright/test": "^1.37.1",
+    "@playwright/test": "^1.38.0",
     "@vitejs/plugin-vue": "^4.3.4",
     "dotenv": "^16.3.1",
     "eslint": "^8.49.0",
@@ -35,7 +35,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-vue": "^9.17.0",
-    "msw": "^1.3.0",
+    "msw": "^1.3.1",
     "prettier": "^3.0.3",
     "vite": "^4.4.9"
   },
