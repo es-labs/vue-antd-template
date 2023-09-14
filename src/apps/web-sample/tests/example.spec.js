@@ -1,16 +1,34 @@
 const { test, expect } = require('@playwright/test')
 
+// https://github.com/calm1205/vite-playwright-msw/blob/main/src/__tests__/index.spec.ts
+
+const BASE_URL = 'http://127.0.0.1:8080/'
 test.describe('New Todo', () => {
+  test.beforeEach(async ({ page }) => await page.goto(BASE_URL))
+
   test('basic test', async ({ page }) => {
-    await page.goto('/signin')
+    page.on('console', (msg) => {
+      console.log(msg)
+    })
+    await page.waitForTimeout(2000)
 
-    await page.locator('text=Mock').click()
-    await page.waitForURL('**/signin-fast') // need timeout
-    await expect(page.url()).toEqual(`http://localhost:8080/signin-fast`)
+    // await page.goto('http://127.0.0.1:8080/')
 
-    await page.locator('text="Mock Login"').click()
+    // await page.locator('text=Login').click()
+    await page.locator('[data-cy="login"]').click()
+    // await page.waitForURL('**/') // need timeout
+    await expect(page.url()).toEqual(BASE_URL)
+
+
+    const xx = await page.locator('[data-cy="otp"]').click()
+    console.log('>>>>', xx)
+    // .click()
+
+    // await page.locator('text=Login').click()
+    // await expect(page.url()).toEqual(BASE_URL)
+
     await page.waitForURL('**/dashboard') // need timeout
-    await expect(page.url()).toEqual(`http://localhost:8080/dashboard`)
+    await expect(page.url()).toEqual(BASE_URL + `dashboard`)
 
     // console.log(page.url())
     // await page.waitForTimeout(2000)

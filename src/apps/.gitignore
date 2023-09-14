@@ -4,6 +4,7 @@
 !apploader.js
 !.env.sample
 !package.json
+!msw.js
 !vite.config.js
 
 # EDIT BELOW - comment out environments you want in your project

@@ -9,6 +9,9 @@ import { Integrations } from '@sentry/tracing'
 import router from './router.js'
 import App from './App.vue'
 
+// msw
+import './apps/msw.js'
+
 // pwa
 import './pwa-init.js'
 

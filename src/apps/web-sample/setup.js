@@ -16,9 +16,8 @@ export default {
     { path: '/:catchAll(.*)', name: 'NotFound', component: () => import('../../views/NotFound.vue') }
   ],
   PUBLIC_ROUTES: [
-    { path: '/', name: 'Home', component: () => import('./views/SignInFast.vue') },
+    { path: '/', name: 'Home', component: () => import('./views/SignIn.vue') },
     { path: '/signin', name: 'SignIn', component: () => import('./views/SignIn.vue') },
-    { path: '/signin-fast', name: 'SignInFast', component: () => import('./views/SignInFast.vue') },
     { path: '/callback', name: 'Callback', component: () => import('./views/Callback.vue') }
   ],
   SECURE_ROUTES: [
