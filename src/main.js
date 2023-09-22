@@ -5,6 +5,7 @@ import Antd from 'ant-design-vue'
 
 // Sentry
 import * as Sentry from '@sentry/vue'
+
 import router from './router.js'
 import App from './App.vue'
 
@@ -14,6 +15,9 @@ import './apps/msw.js'
 // pwa
 import './pwa-init.js'
 
+// configs
+const { VITE_SENTRY_DSN } = import.meta.env
+
 // our own web components
 import '@es-labs/esm/bwc-loading-overlay.js'
 
@@ -22,9 +26,9 @@ const app = createApp(App)
 // https://zhuanlan.zhihu.com/p/135280049
 // app.config.isCustomElement = (tag) => tag.startsWith('bwc-') || tag.startsWith('vcxwc-')
 
-Sentry.init({
+if (VITE_SENTRY_DSN) Sentry.init({
   app,
-  dsn: 'https://3326314072fc4706bf8492e292b674b2@o406131.ingest.sentry.io/5869551',
+  dsn: VITE_SENTRY_DSN,
   integrations: [
     new Sentry.BrowserTracing({
       routingInstrumentation: Sentry.vueRouterInstrumentation(router),
