@@ -5,7 +5,6 @@ import Antd from 'ant-design-vue'
 
 // Sentry
 import * as Sentry from '@sentry/vue'
-import { Integrations } from '@sentry/tracing'
 import router from './router.js'
 import App from './App.vue'
 
@@ -27,15 +26,21 @@ Sentry.init({
   app,
   dsn: 'https://3326314072fc4706bf8492e292b674b2@o406131.ingest.sentry.io/5869551',
   integrations: [
-    new Integrations.BrowserTracing({
+    new Sentry.BrowserTracing({
       routingInstrumentation: Sentry.vueRouterInstrumentation(router),
-      tracingOrigins: ['localhost', 'my-site-url.com', /^\//]
     })
   ],
   // Set tracesSampleRate to 1.0 to capture 100%
   // of transactions for performance monitoring.
   // We recommend adjusting this value in production
-  tracesSampleRate: 1.0
+  tracesSampleRate: 1.0,
+  // Set `tracePropagationTargets` to control for which URLs distributed tracing should be enabled
+  tracePropagationTargets: ['localhost', /^https:\/\/yourserver\.io\/api/],
+
+  // Capture Replay for 10% of all sessions,
+  // plus for 100% of sessions with an error
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1.0
 })
 
 // Sentry.captureMessage('Something went wrong Vue Vute' + Date.now())
