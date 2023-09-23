@@ -15,8 +15,6 @@ import './apps/msw.js'
 // pwa
 import './pwa-init.js'
 
-// configs
-const { VITE_SENTRY_DSN } = import.meta.env
 
 // our own web components
 import '@es-labs/esm/bwc-loading-overlay.js'
@@ -26,27 +24,30 @@ const app = createApp(App)
 // https://zhuanlan.zhihu.com/p/135280049
 // app.config.isCustomElement = (tag) => tag.startsWith('bwc-') || tag.startsWith('vcxwc-')
 
-if (VITE_SENTRY_DSN) Sentry.init({
-  app,
-  dsn: VITE_SENTRY_DSN,
-  integrations: [
-    new Sentry.BrowserTracing({
-      routingInstrumentation: Sentry.vueRouterInstrumentation(router),
-    })
-  ],
-  // Set tracesSampleRate to 1.0 to capture 100%
-  // of transactions for performance monitoring.
-  // We recommend adjusting this value in production
-  tracesSampleRate: 1.0,
-  // Set `tracePropagationTargets` to control for which URLs distributed tracing should be enabled
-  tracePropagationTargets: ['localhost', /^https:\/\/yourserver\.io\/api/],
+// sentry
+const { VITE_SENTRY_DSN } = import.meta.env
+if (VITE_SENTRY_DSN) {
+  Sentry.init({
+    app,
+    dsn: VITE_SENTRY_DSN,
+    integrations: [
+      new Sentry.BrowserTracing({
+        routingInstrumentation: Sentry.vueRouterInstrumentation(router),
+      })
+    ],
+    // Set tracesSampleRate to 1.0 to capture 100%
+    // of transactions for performance monitoring.
+    // We recommend adjusting this value in production
+    tracesSampleRate: 1.0,
+    // Set `tracePropagationTargets` to control for which URLs distributed tracing should be enabled
+    tracePropagationTargets: ['localhost', /^https:\/\/yourserver\.io\/api/],
 
-  // Capture Replay for 10% of all sessions,
-  // plus for 100% of sessions with an error
-  replaysSessionSampleRate: 0.1,
-  replaysOnErrorSampleRate: 1.0
-})
-
+    // Capture Replay for 10% of all sessions,
+    // plus for 100% of sessions with an error
+    replaysSessionSampleRate: 0.1,
+    replaysOnErrorSampleRate: 1.0
+  })
+}
 // Sentry.captureMessage('Something went wrong Vue Vute' + Date.now())
 
 const theme = 'dark'
