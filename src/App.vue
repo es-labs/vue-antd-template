@@ -17,6 +17,7 @@ export default {
     'layout-public': LAYOUTS.layoutPublic, // store.user determines if public or secure
     'layout-secure': LAYOUTS.layoutSecure
   },
+
   setup(props, context) {
     const store = useMainStore()
     const storeUser = store.user

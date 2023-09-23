@@ -41,8 +41,8 @@
 </template>
 
 <script>
-// NOSONAR unref, toRef, toRefs, isRef, isProxy, isReactive, isReadonly, defineComponent, getCurrentInstance, reactive, readonly, watch, watchEffect, provide, inject
-import { onMounted, onUpdated, onUnmounted, onBeforeUnmount, ref, computed, inject, reactive, onBeforeUpdate } from 'vue'
+// NOSONAR unref, toRef, toRefs, isRef, isProxy, isReactive, isReadonly, defineComponent, getCurrentInstance, reactive, readonly, watch, watchEffect
+import { onMounted, onUpdated, onUnmounted, onBeforeUnmount, ref, computed, reactive, onBeforeUpdate } from 'vue'
 import { useMainStore } from '/src/store'
 import { http } from '/src/plugins/fetch.js'
 
@@ -55,15 +55,6 @@ export default {
     const list = reactive([1, 2, 3])
     const divs = ref([])
 
-    console.log('provide-inject AppTheme', inject('AppTheme'))
-
-    // NOSONAR reactivity
-    // // in provider
-    // const themeRef = ref('dark')
-    // provide(SubThemeSymbol, themeRef)
-    // // in consumer
-    // const theme = inject(SubThemeSymbol, ref('light'))
-    // watchEffect(() => console.log(`theme set to: ${theme.value}`))
     // const route = useRoute()
     // const router = useRouter()
     // const obj = reactive({ count: 0 })

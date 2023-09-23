@@ -14,7 +14,6 @@
 </template>
 
 <script>
-// NOSONAR unref, toRef, toRefs, isRef, isProxy, isReactive, isReadonly, defineComponent, getCurrentInstance, reactive, readonly, watch, watchEffect, provide, inject
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 

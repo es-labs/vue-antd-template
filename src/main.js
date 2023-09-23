@@ -3,21 +3,14 @@ import { createPinia } from 'pinia'
 
 import Antd from 'ant-design-vue'
 
-// Sentry
-import * as Sentry from '@sentry/vue'
+import * as Sentry from '@sentry/vue' // Sentry
 
 import router from './router.js'
 import App from './App.vue'
 
-// msw
-import './apps/msw.js'
-
-// pwa
-import './pwa-init.js'
-
-
-// our own web components
-import '@es-labs/esm/bwc-loading-overlay.js'
+import './apps/msw.js' // msw
+import './pwa-init.js' // pwa
+import '@es-labs/esm/bwc-loading-overlay.js' // our own web components
 
 const app = createApp(App)
 // NOSONAR
@@ -50,9 +43,7 @@ if (VITE_SENTRY_DSN) {
 }
 // Sentry.captureMessage('Something went wrong Vue Vute' + Date.now())
 
-const theme = 'dark'
-// const ThemeSymbol = Symbol()
-app.provide('AppTheme', theme) // provide & inject
+// avoid using provide & inject - reduce tech footprint
 app.use(createPinia()) // state management
 app.use(router) // routing
 app.use(Antd)
