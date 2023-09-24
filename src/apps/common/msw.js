@@ -3,7 +3,7 @@ export default async function prepare() {
   if (import.meta.env.MODE === 'mocked') {
     console.log('MSW NOTE: run once only unless you need to generate again - npx msw init public/')
     console.log('MSW NOTE: if you touch MSW and its related code, you need to do empty cache and hard reload')
-    console.log('MSW starting', worker)
+    console.log('MSW starting')
     const { worker } = await import('../web-sample/mocks/browser')
     return worker.start({
       onUnhandledRequest(request, print) {
