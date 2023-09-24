@@ -8,7 +8,7 @@ import App from './App.vue'
 
 import '@es-labs/esm/bwc-loading-overlay.js' // our own web components
 
-import postCreateApp from './apps/init' // initialize
+import postCreateApp from './apps/init' // initialize - must only be called once
 
 const app = createApp(App)
 postCreateApp(app, router)

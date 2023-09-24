@@ -15,14 +15,15 @@
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async function () {
-    console.log('SW load')
+    console.log('SW loading')
+
     const params = '' // '?params=' + encodeURIComponent(JSON.stringify({ a: 1, b: Date.now() })) // TODO some problem with vite (development) if passing in params like this...
     const swPath = window.location.port === '3000' ? 'service-worker.js' : '/service-worker.js' // if dev server use / in front... // NOTE: web path
     navigator.serviceWorker
       .register(swPath + params) // problem in dev no /vite
       .then((res) => {
         window.SW_REG = res // if you need this globally
-        console.log('service worker registered')
+        console.log('SW registered')
       })
       .catch((err) => console.log('SW load Error', err))
   })
