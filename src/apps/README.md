@@ -18,6 +18,10 @@
 |  +- style.css
 +- src/
 |  +- apps/
+|  |  +- common/ : codes here user may not need to touch much
+|  |     +- msw.js : for mock service worker [NEED TO SPECIFY PATH TO MOCKS]
+|  |     +- pwa.js : for PWA (work in progress)
+|  |     +- sentry.js : for error reporting
 |  |  +- web-<Your-Custom-Frontend>/: folder with prefix "-web" are your custom frontend code (your frontend repo)
 |  |  +- web-sample/
 |  |     +- components/
@@ -34,6 +38,7 @@
 |  |  +- .env.sample
 |  |  +- .gitignore
 |  |  +- apploader.js.sample : to create apploader.js from this sample
+|  |  +- init.js : pre and post createApp calls
 |  |  +- package.json
 |  |  +- README.md
 |  |  +- vite.config.js
