@@ -1,11 +1,10 @@
 // MSW - https://www.vuemastery.com/blog/mock-service-worker-api-mocking-for-vuejs-development-testing
-// run once: npx msw init public/
-// NOTE: if you touch MSW and it related code, need to do empty cache and hard reload
-
 export default async function prepare() {
   if (import.meta.env.MODE === 'mocked') {
-    const { worker } = await import('../web-sample/mocks/browser')
+    console.log('MSW NOTE: run once only unless you need to generate again - npx msw init public/')
+    console.log('MSW NOTE: if you touch MSW and its related code, you need to do empty cache and hard reload')
     console.log('MSW starting', worker)
+    const { worker } = await import('../web-sample/mocks/browser')
     return worker.start({
       onUnhandledRequest(request, print) {
         // Do not print warnings on unhandled requests to Sentry.
