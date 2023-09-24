@@ -1,11 +1,12 @@
 # DO NOT EDIT
 !.gitignore
 !README.md
+!init.js
 !apploader.js
 !.env.sample
 !package.json
-!msw.js
 !vite.config.js
+!common
 
 # EDIT BELOW - comment out environments you want in your project
 # !.env.development

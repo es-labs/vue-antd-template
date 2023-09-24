@@ -21,7 +21,7 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker
       .register(swPath + params) // problem in dev no /vite
       .then((res) => {
-        window.SW_REG = res
+        window.SW_REG = res // if you need this globally
         console.log('service worker registered')
       })
       .catch((err) => console.log('SW load Error', err))

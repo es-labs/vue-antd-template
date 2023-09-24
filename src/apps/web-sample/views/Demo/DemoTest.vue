@@ -24,7 +24,7 @@
     <p><button @click="(e) => testApi('healthcheck')">Test API</button> <button @click="(e) => testApi('health-auth')">Test API Auth</button></p>
     <p>Non-Reactive Data: {{ nonReactiveData }}</p>
     <p>Reactive Data: {{ reactiveData }}</p>
-    <p>Vuex Store: {{ store.user }} <button @click="(e) => store.changeUserName('ttt')">Change Name</button></p>
+    <p>Vuex Store: {{ store.user }} <button @click="(e) => store.updateUser({ id: 'AnewId' })">Change Name</button></p>
     <h2>Test Search and rxjs</h2>
     <a-input ref="searchRef" placeholder="rxjs search swapi"></a-input>
     {{ searchResult || 'No Search Result' }}

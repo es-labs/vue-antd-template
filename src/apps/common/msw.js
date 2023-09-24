@@ -2,7 +2,7 @@
 // run once: npx msw init public/
 async function prepare() {
   if (import.meta.env.MODE === 'mocked') {
-    const { worker } = await import('./web-sample/mocks/browser')
+    const { worker } = await import('../web-sample/mocks/browser')
     return worker.start({
       onUnhandledRequest(request, print) {
         // Do not print warnings on unhandled requests to Sentry.

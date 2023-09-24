@@ -38,10 +38,8 @@ export const useMainStore = defineStore('main', () => {
       }
     }
   }
-  function changeUserName(newName) {
-    if (user.value && newName) {
-      user.value.id = newName
-    }
+  function updateUser(payload) {
+    user.value = { ...user.value, ...payload }
   }
-  return { user, loading, doLogin, changeUserName }
+  return { user, loading, doLogin, updateUser }
 })
