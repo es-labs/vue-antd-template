@@ -19,7 +19,6 @@ test.describe('New Todo', () => {
     // await page.waitForURL('**/') // need timeout
     await expect(page.url()).toEqual(BASE_URL)
 
-
     const xx = await page.locator('[data-cy="otp"]').click()
     console.log('>>>>', xx)
     // .click()
