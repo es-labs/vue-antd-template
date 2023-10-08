@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 
-export const useChartPiniaStore = defineStore({ // TODO change to chartJS
+export const useChartPiniaStore = defineStore({
+  // TODO change to chartJS
   id: 'chart',
   // a function that returns a fresh state
   state: () => ({
