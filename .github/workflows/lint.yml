@@ -57,6 +57,7 @@ jobs:
     if: github.event.issue.pull_request
     steps:
       - name: Do this
+        if: startsWith(github.event.comment.body, '/debug')
         run: |
           echo ${{ github.ref_name }} ${GITHUB_REF_NAME}
       - name: Comment Run lint
