@@ -27,14 +27,15 @@ on:
   #   branches: [ main ]
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
+  show_context:
     steps:
       - name: Show GitHub context   
         env: 
           GITHUB_CONTEXT: ${{ toJson(github) }}   
         run: echo "$GITHUB_CONTEXT"
         shell: bash
+  lint:
+    runs-on: ubuntu-latest
     if: github.event_name == 'push'
     steps:
       - name: Do this
