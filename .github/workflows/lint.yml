@@ -56,10 +56,12 @@ jobs:
     # if: github.event_name == 'push' # one if per job
     if: github.event.issue.pull_request
     steps:
-      - name: Do this
+      - name: Command Run Debug Show GitHub context
         if: startsWith(github.event.comment.body, '/debug')
-        run: |
-          echo ${{ github.ref_name }} ${GITHUB_REF_NAME}
+        env: 
+          GITHUB_CONTEXT: ${{ toJson(github) }}   
+        run: echo "$GITHUB_CONTEXT"
+        shell: bash
       - name: Comment Run lint
         if: startsWith(github.event.comment.body, '/lint')
         run: echo "comment lint run"
