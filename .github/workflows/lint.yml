@@ -29,11 +29,11 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'push'
     steps:
       - name: Do this
         run: |
-          # echo ${GITHUB_REF_NAME}
+          echo ${GITHUB_REF_NAME}
           echo ${{ github.event_name }}
     # if: github.event_name == 'workflow_dispatch'
     # steps:
