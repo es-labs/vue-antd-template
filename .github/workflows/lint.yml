@@ -38,8 +38,12 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'workflow_dispatch' # one if per job
     steps:
-      - name: Step 1
-        run: echo "push test run"
+      - name: Workflow Dispatch Run Lint
+        if: github.event.inputs.cmd == 'lint'
+        run: echo "workflow_dispatch run lint"
+      - name: Workflow Dispatch Run Test
+        if: github.event.inputs.cmd == 'test'
+        run: echo "workflow_dispatch run test"
   trigger-comment: # job
     # needs: <job name of job required to succeed to run this job>
     runs-on: ubuntu-latest
@@ -57,12 +61,12 @@ jobs:
           echo ${{ github.repository_owner }} ${GITHUB_REPOSITORY_OWNER}
           echo ${{ github.ref_name }} ${GITHUB_REF_NAME}
           echo ${{ github.event_name }} ${GITHUB_EVENT_NAME}
-      - name: Run lint
+      - name: Comment Run lint
         if: startsWith(github.event.comment.body, '/lint')
-        run: echo "lint run"
-      - name: Run test
+        run: echo "comment lint run"
+      - name: Comment Run test
         if: startsWith(github.event.comment.body, '/test')
-        run: echo "test run"
+        run: echo "comment test run"
 
     # steps:
     #   - name: Selected Branch/tag
