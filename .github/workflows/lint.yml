@@ -4,7 +4,6 @@
 # GITHUB_REPOSITORY_OWNER - owner only name
 # GITHUB_EVENT_NAME - name of event that triggered this
 # usage ${THE-GITHUB-VAR}
-
 name: Lint Check
 
 on:
