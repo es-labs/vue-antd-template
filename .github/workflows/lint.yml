@@ -50,11 +50,9 @@ jobs:
       - name: Workflow Dispatch Run Test
         if: github.event.inputs.cmd == 'test'
         run: echo "workflow_dispatch run test"
-  trigger-comment: # job
-    # needs: <job name of job required to succeed to run this job>
+  trigger-comment-debug: # lint job
     runs-on: ubuntu-latest
-    # if: github.event_name == 'push' # one if per job
-    if: github.event.issue.pull_request
+    if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/debug')
     steps:
       - name: Command Run Debug Show GitHub context
         if: startsWith(github.event.comment.body, '/debug')
@@ -62,25 +60,32 @@ jobs:
           GITHUB_CONTEXT: ${{ toJson(github) }}   
         run: echo "$GITHUB_CONTEXT"
         shell: bash
+  trigger-comment-test: # test job
+    runs-on: ubuntu-latest
+    if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/test')
+    steps:
+      - name: Comment Run Test
+        if: 
+        run: echo "comment Test run"
+  trigger-comment-lint: # lint job
+    # needs: <job name of job required to succeed to run this job>
+    runs-on: ubuntu-latest
+    # if: github.event_name == 'push' # one if per job
+    if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/lint')
+    steps:
       - name: Comment Run lint
-        if: startsWith(github.event.comment.body, '/lint')
         run: echo "comment lint run"
-      - name: Comment Run test
-        if: startsWith(github.event.comment.body, '/test')
-        run: echo "comment test run"
-
-    # steps:
-    #   - name: Selected Branch/tag
-    #     run: echo ${{ github.event.inputs.tag }}
-    #   - name: Checkout Repository
-    #     uses: actions/checkout@v3
-    #     with:
-    #       ref: ${{ github.event.inputs.tag }}
-    #   - name: Set up Node.js
-    #     uses: actions/setup-node@v2
-    #     with:
-    #       node-version: 18
-    #   - name: Install Dependencies
-    #     run: npm install
-    #   - name: Run Lint
-    #     run: npm run lint
+      - name: Selected Branch/tag
+        run: echo ${{ github.ref_name }}
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        # with:
+        #   ref: ${{ github.event.inputs.tag }}
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        # with:
+        #   node-version: 18 // lts
+      - name: Install Dependencies
+        run: npm install
+      - name: Run Lint
+        run: npm run lint
