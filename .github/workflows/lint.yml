@@ -28,7 +28,7 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
-    if: ${GITHUB_EVENT_NAME} == 'workflow_dispatch'
+    if: $GITHUB_EVENT_NAME == 'workflow_dispatch'
     steps:
       - name: Do this
         run: echo ${GITHUB_REF_NAME}
