@@ -1,26 +1,55 @@
+# GITHUB_REF_NAME - branch or tag that triggerred the workflow
+# GITHUB_SHA - sha that triggerred the workflow
+# GITHUB_REPOSITORY - owner/repo name
+# GITHUB_REPOSITORY_OWNER - owner only name
+# GITHUB_EVENT_NAME - name of event that triggered this
+# usage ${THE-GITHUB-VAR}
+
 name: Lint Check
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch:
+    # Inputs the workflow accepts.
+    inputs:
+      command:
+        description: 'lint for now'
+        default: 'lint'
+        required: true
+      tag:
+        description: 'Enter branch or tag'
+        default: 'main'
+        required: true
+  issue_comment:
+    types: [created]
+  # push:
+  #   branches: [ main ]
+  # pull_request:
+  #   branches: [ main ]
 
 jobs:
   lint:
     runs-on: ubuntu-latest
-
+    if: GITHUB_EVENT_NAME == 'workflow_dispatch'
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 18
-
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Run Lint
-        run: npm run lint
+      - name: Do this
+        run: echo ${{ GITHUB_REF_NAME }}
+    if: GITHUB_EVENT_NAME == 'push'
+    steps:
+      - name: Do that
+        run: echo "Do That"
+    # if: github.repository == 'es-labs/vue-antd-template' && ( (github.event.issue.pull_request && startsWith(github.event.comment.body, '/lint')) || github.event_name == 'workflow_dispatch' )
+    # steps:
+    #   - name: Selected Branch/tag
+    #     run: echo ${{ github.event.inputs.tag }}
+    #   - name: Checkout Repository
+    #     uses: actions/checkout@v3
+    #     with:
+    #       ref: ${{ github.event.inputs.tag }}
+    #   - name: Set up Node.js
+    #     uses: actions/setup-node@v2
+    #     with:
+    #       node-version: 18
+    #   - name: Install Dependencies
+    #     run: npm install
+    #   - name: Run Lint
+    #     run: npm run lint
