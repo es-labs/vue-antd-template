@@ -21,8 +21,8 @@ on:
         required: true
   issue_comment:
     types: [created]
-  # push:
-  #   branches: [ main ]
+  push:
+    branches: [ main ]
   # pull_request:
   #   branches: [ main ]
 
