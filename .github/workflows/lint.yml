@@ -33,8 +33,8 @@ jobs:
     steps:
       - name: Do this
         run: |
-          echo ${GITHUB_REF_NAME}
-          echo ${{ github.event_name }}
+          echo ${{ github.ref_name }} ${GITHUB_REF_NAME}
+          echo ${{ github.event_name }} ${GITHUB_EVENT_NAME}
     # if: github.event_name == 'workflow_dispatch'
     # steps:
     #   - name: Do that
