@@ -50,7 +50,7 @@ jobs:
       - name: Workflow Dispatch Run Test
         if: github.event.inputs.cmd == 'test'
         run: echo "workflow_dispatch run test"
-  trigger-comment-debug: # lint job
+  trigger-comment-debug: # debug job
     runs-on: ubuntu-latest
     if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/debug')
     steps:
@@ -58,7 +58,9 @@ jobs:
         if: startsWith(github.event.comment.body, '/debug')
         env: 
           GITHUB_CONTEXT: ${{ toJson(github) }}   
-        run: echo "$GITHUB_CONTEXT"
+        run: |
+          echo "Version 0.0.5"
+          echo "$GITHUB_CONTEXT"
         shell: bash
   trigger-comment-test: # test job
     runs-on: ubuntu-latest
