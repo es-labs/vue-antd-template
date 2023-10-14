@@ -14,8 +14,8 @@ on:
     # Inputs the workflow accepts.
     inputs:
       cmd:
-        description: 'lint for now'
-        default: 'lint'
+        description: 'lint, test, debug'
+        default: 'debug'
         required: true
       tag:
         description: 'Enter branch or tag'
@@ -38,6 +38,12 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'workflow_dispatch' # one if per job
     steps:
+      - name: Workflow Dispatch Run Debug Show GitHub context
+        if: github.event.inputs.cmd == 'debug'
+        env: 
+          GITHUB_CONTEXT: ${{ toJson(github) }}   
+        run: echo "$GITHUB_CONTEXT"
+        shell: bash
       - name: Workflow Dispatch Run Lint
         if: github.event.inputs.cmd == 'lint'
         run: echo "workflow_dispatch run lint"
@@ -50,11 +56,6 @@ jobs:
     # if: github.event_name == 'push' # one if per job
     if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/lint')
     steps:
-      - name: Show GitHub context   
-        env: 
-          GITHUB_CONTEXT: ${{ toJson(github) }}   
-        run: echo "$GITHUB_CONTEXT"
-        shell: bash
       - name: Do this
         run: |
           echo ${{ github.repository }} ${GITHUB_REPOSITORY}
