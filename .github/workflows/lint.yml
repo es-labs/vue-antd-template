@@ -34,7 +34,13 @@ env:
 
 # each job run in parallel by default
 jobs:
-  lint: # job
+  push-comment: # job
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' # one if per job
+    steps:
+      - name: Step 1
+        run: echo "push test run"
+  trigger-comment: # job
     # needs: <job name of job required to succeed to run this job>
     runs-on: ubuntu-latest
     # if: github.event_name == 'push' # one if per job
@@ -51,6 +57,13 @@ jobs:
           echo ${{ github.repository_owner }} ${GITHUB_REPOSITORY_OWNER}
           echo ${{ github.ref_name }} ${GITHUB_REF_NAME}
           echo ${{ github.event_name }} ${GITHUB_EVENT_NAME}
+      - name: Run lint
+        if: startsWith(github.event.comment.body, '/lint'
+        run: echo "lint run"
+      - name: Run test
+        if: startsWith(github.event.comment.body, '/test'
+        run: echo "test run"
+
     # steps:
     #   - name: Selected Branch/tag
     #     run: echo ${{ github.event.inputs.tag }}
