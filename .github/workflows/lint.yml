@@ -54,14 +54,11 @@ jobs:
     # needs: <job name of job required to succeed to run this job>
     runs-on: ubuntu-latest
     # if: github.event_name == 'push' # one if per job
-    if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/lint')
+    if: github.event.issue.pull_request
     steps:
       - name: Do this
         run: |
-          echo ${{ github.repository }} ${GITHUB_REPOSITORY}
-          echo ${{ github.repository_owner }} ${GITHUB_REPOSITORY_OWNER}
           echo ${{ github.ref_name }} ${GITHUB_REF_NAME}
-          echo ${{ github.event_name }} ${GITHUB_EVENT_NAME}
       - name: Comment Run lint
         if: startsWith(github.event.comment.body, '/lint')
         run: echo "comment lint run"
