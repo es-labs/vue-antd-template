@@ -58,10 +58,10 @@ jobs:
           echo ${{ github.ref_name }} ${GITHUB_REF_NAME}
           echo ${{ github.event_name }} ${GITHUB_EVENT_NAME}
       - name: Run lint
-        if: startsWith(github.event.comment.body, '/lint'
+        if: startsWith(github.event.comment.body, '/lint')
         run: echo "lint run"
       - name: Run test
-        if: startsWith(github.event.comment.body, '/test'
+        if: startsWith(github.event.comment.body, '/test')
         run: echo "test run"
 
     # steps:
