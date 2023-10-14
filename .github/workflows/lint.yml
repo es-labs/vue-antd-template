@@ -34,7 +34,7 @@ env:
 
 # each job run in parallel by default
 jobs:
-  tirgger-workflow_dispatch: # job
+  trigger-workflow_dispatch: # job
     runs-on: ubuntu-latest
     if: github.event_name == 'workflow_dispatch' # one if per job
     steps:
