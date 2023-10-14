@@ -18,9 +18,9 @@
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",
     "@es-labs/esm": "^0.0.21",
-    "@sentry/vue": "^7.73.0",
+    "@sentry/vue": "^7.74.0",
     "ant-design-vue": "^4.0.3",
-    "pinia": "^2.1.6",
+    "pinia": "^2.1.7",
     "vue": "^3.3.4",
     "vue-router": "^4.2.5"
   },

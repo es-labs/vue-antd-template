@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useMainStore } from '/src/store'
-import { BASE_URL, ROUTES, SECURE_ROUTES, PUBLIC_ROUTES, INITIAL_SECURE_PATH, INITIAL_PUBLIC_PATH } from '/config.js'
+import { BASE_URL, ROUTES, SECURE_ROUTES, PUBLIC_ROUTES, INITIAL_SECURE_PATH, INITIAL_PUBLIC_PATH, } from '/config.js'
 
 // const permissions = {
 //   // g1 = route groups, g2 = user groups
