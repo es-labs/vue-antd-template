@@ -6,7 +6,7 @@
 # GITHUB_EVENT_NAME (github.event_name) - name of event that triggered this
 # usage ${THE-GITHUB-VAR}
 
-# Version 0.0.3
+# Version 0.0.5
 name: Perform Checks
 
 on:
