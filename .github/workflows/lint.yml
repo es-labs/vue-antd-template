@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
     # Inputs the workflow accepts.
     inputs:
-      command:
+      cmd:
         description: 'lint for now'
         default: 'lint'
         required: true
@@ -21,23 +21,27 @@ on:
         required: true
   issue_comment:
     types: [created]
-  push:
-    branches: [ main ]
+  # push:
+  #   branches: [ main ]
   # pull_request:
   #   branches: [ main ]
 
+env:
+  TAG: ${{ github.event.inputs.tag || 'main' }}
+  COMMAND: ${{ github.event.inputs.cmd || 'lint' }}
+
+# each job run in parallel by default
 jobs:
-  show_context:
+  lint: # job
+    # needs: <job name of job required to succeed to run this job>
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' # one if per job
     steps:
-      - name: Show GitHub context   
+      - name: DEBUG: Show GitHub context   
         env: 
           GITHUB_CONTEXT: ${{ toJson(github) }}   
         run: echo "$GITHUB_CONTEXT"
         shell: bash
-  lint:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push'
     steps:
       - name: Do this
         run: |
@@ -45,11 +49,7 @@ jobs:
           echo ${{ github.repository_owner }} ${GITHUB_REPOSITORY_OWNER}
           echo ${{ github.ref_name }} ${GITHUB_REF_NAME}
           echo ${{ github.event_name }} ${GITHUB_EVENT_NAME}
-    # if: github.event_name == 'workflow_dispatch'
-    # steps:
-    #   - name: Do that
-    #     run: echo "Do That"
-    # if: github.repository == 'es-labs/vue-antd-template' && ( (github.event.issue.pull_request && startsWith(github.event.comment.body, '/lint')) || github.event_name == 'workflow_dispatch' )
+    # if: (github.event.issue.pull_request && startsWith(github.event.comment.body, '/lint')) || github.event_name == 'workflow_dispatch'
     # steps:
     #   - name: Selected Branch/tag
     #     run: echo ${{ github.event.inputs.tag }}
