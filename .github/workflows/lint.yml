@@ -35,7 +35,8 @@ jobs:
   lint: # job
     # needs: <job name of job required to succeed to run this job>
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' # one if per job
+    # if: github.event_name == 'push' # one if per job
+    if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/lint')
     steps:
       - name: Show GitHub context   
         env: 
@@ -48,7 +49,6 @@ jobs:
           echo ${{ github.repository_owner }} ${GITHUB_REPOSITORY_OWNER}
           echo ${{ github.ref_name }} ${GITHUB_REF_NAME}
           echo ${{ github.event_name }} ${GITHUB_EVENT_NAME}
-    # if: (github.event.issue.pull_request && startsWith(github.event.comment.body, '/lint')) || github.event_name == 'workflow_dispatch'
     # steps:
     #   - name: Selected Branch/tag
     #     run: echo ${{ github.event.inputs.tag }}
