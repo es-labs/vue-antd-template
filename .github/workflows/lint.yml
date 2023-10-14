@@ -32,10 +32,10 @@ jobs:
     steps:
       - name: Do this
         run: echo ${{ GITHUB_REF_NAME }}
-    if: GITHUB_EVENT_NAME == 'push'
-    steps:
-      - name: Do that
-        run: echo "Do That"
+    # if: GITHUB_EVENT_NAME == 'push'
+    # steps:
+    #   - name: Do that
+    #     run: echo "Do That"
     # if: github.repository == 'es-labs/vue-antd-template' && ( (github.event.issue.pull_request && startsWith(github.event.comment.body, '/lint')) || github.event_name == 'workflow_dispatch' )
     # steps:
     #   - name: Selected Branch/tag
