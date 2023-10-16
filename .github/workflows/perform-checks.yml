@@ -50,7 +50,7 @@ jobs:
     if: github.event_name == 'workflow_dispatch' && github.event.inputs.cmd == 'lint' # one if per job
     steps:
       - name: Selected Branch/tag
-        run: echo Selected Branch: ${{ github.event.inputs.tag }}
+        run: echo "Selected Branch: ${{ github.event.inputs.tag }}"
       - name: Checkout Repository
         uses: actions/checkout@v3
         with:
