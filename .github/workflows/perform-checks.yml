@@ -32,30 +32,44 @@ env:
   COMMAND: ${{ github.event.inputs.cmd || 'lint' }}
 
 # each job run in parallel by default
+
+
 jobs:
-  trigger-workflow_dispatch: # job
+  trigger-workflow_dispatch-debug: # job
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' # one if per job
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.cmd == 'debug' # one if per job
     steps:
       - name: Workflow Dispatch Run Debug Show GitHub context
-        if: github.event.inputs.cmd == 'debug'
+        # if: github.event.inputs.cmd == 'debug'
         env: 
           GITHUB_CONTEXT: ${{ toJson(github) }}   
         run: echo "$GITHUB_CONTEXT"
         shell: bash
-      - name: Workflow Dispatch Run Lint
-        if: github.event.inputs.cmd == 'lint'
-        run: echo "workflow_dispatch run lint"
-      - name: Workflow Dispatch Run Test
-        if: github.event.inputs.cmd == 'test'
-        run: echo "workflow_dispatch run test"
+  trigger-workflow_dispatch-lint: # job
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.cmd == 'lint' # one if per job
+    steps:
+      - name: Selected Branch/tag
+        run: echo Selected Branch: ${{ github.event.inputs.tag }}
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.tag }}
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        # with:
+        #   node-version: 18 // lts
+      - name: Install Dependencies
+        run: npm install
+      - name: Run Lint
+        run: npm run lint
   trigger-comment-debug: # debug job
     runs-on: ubuntu-latest
     if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/debug')
     steps:
       - name: Command Run Debug Show GitHub context
         if: startsWith(github.event.comment.body, '/debug')
-        env: 
+        env:
           GITHUB_CONTEXT: ${{ toJson(github) }}   
         run: |
           echo "Version 0.0.6"
