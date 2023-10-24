@@ -8,10 +8,10 @@ export default async function prepare() {
     return worker.start({
       onUnhandledRequest(request, print) {
         // Do not print warnings on unhandled requests to Sentry.
-        if (request.url.hostname.includes('sentry.io')) return
+        if (request.url.includes('sentry.io')) return
         // Print the regular MSW unhandled request warning otherwise.
         // print.warning()
-        console.log('[MSW]', request.method, request.url.pathname)
+        console.log('[MSW]', request.method, request.url)
       }
     })
   }
