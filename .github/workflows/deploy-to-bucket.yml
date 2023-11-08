@@ -30,16 +30,6 @@ on:
         description: 'environment: dev, uat, prd'
         default: 'dev'
         required: true
-# env:
-#   BUCKET_TYPE: ${{ vars.BUCKET_TYPE }}
-#   REPO_NAME: ${{ github.event.repository.name }}
-
-# env:
-#   BUCKET: tlc-www-adm
-#   SHOP_BUCKET: tlc-www-shp
-#   ENDPOINT: oss-ap-southeast-1.aliyuncs.com
-#   ACCESS_KEY_ID: LTAI5t7CzPmfdQvhfRxXd6Z2
-#   ACCESS_KEY_SECRET: cBBmfF91CwEsvhqWk42Wku9CFDdcvY
 
 jobs:
   run-build:
@@ -55,20 +45,30 @@ jobs:
         with:
           ref: ${{ github.event.inputs.tag }}
       - name: Npm Install
-        run: npm install && cd src/apps && npm run install
+        run: npm install && cd src/apps && npm install
       - name: Build
         run: npx vite build --config src/apps/vite.config.js --mode ${{ github.event.inputs.env }}
         # run: npm run build # will create a dist folder (tbd build environment??)
+      - name: upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-build
+          path: ${{ github.workspace }}/dist
   deploy-oss: # aliyun OSS
     needs: run-build
     if: vars.BUCKET_TYPE == 'oss'
     name: Deploying To Aliyun OSS - Node Version TBD
     runs-on: ubuntu-latest
     steps:
+      - name: download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: my-build
+          path: ${{ github.workspace }}/dist
       - name: Install Alibaba Cloud OSSUTIL
         run: wget http://gosspublic.alicdn.com/ossutil/1.6.10/ossutil64 && chmod +x ossutil64
       - name: Configure Alibaba Cloud OSSUTIL
-        run: ./ossutil64 config -i ${secrets.ACCESS_KEY_ID} -k ${secrets.ACCESS_KEY_SECRET} -e ${vars.ENDPOINT} -c .ossutilconfig
+        run: ./ossutil64 config -i ${{ secrets.ACCESS_KEY_ID }} -k ${{ secrets.ACCESS_KEY_SECRET }} -e ${{ vars.ENDPOINT }} -c .ossutilconfig
       - name: Upload the web folder to the chosen OSS bucket
         run: ./ossutil64 --config-file .ossutilconfig cp ${{ github.workspace }}/dist oss://${{ vars.BUCKET_NAME }}-${{ github.event.inputs.env }} -r -f
   deploy-s3: # AWS S3
@@ -76,6 +76,11 @@ jobs:
     if: vars.BUCKET_TYPE == 's3'
     runs-on: ubuntu-latest
     steps:
+      - name: download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: my-build
+          path: ${{ github.workspace }}/dist
       - name: Setup AWS CLI
         uses: aws-actions/configure-aws-credentials@v1
         with:
