@@ -1,6 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useMainStore } from '/src/store'
 import { BASE_URL, ROUTES, SECURE_ROUTES, PUBLIC_ROUTES, INITIAL_SECURE_PATH, INITIAL_PUBLIC_PATH } from '/config.js'
+import { http } from './plugins/fetch'
+
+const { VITE_API_URL } = import.meta.env
 
 // const permissions = {
 //   // g1 = route groups, g2 = user groups
@@ -13,9 +16,24 @@ import { BASE_URL, ROUTES, SECURE_ROUTES, PUBLIC_ROUTES, INITIAL_SECURE_PATH, IN
 //   '/test': ['TestGroup'] //
 // }
 
-const authGuard = (to, from, next) => {
+const previoulyLoggedIn = async () => {
+  return false
+  // let result = false
+  // const store = useMainStore()
+
+  // // check if user previously logged in (has token in cookies)
+  // const response = await http.get(`${VITE_API_URL}/auth/verify`)
+  // if (response.status == 200) {
+  //   const user = response.data.data.user
+  //   store.user = user
+  //   result = true
+  // }
+
+  // return result
+}
+
+const authGuard = async (to, from, next) => {
   const store = useMainStore()
-  // console.log('authGuard', store.state.user ? 'user' : 'anon', from.path, to.path)
 
   // TODO find users from localStorage? // potential security leak
   // const item = localStorage.getItem('session') // survive a refresh - POTENTIAL SECURITY RISK - TO REVIEW AND CHANGE USE HTTPONLY COOKIES
@@ -38,7 +56,12 @@ const authGuard = (to, from, next) => {
   if (loggedIn === requiresAuth) {
     next()
   } else if (!loggedIn && requiresAuth) {
-    next(INITIAL_PUBLIC_PATH)
+    const result = await previoulyLoggedIn()
+    if (result) {
+      next()
+    } else {
+      next(INITIAL_PUBLIC_PATH)
+    }
   } else if (loggedIn && !requiresAuth) {
     next(INITIAL_SECURE_PATH)
   } else {
