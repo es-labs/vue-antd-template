@@ -1,10 +1,10 @@
-import './style/main.css'
-
-import { openWs, closeWs } from './hookFns.js'
-
-// :key="$route.fullPath" // this is causing problems
+import './style/main.css' // app overall custom style
+import { authGuard, INITIAL_PUBLIC_PATH, INITIAL_SECURE_PATH } from './setups/authGuard'
+import { openWs, closeWs } from './setups/ws'
 import layoutPublic from '../../layouts/Public.vue' // you can change this to your own layout
 import layoutSecure from '../../layouts/Secure.vue' // as above
+
+// :key="$route.fullPath" // this is causing problems
 
 export default {
   LAYOUTS: {
@@ -48,10 +48,13 @@ export default {
       return { path: '/test/' + i, name: 'Fill ID ' + i, component: async () => import('./views/Demo/Filler.vue'), props: { testId: i } }
     })
   ],
-  INITIAL_PUBLIC_PATH: '/signin',
-  INITIAL_SECURE_PATH: '/dashboard',
+
+  // route-setup
+  INITIAL_PUBLIC_PATH,
+  INITIAL_SECURE_PATH,
+  authGuard,
 
   // log-in/logout hook
-  ON_LOGIN: () => openWs(),
-  ON_LOGOUT: () => closeWs()
+  onLogin: () => openWs(),
+  onLogout: () => closeWs()
 }

@@ -37,7 +37,7 @@
 import { onMounted, onUnmounted, onBeforeUnmount, ref, reactive, computed } from 'vue'
 import { useMainStore } from '/src/store'
 import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons-vue'
-import { SECURE_ROUTES, ON_LOGIN, ON_LOGOUT } from '/config.js'
+import { SECURE_ROUTES, onLogin, onLogout } from '/config.js'
 
 import idleTimer from '@es-labs/esm/idle.js'
 
@@ -83,7 +83,7 @@ export default {
           }
         }
       })
-      ON_LOGIN && ON_LOGIN()
+      onLogin && onLogin()
     })
     onUnmounted(() => {
       console.log('SECURE unmounted')
@@ -91,7 +91,7 @@ export default {
     onBeforeUnmount(() => {
       // close WS
       idleTimer.stop()
-      ON_LOGOUT && ON_LOGOUT()
+      onLogout && onLogout()
     })
 
     const logout = async () => {
