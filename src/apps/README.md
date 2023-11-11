@@ -27,6 +27,9 @@
 |  |     +- components/
 |  |     +- layouts/
 |  |     +- mocks/ : for msw
+|  |     +- style/
+|  |     +  +- main.css # overall custom styling (import in setup.js)
+|  |     +  +- signin.css # custom styling for SignIn.vue
 |  |     +- tests/
 |  |     +  +- example.spec.js
 |  |     +- views/

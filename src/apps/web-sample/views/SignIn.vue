@@ -173,7 +173,7 @@ export default {
 </script>
 
 <style scoped>
-@import '../style/main.css';
+@import '../style/signin.css';
 .page-flex h1,
 .page-flex p {
   text-align: center;

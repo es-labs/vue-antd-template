@@ -1,3 +1,5 @@
+import './style/main.css'
+
 import { openWs, closeWs } from './hookFns.js'
 
 // :key="$route.fullPath" // this is causing problems
