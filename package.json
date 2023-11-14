@@ -21,7 +21,7 @@
     "@sentry/vue": "^7.80.0",
     "ant-design-vue": "^4.0.7",
     "pinia": "^2.1.7",
-    "vue": "^3.3.4",
+    "vue": "^3.3.8",
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
@@ -34,8 +34,8 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^5.0.1",
     "eslint-plugin-vue": "^9.18.1",
-    "msw": "^2.0.5",
-    "prettier": "^3.0.3",
+    "msw": "^2.0.6",
+    "prettier": "^3.1.0",
     "vite": "^4.5.0"
   },
   "msw": {
