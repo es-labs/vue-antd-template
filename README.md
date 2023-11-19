@@ -33,7 +33,8 @@ cp src/apps/.env.sample src/apps/.env.development
 ```bash
 # Commit and push to remote before running commands below
 git fetch upstream
-git merge upstream/main # or 'git merge upstream/main --allow-unrelated-histories'
+git merge upstream/<branch or tag> # or 'git merge upstream/<branch or tag> --allow-unrelated-histories'
+# main = stable, dev = development, <tag> = previous stable
 # There may be some template related merge conflicts to resolve.
 ```
 
