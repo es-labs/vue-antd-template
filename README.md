@@ -23,9 +23,9 @@ cp src/apps/.env.sample src/apps/.env.development
 ```
 
 **Important notes**
-- You can develop custom code in `apps/app-sample` or rename it or copy it to another folder name
+- DO NOT develop custom code using `apps/app-sample`. Rename it or copy it to another folder name
 - In apps/apploader.js, change `app-sample` to the folder you are using
-- userland changes only in the `apps` folder
+- userland changes ONLY in the `src/apps` folder, NEVER outside the folder. Contact template maintainer if you need something outside `src/apps`
 - do note any conflicts to resolve when merging from upstream
 
 3 - Updating the template

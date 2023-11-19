@@ -1,0 +1,92 @@
+# This workflow deploys front end application to a object store bucket
+# Supported buckets:
+# - [to test] Aliyun OSS
+# - [to test] AWS S3
+# - [backlog] Azure 
+# - [backlog] GCP Cloud Storage
+#
+# Setup the following vars
+# - ACCESS_KEY_ID
+# - ACCESS_KEY_SECRET
+# - ENDPOINT
+# - BUCKET_TYPE (oss, s3)
+# - BUCKET_NAME
+# Specify the following during build
+# - tag
+# - env (dev, uat, prd)
+#
+name: Deploy To Bucket
+
+# on: [push]
+on:
+  workflow_dispatch:
+    # Inputs the workflow accepts.
+    inputs:
+      tag:
+        description: 'git repo branch or tag'
+        default: 'main'
+        required: true
+      env:
+        description: 'environment: dev, uat, prd'
+        default: 'dev'
+        required: true
+
+jobs:
+  run-build:
+    name: Install And Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup NodeJS
+        uses: actions/setup-node@v3 # v4
+        with:
+          node-version: "18"
+      - name: Checkout ${{ github.event.inputs.tag }}
+        uses: actions/checkout@v3 # v4
+        with:
+          ref: ${{ github.event.inputs.tag }}
+      - name: Npm Install
+        run: npm install && cd src/apps && npm install
+      - name: Build
+        run: npx vite build --config src/apps/vite.config.js --mode ${{ github.event.inputs.env }}
+        # run: npm run build # will create a dist folder (tbd build environment??)
+      - name: upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-build
+          path: ${{ github.workspace }}/dist
+  deploy-oss: # aliyun OSS
+    needs: run-build
+    if: vars.BUCKET_TYPE == 'oss'
+    name: Deploying To Aliyun OSS - Node Version TBD
+    runs-on: ubuntu-latest
+    steps:
+      - name: download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: my-build
+          path: ${{ github.workspace }}/dist
+      - name: Install Alibaba Cloud OSSUTIL
+        run: wget http://gosspublic.alicdn.com/ossutil/1.6.10/ossutil64 && chmod +x ossutil64
+      - name: Configure Alibaba Cloud OSSUTIL
+        run: ./ossutil64 config -i ${{ secrets.ACCESS_KEY_ID }} -k ${{ secrets.ACCESS_KEY_SECRET }} -e ${{ vars.ENDPOINT }} -c .ossutilconfig
+      - name: Upload the web folder to the chosen OSS bucket
+        run: ./ossutil64 --config-file .ossutilconfig cp ${{ github.workspace }}/dist oss://${{ vars.BUCKET_NAME }}-${{ github.event.inputs.env }} -r -f
+  deploy-s3: # AWS S3
+    needs: run-build
+    if: vars.BUCKET_TYPE == 's3'
+    runs-on: ubuntu-latest
+    steps:
+      - name: download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: my-build
+          path: ${{ github.workspace }}/dist
+      - name: Setup AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.ACCESS_KEY_SECRET }}
+          aws-region: us-east-1
+      - name: Sync files to S3 bucket
+        run: |
+          aws s3 sync dist s3://${{ vars.BUCKET_NAME }}-${{ github.event.inputs.env }} --delete

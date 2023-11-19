@@ -27,14 +27,19 @@
 |  |     +- components/
 |  |     +- layouts/
 |  |     +- mocks/ : for msw
+|  |     +- setups/ : used by setup.js
+|  |     +  +- authGuard.js : authGuard setup and initial paths
+|  |     +  +- ws.js : websocket open / close
+|  |     +- style/
+|  |     +  +- main.css # overall custom styling (import in setup.js)
+|  |     +  +- signin.css # custom styling for SignIn.vue
 |  |     +- tests/
 |  |     +  +- example.spec.js
 |  |     +- views/
 |  |     +- .gitignore: for your repo
-|  |     +- hookFns.js
 |  |     +- playwright.config.js
-|  |     +- setup.js: custom frontend setup (set INITIAL_SECURE_PATH, ROUTES CONSTANTS here)
-|  |     +- store.js: custom frontend store
+|  |     +  setup.js : custom frontend setup export (important!)
+|  |     +- store.js : custom frontend store
 |  |  +- .env.sample
 |  |  +- .gitignore
 |  |  +- apploader.js.sample : to create apploader.js from this sample

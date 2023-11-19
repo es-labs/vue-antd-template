@@ -10,7 +10,12 @@
 !common
 
 # EDIT BELOW - comment out environments you want in your project
+
+# .env.development is for local development
 # !.env.development
+
+# .env.dev is for dev server build
+# !.env.dev
 
 # EDIT BELOW - comment out folders you want in your project
 !web-sample

@@ -1,5 +1,5 @@
 import { useMainStore } from '/src/store'
-import { useAppStore } from './store.js'
+import { useAppStore } from '../store.js'
 import { ws } from '/src/plugins/ws.js'
 const { VITE_WS_URL } = import.meta.env
 
