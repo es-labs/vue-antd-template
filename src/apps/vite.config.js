@@ -1,9 +1,10 @@
 // import.meta is undefined, process.env is not populated with custom values
 import vue from '@vitejs/plugin-vue'
-export default ({ command, mode }) => {
-  const path = require('path')
-  const env = require('dotenv').config({ path: path.join(__dirname, '.env.' + mode) }).parsed
+import path from 'path'
+import * as dotenv from 'dotenv'
 
+export default ({ command, mode }) => {
+  const env = dotenv.config({ path: path.join(__dirname, '.env.' + mode) }).parsed
   // console.log(__dirname, mode, command, env) // command = serve, build
 
   return {

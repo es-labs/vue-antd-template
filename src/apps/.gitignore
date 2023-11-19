@@ -4,6 +4,7 @@
 !init.js
 !apploader.js
 !.env.sample
+!.env.mocked
 !package.json
 !vite.config.js
 !common
