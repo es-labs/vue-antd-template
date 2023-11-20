@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import { createPinia } from 'pinia'
+// import { createPinia } from 'pinia'
 
 import Antd from 'ant-design-vue'
 
@@ -17,7 +17,7 @@ postCreateApp(app, router)
 // app.config.isCustomElement = (tag) => tag.startsWith('bwc-') || tag.startsWith('vcxwc-')
 
 // avoid using provide & inject - reduce tech footprint
-app.use(createPinia()) // state management
+// app.use(createPinia()) // state management
 app.use(router) // routing
 app.use(Antd)
 
