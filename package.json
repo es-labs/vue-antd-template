@@ -19,17 +19,17 @@
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",
     "@es-labs/esm": "^0.0.21",
-    "@sentry/vue": "^7.80.0",
+    "@sentry/vue": "^7.81.0",
     "ant-design-vue": "^4.0.7",
     "pinia": "^2.1.7",
     "vue": "^3.3.8",
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
-    "@playwright/test": "^1.39.0",
-    "@vitejs/plugin-vue": "^4.4.1",
+    "@playwright/test": "^1.40.0",
+    "@vitejs/plugin-vue": "^4.5.0",
     "dotenv": "^16.3.1",
-    "eslint": "^8.53.0",
+    "eslint": "^8.54.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "^2.29.0",
     "eslint-plugin-node": "^11.1.0",

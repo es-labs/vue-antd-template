@@ -26,8 +26,9 @@ export const useMainStore = defineStore('main', () => {
     } else {
       // sign in failed
       // console.log('payload forced === false')
+      const { VITE_LOGOUT_URL } = import.meta.env
       try {
-        await http.get('/api/auth/logout')
+        if (VITE_LOGOUT_URL) await http.get(VITE_LOGOUT_URL)
         user.value = null
         await router.push(INITIAL_PUBLIC_PATH)
       } catch (e) {
