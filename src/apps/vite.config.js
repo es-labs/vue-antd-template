@@ -6,6 +6,7 @@ import * as dotenv from 'dotenv'
 export default ({ command, mode }) => {
   const env = dotenv.config({ path: path.join(__dirname, '.env.' + mode) }).parsed
   // console.log(__dirname, mode, command, env) // command = serve, build
+  if (!env) return console.error(`Vite Error: env undefined for mode: ${mode}`)
 
   return {
     define: {
