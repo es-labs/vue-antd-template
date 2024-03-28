@@ -41,7 +41,7 @@ git pull upstream <branch or tag> --no-rebase
 **Suggested Conventions**
 - branch
   - main = stable
-  - dev = development
+  - work = working branch
   - feat-<issue number>
   - bugfix-<issue number>
 - release tags
