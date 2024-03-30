@@ -19,7 +19,7 @@
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",
     "@es-labs/esm": "^0.0.21",
-    "@sentry/vue": "^7.108.0",
+    "@sentry/vue": "^7.109.0",
     "ant-design-vue": "^4.1.2",
     "pinia": "^2.1.7",
     "vue": "^3.3.8",
@@ -37,7 +37,7 @@
     "eslint-plugin-vue": "^9.24.0",
     "msw": "^2.2.13",
     "prettier": "^3.2.5",
-    "vite": "^5.2.6"
+    "vite": "^5.2.7"
   },
   "msw": {
     "workerDirectory": "public"
