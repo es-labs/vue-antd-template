@@ -19,14 +19,14 @@
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",
     "@es-labs/esm": "^0.0.21",
-    "@sentry/vue": "^7.114.0",
+    "@sentry/vue": "^7.116.0",
     "ant-design-vue": "^4.2.1",
     "pinia": "^2.1.7",
     "vue": "^3.3.8",
     "vue-router": "^4.3.2"
   },
   "devDependencies": {
-    "@playwright/test": "^1.44.0",
+    "@playwright/test": "^1.44.1",
     "@vitejs/plugin-vue": "^5.0.4",
     "dotenv": "^16.4.5",
     "eslint": "^8.57.0",
