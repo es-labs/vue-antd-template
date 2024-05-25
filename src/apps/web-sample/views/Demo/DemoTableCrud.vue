@@ -24,9 +24,9 @@
             <a-select style="width: 75px" placeholder="And Or" v-model:value="filter.andOr">
               <a-select-option v-for="andOr of table.filterAndOr" :key="andOr" :value="andOr">{{ andOr }}</a-select-option>
             </a-select>
-            <a-button type="primary" @click="() => filterDelete(index)"
-              ><template #icon><CloseOutlined /></template
-            ></a-button>
+            <a-button type="primary" @click="() => filterDelete(index)">
+              <template #icon><CloseOutlined /></template>
+            </a-button>
           </a-input-group>
         </a-form-item>
       </a-form>

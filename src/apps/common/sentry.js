@@ -8,11 +8,7 @@ export default function createSentry(app, router) {
     Sentry.init({
       app,
       dsn: VITE_SENTRY_DSN,
-      integrations: [
-        new Sentry.BrowserTracing({
-          routingInstrumentation: Sentry.vueRouterInstrumentation(router)
-        })
-      ],
+      integrations: [Sentry.browserTracingIntegration({router})],
       // Set tracesSampleRate to 1.0 to capture 100%
       // of transactions for performance monitoring.
       // We recommend adjusting this value in production

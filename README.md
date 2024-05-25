@@ -140,4 +140,3 @@ Authorization: signatureValue
 - Move the following files to userland folder if possible
   - package.json (may not be necessary)
 - [Why Use Vite](https://indepth.dev/a-note-on-vite-a-very-fast-dev-build-tool/)
-
