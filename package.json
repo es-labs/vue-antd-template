@@ -24,7 +24,7 @@
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",
     "@es-labs/esm": "^0.0.21",
-    "@sentry/vue": "^8.9.1",
+    "@sentry/vue": "^8.10.0",
     "ant-design-vue": "^4.2.3",
     "pinia": "^2.1.7",
     "vue": "^3.3.8",
@@ -34,11 +34,11 @@
     "@playwright/test": "^1.44.1",
     "@vitejs/plugin-vue": "^5.0.5",
     "dotenv": "^16.4.5",
-    "eslint": "^9.4.0",
+    "eslint": "^9.5.0",
     "eslint-plugin-vue": "^9.26.0",
     "msw": "^2.3.1",
     "prettier": "^3.3.2",
-    "vite": "^5.2.13"
+    "vite": "^5.3.1"
   },
   "msw": {
     "workerDirectory": "public"
