@@ -54,9 +54,12 @@ git pull upstream <branch or tag> --no-rebase
 
 ```bash
 npm i
-cd src/apps/<your custom development folder> default is `web-sample`
+cd src/apps
 npm i
-cd ../../..
+# Note your custom development folder is `<project root>/src/apps/web-sample`
+
+cd ../.. # go back
+
 npm run dev # using the dev server
 # OR
 npm run dev:mocked # to run with mock service worker (many other API calls will fail because they are not mocked)
