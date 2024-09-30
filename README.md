@@ -60,9 +60,9 @@ npm i
 
 cd ../.. # go back
 
-npm run dev # using the dev server
+npm run local # run locally using the dev server
 # OR
-npm run dev:mocked # to run with mock service worker (many other API calls will fail because they are not mocked)
+npm run local:mocked # run locally with mock service worker (many other API calls will fail because they are not mocked)
 ```
 
 Visit `http://127.0.0.1:8080` to view application
@@ -101,6 +101,7 @@ Setting up your custom frontend
 
 **Notes:**
 - `.env.[MODE]` indicates the environment file to use (command to use: npx vite build --mode $1)
+  - e.g. npx vite build --config src/apps/vite.config.js --mode ${{ github.event.inputs.env }}
 - `src/apps/apploader.js` will specify the path to `setup.js` of in your custom code folder
 - see **src/apps/web-sample/setup.js** on the frontend setup especially the ROUTES property
 - ROUTES property
