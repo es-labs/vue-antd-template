@@ -39,7 +39,7 @@ jobs:
       - name: Setup NodeJS
         uses: actions/setup-node@v3 # v4
         with:
-          node-version: "18"
+          node-version: "20"
       - name: Checkout ${{ github.event.inputs.tag }}
         uses: actions/checkout@v3 # v4
         with:
@@ -50,7 +50,7 @@ jobs:
         run: npx vite build --config src/apps/vite.config.js --mode ${{ github.event.inputs.env }}
         # run: npm run build # will create a dist folder (tbd build environment??)
       - name: upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: my-build
           path: ${{ github.workspace }}/dist

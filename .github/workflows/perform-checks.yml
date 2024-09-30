@@ -56,7 +56,7 @@ jobs:
         with:
           ref: ${{ github.event.inputs.tag }}
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         # with:
         #   node-version: 18 // lts
       - name: Install Dependencies
@@ -97,7 +97,7 @@ jobs:
         # with:
         #   ref: ${{ github.event.inputs.tag }}
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         # with:
         #   node-version: 18 // lts
       - name: Install Dependencies
