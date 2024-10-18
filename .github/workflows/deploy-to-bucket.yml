@@ -36,6 +36,10 @@ jobs:
     name: Install And Build
     runs-on: ubuntu-latest
     steps:
+      - name: Workflow Inputs
+        run: |
+          echo "branch/tag: ${{ github.event.inputs.tag }}"
+          echo "environment: ${{ github.event.inputs.env }}"
       - name: Setup NodeJS
         uses: actions/setup-node@v3 # v4
         with:
