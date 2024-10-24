@@ -29,7 +29,7 @@
         <a-form-item v-for="(filter, index) of table.filters" :key="index">
           <a-input-group compact>
             <a-select style="width: 125px" placeholder="Column" v-model:value="filter.col">
-              <a-select-option v-for="col of table.filterCols" :key="col" :value="col">{{ col }}</a-select-option>
+              <a-select-option v-for="col of table.filterCols" :key="col.value" :value="col.value">{{ col.label }}</a-select-option>
             </a-select>
             <a-select style="width: 75px" placeholder="Operation" v-model:value="filter.op">
               <a-select-option v-for="op of table.filterOps" :key="op" :value="op">{{ op }}</a-select-option>
@@ -45,19 +45,7 @@
         </a-form-item>
       </a-form>
       <a-button :disabled="table.filters.length > 9" style="margin-bottom: 8px" @click="filterAdd">Add Filter</a-button>
-      <div
-        :style="{
-          position: 'absolute',
-          right: 0,
-          bottom: 0,
-          width: '100%',
-          borderTop: '1px solid #e9e9e9',
-          padding: '10px 16px',
-          background: '#fff',
-          textAlign: 'right',
-          zIndex: 1
-        }"
-      >
+      <div class="t4t-drawer">
         <a-button type="primary" @click="filterApply">Apply</a-button>
       </div>
     </a-drawer>
@@ -65,48 +53,19 @@
       <a-form layout="vertical" :model="table.formData" :rules="table.formRules">
         <template v-for="(colObj, col) in table.config.cols" :key="col">
           <a-form-item :label="colObj.label" v-if="colShow(colObj)">
-            <a-textarea
-              v-if="colUiType(colObj, 'textarea')"
-              v-model:value="table.formData[col]"
-              :rows="4"
-              :required="colRequired(colObj)"
-              :disabled="colReadonly(colObj)"
-            />
-            <a-input v-else v-model:value="table.formData[col]" :type="colUiInputType(colObj)" :required="colRequired(colObj)" :disabled="colReadonly(colObj)" />
+            <a-textarea v-if="colUiType(colObj, 'textarea')" v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]" />
+            <a-select v-else-if="colUiType(colObj, 'select')" v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]" />
+            <a-input v-else v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]"/>
           </a-form-item>
         </template>
         <!-- TBD single autocomplete ? -->
         <!-- TBD multi autocomplete ? -->
-        <!-- TBD single select -->
         <!-- TBD multi select -->
         <!-- TBD date & time -->
         <!-- TBD date -->
         <!-- TBD time -->
-        <!--
-        <a-form-item label="Owner" name="owner">
-          <a-select placeholder="Please a-s an owner" v-model:value="form.form.owner">
-            <a-select-option value="xiao">Xiaoxiao Fu</a-select-option>
-            <a-select-option value="mao">Maomao Zhou</a-select-option>
-          </a-select>
-        </a-form-item>
-        <a-form-item label="DateTime" name="dateTime">
-          <a-date-picker v-model:value="form.form.dateTime" style="width: 100%" :get-popup-container="trigger => trigger.parentNode" />
-        </a-form-item>
-        -->
       </a-form>
-      <div
-        :style="{
-          position: 'absolute',
-          right: 0,
-          bottom: 0,
-          width: '100%',
-          borderTop: '1px solid #e9e9e9',
-          padding: '10px 16px',
-          background: '#fff',
-          textAlign: 'right',
-          zIndex: 1
-        }"
-      >
+      <div class="t4t-drawer">
         <a-button style="margin-right: 8px" @click="formClose">Cancel</a-button>
         <a-button type="primary" @click="formSubmit">Submit</a-button>
       </div>
@@ -115,9 +74,10 @@
 </template>
 <script>
 // TODO
-// filters
-// update, create, delete (multi select), export to CSV?
-// attributes
+// 1. fix table size
+// 2. fix add/edit box layout
+// 3. clear all filters button
+// filters, create, delete (multi select), import, export to CSV? upload
 // i18n
 
 import { reactive, ref, computed, watch, onMounted } from 'vue'
@@ -163,7 +123,8 @@ export default {
 
       formKey: null,
       formData: {},
-      formRules: {}
+      formRules: {},
+      formColAttrs: {} // attributes for your inputs
     })
 
     const form = reactive({
@@ -177,13 +138,11 @@ export default {
       }
     })
 
+    // Filters
     const filterShow = ref(false)
     const filterOpen = () => (filterShow.value = true)
     const filterClose = () => (filterShow.value = false)
     const filterApply = async () => {
-      console.log('aa', table.filters)
-      console.log('bb', table.filterCols)
-      // filterShow.value = false
       if (store.loading === false) {
         store.loading = true
         await find()
@@ -193,10 +152,12 @@ export default {
     const filterAdd = () => table.filters.push({ ...filterTemplate })
     const filterDelete = (index) => table.filters.splice(index, 1)
 
+    // Deletion
     const deleteItems = async () => {
-      console.log('deleteItems', rowSelection.selectedRowKeys)
+      console.log('TBD deleteItems', rowSelection.selectedRowKeys)
     }
 
+    // Add / Edit Form
     const formMode = ref(false) // false, add or edit
     const formOpen = async (item) => {
       table.formData = {}
@@ -214,8 +175,16 @@ export default {
         }
         const cols = table.columns.filter((col) => col[mode] !== 'hide')
         for (let col of cols) {
-          // console.log('col', col)
-          table.formData[col.dataIndex] = mode === 'add' ? '' : rv[col.dataIndex]
+          table.formData[col.dataIndex] = mode === 'add' ? '' : rv[col.dataIndex] // get the data
+          table.formColAttrs[col.dataIndex] = {
+            ...col.ui?.attrs,
+            // TBD... permissions for adding and editing...
+            disabled: (mode === 'add' && col.add === 'readonly') || (mode === 'edit' && col.edit === 'readonly'),
+            required: (mode === 'add' && col.add === 'required') || (mode === 'edit' && col.edit === 'required'),
+          }
+          if (col?.ui?.tag == 'select') {
+            console.log('yyyy', table.formColAttrs[col.dataIndex], table.formData[col.dataIndex])
+          }
         }
         // console.log(table.formData)
       } catch (e) {
@@ -281,7 +250,11 @@ export default {
 
       if (store.loading === false) {
         store.loading = true
-        table.config = await t4tFe.getConfig()
+        try {
+          table.config = await t4tFe.getConfig()
+        } catch (e) {
+          console.log('table config error', e.toString())
+        }
         console.log('TABLE CONFIG', table.config)
         for (const key in table.config.cols) {
           const val = table.config.cols[key]
@@ -299,7 +272,7 @@ export default {
           }
           if (!val.hide) table.columns.push(col)
         }
-        table.filterCols = table.columns.filter((col) => col.filter).map((col) => col.dataIndex)
+        table.filterCols = table.columns.filter((col) => col.filter).map((col) => ({ value: col.dataIndex, label: col.title }))
         await find()
         store.loading = false
       }
@@ -341,10 +314,7 @@ export default {
 
     return {
       colShow: (val) => (formMode.value === 'add' && val.add !== 'hide') || (formMode.value === 'edit' && val.edit !== 'hide'),
-      colReadonly: (val) => (formMode.value === 'add' && val.add === 'readonly') || (formMode.value === 'edit' && val.edit === 'readonly'),
-      colRequired: (val) => (formMode.value === 'add' && val.add === 'required') || (formMode.value === 'edit' && val.edit === 'required'),
       colUiType: (val, uiType) => val?.ui?.tag === uiType,
-      colUiInputType: (val) => val?.ui?.attrs?.type || 'text',
       table,
       handleTableChange,
       getRowKey,
@@ -376,5 +346,17 @@ export default {
 
 .table-operations > button {
   margin-right: 8px;
+}
+
+.t4t-drawer {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  border-top: 1px solid #e9e9e9;
+  padding: 10px 16px;
+  background: #fff;
+  text-align: right;
+  z-index: 1;
 }
 </style>
