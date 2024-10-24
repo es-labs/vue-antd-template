@@ -31,6 +31,7 @@ export default {
     { path: '/demo/table-edit', name: 'Table Edit', component: async () => import('./views/Demo/DemoTableEdit.vue') },
     { path: '/demo/table', name: 'Table', component: async () => import('./views/Demo/DemoTable.vue') },
     { path: '/demo/table-crud', name: 'Table CRUD', component: async () => import('./views/Demo/DemoTableCrud.vue') },
+    { path: '/t4t', name: 'T4t', component: async () => import('./views/Demo/T4t.vue') },
 
     { path: '/visuals/g2-chart1', name: 'G2 Chart1', component: async () => import('./views/Visuals/DemoChart1.vue') },
     { path: '/visuals/leaflet-map', name: 'Leaflet', component: () => import('./views/Visuals/DemoLeaflet.vue') },

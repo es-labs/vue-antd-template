@@ -13,6 +13,7 @@
   "scripts": {
     "build": "vite build --config src/apps/vite.config.js",
     "local": "vite --config src/apps/vite.config.js",
+    "local:reload": "vite --force --config src/apps/vite.config.js",
     "local:mocked": "vite --config src/apps/vite.config.js --mode mocked",
     "lint": "eslint .",
     "lint:fix": "eslint . --ext .js,.vue --fix",
@@ -33,7 +34,7 @@
     "@playwright/test": "^1.48.1",
     "@vitejs/plugin-vue": "^5.1.4",
     "dotenv": "^16.4.5",
-    "eslint": "^9.12.0",
+    "eslint": "^9.13.0",
     "eslint-plugin-vue": "^9.29.0",
     "msw": "^2.4.11",
     "prettier": "^3.3.3",
