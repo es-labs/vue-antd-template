@@ -23,6 +23,11 @@
       <!-- <template #action="item">
         <a-button @click="() => console.log(item)">{{ item.text }}</a-button>
       </template> -->
+      <!-- <template #bodyCell="{ column, text, record }">
+        <template v-if="column.link">
+          <div>{{ record.key }}</div>
+        </template>
+      </template> -->
     </a-table>
     <a-drawer title="Filters" :width="512" :open="filterShow" :body-style="{ paddingBottom: '80px' }" @close="filterClose" placement="left">
       <a-form layout="vertical">
