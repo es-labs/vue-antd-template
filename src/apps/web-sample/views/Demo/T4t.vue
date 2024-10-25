@@ -11,7 +11,7 @@
       :columns="table.columns"
       :data-source="table.data"
       :pagination="table.pagination"
-      :scroll="table.scroll"
+      :scroll="{ x: table.scrollX, y: tableHeight }"
       :loading="table.loading"
       size="small"
       @change="handleTableChange"
@@ -72,7 +72,7 @@
       </a-form>
       <div class="t4t-drawer">
         <a-button style="margin-right: 8px" @click="formClose">Cancel</a-button>
-        <a-button type="primary" @click="formSubmit">Submit</a-button>
+        <a-button style="margin-right: 10px" type="primary" @click="formSubmit">Submit</a-button>
       </div>
     </a-drawer>
   </div>
@@ -85,7 +85,7 @@
 // filters, create, delete (multi select), import, export to CSV? upload
 // i18n
 
-import { reactive, ref, computed, watch, onMounted } from 'vue'
+import { reactive, ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { CloseOutlined } from '@ant-design/icons-vue'
 import { notification } from 'ant-design-vue'
 import * as t4tFe from '@es-labs/esm/t4t-fe'
@@ -128,7 +128,8 @@ export default {
       formData: {},
       formRules: {},
       formCols: {},
-      formColAttrs: {} // attributes for your inputs
+      formColAttrs: {}, // attributes for your inputs
+      scrollX: 1800,
     })
 
     // Filters
@@ -305,6 +306,24 @@ export default {
     const importCsv = () => {}
     const exportCsv = () => {}
 
+    //responsive table height
+    const tableHeight = ref(0);
+
+    const handleResize = () => {
+      const windowHeight = window.innerHeight;
+      const offsetHeight = 320; // Adjust based on your layout (headers, footers, etc.)
+      tableHeight.value = windowHeight - offsetHeight;
+    };
+
+    onMounted(() => {
+      handleResize();
+      window.addEventListener("resize", handleResize);
+    });
+
+    onBeforeUnmount(() => {
+      window.removeEventListener("resize", handleResize);
+    });
+
     return {
       colShow: (val) => (formMode.value === 'add' && val.add !== 'hide') || (formMode.value === 'edit' && val.edit !== 'hide'),
       colUiType: (val, uiType) => val?.ui?.tag === uiType,
@@ -337,7 +356,10 @@ export default {
 
       // others
       rowSelection,
-      deleteItems
+      deleteItems,
+
+      //responsive table height
+      tableHeight,
     }
   }
 }
@@ -358,7 +380,7 @@ export default {
   bottom: 0;
   width: 100%;
   border-top: 1px solid #e9e9e9;
-  padding: 10px 16px;
+  padding: 10px 0px 10px 0px;
   background: #fff;
   text-align: right;
   z-index: 1;
