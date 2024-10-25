@@ -24,7 +24,6 @@ export default {
   ],
   SECURE_ROUTES: [
     { path: '/dashboard', name: 'Dashboard', component: async () => import('./views/Dashboard.vue') },
-    /*
     { path: '/demo/test', name: 'Tests', component: async () => import('./views/Demo/DemoTest.vue') },
     { path: '/demo/web-cam', name: 'Web Cam', component: () => import('./views/Demo/DemoWebCam.vue') },
     { path: '/demo/sign-pad', name: 'Sign Pad', component: async () => import('./views/Demo/DemoSignPad.vue') },
@@ -56,11 +55,12 @@ export default {
     ...Array.from(Array(15), (x, i) => {
       return { path: '/test/' + i, name: 'Fill ID ' + i, component: async () => import('./views/Demo/Filler.vue'), props: { testId: i } }
     }),
-    */
+    /*
     { path: '/flight', name: 'Flight', component: async () => import('./views/Demo/T4t.vue'), props: { tableName: 'flights' } },
     { path: '/cargo', name: 'Cargo', component: async () => import('./views/Demo/T4t.vue'), props: { tableName: 'cargos' } },
     { path: '/check-status', name: 'Check Status', component: async () => import('./views/Demo/T4t.vue'), props: { tableName: 'lock_check_status' } },
     { path: '/check-images', name: 'Check Images', component: async () => import('./views/Demo/T4t.vue'), props: { tableName: 'cargo_check_images' } },
+    */
   ],
 
   // route-setup
