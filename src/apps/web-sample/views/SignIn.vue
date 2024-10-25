@@ -5,6 +5,7 @@
         <h1>{{ i18n.$t('sign_in') }}</h1>
         <a-input data-cy="username" label="Username" type="text" v-model:value="email"></a-input>
         <a-input data-cy="password" label="Password" type="password" v-model:value="password"></a-input>
+        <a-checkbox v-model:checked="forced">Force Login</a-checkbox>
         <div class="buttons-box-flex">
           <a-button data-cy="login" @click="login">Login</a-button>
         </div>
@@ -53,6 +54,7 @@ export default {
     const mode = ref('login') // login, otp
     const otp = ref('')
 
+    const forced = ref(false)
     let otpCount = 0
     let otpId = ''
 
@@ -86,6 +88,14 @@ export default {
 
     const login = async () => {
       console.log('login clicked')
+      if (forced) {
+        _setUser(null, {
+          id: 1,
+          access_token: '',
+          refresh_token: ''
+        })
+        return
+      }
       if (store.value) return
       store.loading = true
       errorMessage.value = ''
@@ -166,7 +176,8 @@ export default {
       oauthLogin,
       i18n,
       isMobile,
-      VERSION
+      VERSION,
+      forced
     }
   }
 }

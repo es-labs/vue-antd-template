@@ -24,15 +24,23 @@ export default {
   ],
   SECURE_ROUTES: [
     { path: '/dashboard', name: 'Dashboard', component: async () => import('./views/Dashboard.vue') },
-
+    /*
     { path: '/demo/test', name: 'Tests', component: async () => import('./views/Demo/DemoTest.vue') },
     { path: '/demo/web-cam', name: 'Web Cam', component: () => import('./views/Demo/DemoWebCam.vue') },
     { path: '/demo/sign-pad', name: 'Sign Pad', component: async () => import('./views/Demo/DemoSignPad.vue') },
-    { path: '/demo/table-edit', name: 'Table Edit', component: async () => import('./views/Demo/DemoTableEdit.vue') },
-    { path: '/demo/table', name: 'Table', component: async () => import('./views/Demo/DemoTable.vue') },
-    { path: '/demo/table-crud', name: 'Table CRUD', component: async () => import('./views/Demo/DemoTableCrud.vue') },
-    { path: '/t4t', name: 'T4t', component: async () => import('./views/Demo/T4t.vue') },
-
+    {
+      path: '/t4ta/:table?',
+      name: 'T4ta',
+      component: async () => import('./views/Demo/T4t.vue'),
+      props: route => ({
+        tableName: route.params.table,
+        filterKeys: route.query.fkeys,
+        filterVals: route.query.fvals,
+      }),
+      hidden: true
+    },
+    { path: '/t4t', name: 'T4t', component: async () => import('./views/Demo/T4t.vue'), props: { tableName: 'student' } },
+    
     { path: '/visuals/g2-chart1', name: 'G2 Chart1', component: async () => import('./views/Visuals/DemoChart1.vue') },
     { path: '/visuals/leaflet-map', name: 'Leaflet', component: () => import('./views/Visuals/DemoLeaflet.vue') },
 
@@ -47,7 +55,12 @@ export default {
     { path: '/test', name: 'Fill No ID', component: async () => import('./views/Demo/Filler.vue') },
     ...Array.from(Array(15), (x, i) => {
       return { path: '/test/' + i, name: 'Fill ID ' + i, component: async () => import('./views/Demo/Filler.vue'), props: { testId: i } }
-    })
+    }),
+    */
+    { path: '/flight', name: 'Flight', component: async () => import('./views/Demo/T4t.vue'), props: { tableName: 'flights' } },
+    { path: '/cargo', name: 'Cargo', component: async () => import('./views/Demo/T4t.vue'), props: { tableName: 'cargos' } },
+    { path: '/check-status', name: 'Check Status', component: async () => import('./views/Demo/T4t.vue'), props: { tableName: 'lock_check_status' } },
+    { path: '/check-images', name: 'Check Images', component: async () => import('./views/Demo/T4t.vue'), props: { tableName: 'cargo_check_images' } },
   ],
 
   // route-setup

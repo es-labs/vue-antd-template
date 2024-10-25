@@ -23,11 +23,11 @@
       <!-- <template #action="item">
         <a-button @click="() => console.log(item)">{{ item.text }}</a-button>
       </template> -->
-      <!-- <template #bodyCell="{ column, text, record }">
-        <template v-if="column.link">
-          <div>{{ record.key }}</div>
+      <template #bodyCell="{ column, text, record }">
+        <template v-if="column?.ui?.link">
+          <div @click="(e) => onLinkClick(e, column, record)">{{ column.ui.link.childTbl }}</div>
         </template>
-      </template> -->
+      </template>
     </a-table>
     <a-drawer title="Filters" :width="512" :open="filterShow" :body-style="{ paddingBottom: '80px' }" @close="filterClose" placement="left">
       <a-form layout="vertical">
@@ -56,8 +56,8 @@
     </a-drawer>
     <a-drawer :title="formMode" :width="480" :open="!!formMode" :body-style="{ paddingBottom: '80px' }" @close="formClose">
       <a-form layout="vertical" :model="table.formData" :rules="table.formRules">
-        <template v-for="(colObj, col) in table.config.cols" :key="col">
-          <a-form-item :label="colObj.label" v-if="colShow(colObj)">
+        <template v-for="(colObj, col) in table.formCols" :key="col">
+          <a-form-item :label="colObj.title" v-if="colShow(colObj)">
             <a-textarea v-if="colUiType(colObj, 'textarea')" v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]" />
             <a-select v-else-if="colUiType(colObj, 'select')" v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]" />
             <a-input v-else v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]"/>
@@ -91,23 +91,21 @@ import { notification } from 'ant-design-vue'
 import * as t4tFe from '@es-labs/esm/t4t-fe'
 import { http } from '/src/plugins/fetch'
 import { useMainStore } from '/src/store'
+import { useRouter } from 'vue-router'
 
-const filterTemplate = {
-  col: '',
-  op: '=',
-  andOr: 'and',
-  val: ''
-}
-
+const filterTemplate = { col: '', op: '=', andOr: 'and', val: '' }
 const DEFAULT_PAGE_SIZE = 10
 
 export default {
+  name: 'T4t',
+  props: ['tableName', 'filterKeys', 'filterVals'],
   components: {
     CloseOutlined
   },
-  setup() {
+  setup(props, context) {
     const store = useMainStore()
-    const loading = store.loading
+    const router = useRouter()
+    // const loading = store.loading
 
     // table information
     const table = reactive({
@@ -129,18 +127,8 @@ export default {
       formKey: null,
       formData: {},
       formRules: {},
+      formCols: {},
       formColAttrs: {} // attributes for your inputs
-    })
-
-    const form = reactive({
-      rules: {
-        name: [{ required: true, message: 'Please enter user name' }],
-        owner: [{ required: true, message: 'Please select an owner' }],
-        type: [{ required: true, message: 'Please choose the type' }],
-        approver: [{ required: true, message: 'Please choose the approver' }],
-        dateTime: [{ required: true, message: 'Please choose the dateTime', type: 'object' }],
-        description: [{ required: true, message: 'Please enter url description' }]
-      }
     })
 
     // Filters
@@ -179,7 +167,9 @@ export default {
           table.loading = false
         }
         const cols = table.columns.filter((col) => col[mode] !== 'hide')
+        console.log('asdhgf', mode, cols)
         for (let col of cols) {
+          table.formCols[col.dataIndex] = col
           table.formData[col.dataIndex] = mode === 'add' ? '' : rv[col.dataIndex] // get the data
           table.formColAttrs[col.dataIndex] = {
             ...col.ui?.attrs,
@@ -228,14 +218,12 @@ export default {
       }
     })
     // const hasSelected = computed(() => state.selectedRowKeys.length > 0);
-
     const find = async () => {
       if (table.loading) return
       table.loading = true
       try {
         const { results, total } = await t4tFe.find(table.filters, null, table.pagination.current, table.pagination.pageSize)
-        // console.log('columns', table.columns)
-        // console.log('results', results, total)
+        // console.log('columns', table.columns, 'results', results, total)
         table.data = results
         table.pagination.total = total
         // console.log(table.filters)
@@ -251,7 +239,7 @@ export default {
 
     onMounted(async () => {
       t4tFe.setFetch(http)
-      t4tFe.setTableName('student')
+      t4tFe.setTableName(props.tableName)
 
       if (store.loading === false) {
         store.loading = true
@@ -320,6 +308,18 @@ export default {
     return {
       colShow: (val) => (formMode.value === 'add' && val.add !== 'hide') || (formMode.value === 'edit' && val.edit !== 'hide'),
       colUiType: (val, uiType) => val?.ui?.tag === uiType,
+      onLinkClick: (event, column, record) => {
+        // console.log(column, record)
+        // console.log(router.push)
+        router.push({
+          path: '/t4ta',
+          name: 'T4ta',
+          query: { fkeys: 'aa,bb', fvals: '11,22' },
+          params: { table: 'student_subject' }
+        })
+        event.stopPropagation()
+        // send to child table
+      },
       table,
       handleTableChange,
       getRowKey,
@@ -333,7 +333,6 @@ export default {
       importCsv, exportCsv,
 
       // forms
-      form, // TOREMOVE
       formMode, formOpen, formClose, formSubmit,
 
       // others

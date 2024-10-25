@@ -72,7 +72,7 @@
         Create Response: {{ submitResult || 'No Response' }}
       </a-form>
     </a-collapse-panel>
-    <a-collapse-panel key="3" header="Transfer" :disabled="false">
+    <a-collapse-panel key="3" header="Transfer" collapsible="header">
       <a-transfer
         :data-source="mockData"
         show-search
