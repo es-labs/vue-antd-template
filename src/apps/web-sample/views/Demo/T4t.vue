@@ -60,6 +60,7 @@
           <a-form-item :label="colObj.title" v-if="colShow(colObj)">
             <a-textarea v-if="colUiType(colObj, 'textarea')" v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]" />
             <a-select v-else-if="colUiType(colObj, 'select')" v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]" />
+            <a-select v-else-if="colUiType(colObj, 'files')" v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]" />
             <a-input v-else v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]"/>
           </a-form-item>
         </template>
@@ -327,7 +328,7 @@ export default {
     return {
       colShow: (val) => (formMode.value === 'add' && val.add !== 'hide') || (formMode.value === 'edit' && val.edit !== 'hide'),
       colUiType: (val, uiType) => val?.ui?.tag === uiType,
-      onLinkClick: (event, column, record) => {
+      onLinkClick: (event, column, record) => { // TBD
         // console.log(column, record)
         // console.log(router.push)
         router.push({
