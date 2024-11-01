@@ -26,7 +26,7 @@
     "@es-labs/esm": "^0.0.25",
     "@sentry/vue": "^8.35.0",
     "ant-design-vue": "^4.2.5",
-    "pinia": "^2.2.4",
+    "pinia": "^2.2.5",
     "vue": "^3.3.8",
     "vue-router": "^4.4.5"
   },
@@ -35,8 +35,8 @@
     "@vitejs/plugin-vue": "^5.1.4",
     "dotenv": "^16.4.5",
     "eslint": "^9.13.0",
-    "eslint-plugin-vue": "^9.29.1",
-    "msw": "^2.5.2",
+    "eslint-plugin-vue": "^9.30.0",
+    "msw": "^2.6.0",
     "prettier": "^3.3.3",
     "vite": "^5.4.10"
   },

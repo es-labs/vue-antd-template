@@ -56,20 +56,27 @@
     </a-drawer>
     <a-drawer :title="formMode" :width="480" :open="!!formMode" :body-style="{ paddingBottom: '80px' }" @close="formClose">
       <a-form layout="vertical" :model="table.formData" :rules="table.formRules">
-        <template v-for="(colObj, col) in table.formCols" :key="col">
+        <template v-for="(colObj, col, index) in table.formCols" :key="col">
           <a-form-item :label="colObj.title" v-if="colShow(colObj)">
+            <!-- <a-input v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]"/> -->
+            <!-- <div>{{ index }} {{ table.formData[col] }}</div><br/> -->
             <a-textarea v-if="colUiType(colObj, 'textarea')" v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]" />
             <a-select v-else-if="colUiType(colObj, 'select')" v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]" />
-            <a-select v-else-if="colUiType(colObj, 'files')" v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]" />
+            <div v-else-if="colUiType(colObj, 'files')">
+              <a-upload :file-list="table.formFiles[col]" :before-upload="(file) => beforeUpload(file,col)" @remove="(file) => handleRemove(file,col)">
+                <a-button>
+                  Select File
+                </a-button>
+              </a-upload>{{ table.formData[col] }}
+            </div>
             <a-input v-else v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]"/>
+            <!-- <div v-else>[{{ index }}] {{ table.formData[col] }}</div><br/> -->
           </a-form-item>
         </template>
         <!-- TBD single autocomplete ? -->
         <!-- TBD multi autocomplete ? -->
         <!-- TBD multi select -->
-        <!-- TBD date & time -->
-        <!-- TBD date -->
-        <!-- TBD time -->
+        <!-- TBD date, time date & time -->
       </a-form>
       <div class="t4t-drawer">
         <a-button style="margin-right: 8px" @click="formClose">Cancel</a-button>
@@ -127,7 +134,8 @@ export default {
 
       formKey: null,
       formData: {},
-      formRules: {},
+      formFiles: {},
+      formRules: {}, // To Remove
       formCols: {},
       formColAttrs: {}, // attributes for your inputs
       scrollX: 1800,
@@ -152,10 +160,22 @@ export default {
       console.log('TBD deleteItems', rowSelection.selectedRowKeys)
     }
 
+    const handleRemove = (file, col) => {
+      const index = table.formFiles[col].indexOf(file)
+      const newFileList = table.formFiles[col].slice()
+      newFileList.splice(index, 1)
+      table.formFiles[col] = newFileList
+    }
+    const beforeUpload = (file, col) => {
+      table.formFiles[col] = [...(table.formFiles[col] || []), file]
+      return false
+    }
+
     // Add / Edit Form
     const formMode = ref(false) // false, add or edit
     const formOpen = async (item) => {
       table.formData = {}
+      table.formFiles = {}
       table.formKey = null
       let rv = {}
       const mode = item ? 'edit' : 'add'
@@ -168,38 +188,51 @@ export default {
           table.formKey = item.__key
           table.loading = false
         }
-        const cols = table.columns.filter((col) => col[mode] !== 'hide')
-        console.log('asdhgf', mode, cols)
+        const cols = table.columns.filter((col) => col[mode] !== 'hide' && col.__type !== 'link')
         for (let col of cols) {
           table.formCols[col.dataIndex] = col
-          table.formData[col.dataIndex] = mode === 'add' ? '' : rv[col.dataIndex] // get the data
+          table.formData[col.dataIndex] = mode === 'add' ? '' : rv[col.dataIndex] // get the data // TBD May need formatting?
           table.formColAttrs[col.dataIndex] = {
             ...col.ui?.attrs,
             // TBD... permissions for adding and editing...
             disabled: (mode === 'add' && col.add === 'readonly') || (mode === 'edit' && col.edit === 'readonly'),
             required: (mode === 'add' && col.add === 'required') || (mode === 'edit' && col.edit === 'required'),
           }
-          if (col?.ui?.tag == 'select') {
-            console.log('yyyy', table.formColAttrs[col.dataIndex], table.formData[col.dataIndex])
-          }
+          // if (col?.ui?.tag === 'select') {
+          //   console.log('yyyy', table.formColAttrs[col.dataIndex], table.formData[col.dataIndex])
+          // }
+          //
+          table.formData[col.dataIndex] = mapRecordCol(table.formData, col.dataIndex)
+          if (col?.ui?.tag === 'files') table.formFiles[col.dataIndex] = [] // add file
         }
-        // console.log(table.formData)
       } catch (e) {
       }
       formMode.value = mode
     }
     const formClose = () => (formMode.value = false)
     const formSubmit = async () => {
-      // console.log(table.formKey, table.formData)
+      const formData = new FormData()
+      for (const col in table.formFiles) {
+        if (table.formFiles[col]?.length) {
+          for (const file of table.formFiles[col]) {
+            // const ext = file.name.split('.').pop()
+            table.formData[col] = file.name
+            formData.append(file.name, file, file.name) // if there is more than 1 file?
+          }
+        } else { // TBD clearing file
+          // table.formData[col] = ''
+        }
+      }
+      formData.append('json', JSON.stringify(table.formData))
       if (store.loading === false) {
         store.loading = true
         const message = formMode.value === 'add' ? 'Add' : 'Update'
         const duration = 3 // seconds
         try {
           if (formMode.value === 'add') {
-            await t4tFe.create(table.formData)
+            await t4tFe.create(formData)
           } else {
-            await t4tFe.update(table.formKey, table.formData)
+            await t4tFe.update(table.formKey, formData)
           }
           await find()
           notification.open({ message, duration, description: 'Success' })
@@ -218,7 +251,35 @@ export default {
         console.log('selectedRowKeys changed: ', selectedRowKeys)
         rowSelection.selectedRowKeys = selectedRowKeys
       }
+
     })
+
+    const mapRecordCol = (record, _col) => {
+      const colObj = table.config.cols[_col]
+      if (colObj?.options) {
+        const { display } = colObj.options
+        if (display && record[_col][display]) {
+          record[_col] = record[_col][display]
+        } else if (typeof record[_col] !== 'string') { // TBD handle display === both
+          record[_col] = JSON.stringify(record[_col])
+        }
+      }
+      // if (colObj.type === 'link') record[_col] = 'aa'
+      return record[_col]
+    }
+
+    const mapRecord = (record) => {
+      for (const _col in table.config.cols) {
+        const tableCol = table.config.cols[_col]
+        if (tableCol.type === 'link') {
+          record[_col] = tableCol?.link?.text || 'Click To View'
+        } else if (record[_col]) {
+          record[_col] = mapRecordCol(record, _col)
+        }
+      }
+      return record
+    }
+
     // const hasSelected = computed(() => state.selectedRowKeys.length > 0);
     const find = async () => {
       if (table.loading) return
@@ -226,7 +287,7 @@ export default {
       try {
         const { results, total } = await t4tFe.find(table.filters, null, table.pagination.current, table.pagination.pageSize)
         // console.log('columns', table.columns, 'results', results, total)
-        table.data = results
+        table.data = results.map(result => mapRecord(result)) // format the results...
         table.pagination.total = total
         // console.log(table.filters)
       } catch (e) {
@@ -235,9 +296,7 @@ export default {
       table.loading = false
     }
 
-    const getRowKey = (record) => {
-      return table.keyCols.map(keyCol => record[keyCol]).join('|')
-    }
+    const getRowKey = (record) => table.keyCols.map(keyCol => record[keyCol]).join('|')
 
     onMounted(async () => {
       t4tFe.setFetch(http)
@@ -290,6 +349,7 @@ export default {
         // xxx, // props
         onClick: (event) => {
           // console.log('onClick', event, record)
+          // TBD Handle Row Click - open form or go to related table...
           formOpen(record)
         }, // click row
         onDblclick: (event) => console.log('dblCLick'), // double click row
@@ -342,7 +402,6 @@ export default {
       },
       table,
       handleTableChange,
-      getRowKey,
       customRow,
       customHeaderRow,
 
@@ -361,6 +420,9 @@ export default {
 
       //responsive table height
       tableHeight,
+
+      // files
+      handleRemove, beforeUpload
     }
   }
 }

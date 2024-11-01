@@ -87,8 +87,8 @@ export default {
     }
 
     const login = async () => {
-      console.log('login clicked')
-      if (forced) {
+      console.log('login clicked', forced.value)
+      if (forced.value) {
         _setUser(null, {
           id: 1,
           access_token: '',
