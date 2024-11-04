@@ -87,8 +87,8 @@
 </template>
 <script>
 // TODO
-// 1. fix table size
-// 2. fix add/edit box layout
+// 1. validation
+// 2. required * label in form
 // 3. clear all filters button
 // filters, create, delete (multi select), import, export to CSV? upload
 // i18n
@@ -214,10 +214,11 @@ export default {
       const formData = new FormData()
       for (const col in table.formFiles) {
         if (table.formFiles[col]?.length) {
+          table.formData[col] = ''
           for (const file of table.formFiles[col]) {
             // const ext = file.name.split('.').pop()
-            table.formData[col] = file.name
-            formData.append(file.name, file, file.name) // if there is more than 1 file?
+            table.formData[col] = table.formData[col] ? table.formData[col] + ',' + file.name : file.name
+            formData.append(col, file, file.name) // if there is more than 1 file?
           }
         } else { // TBD clearing file
           // table.formData[col] = ''
