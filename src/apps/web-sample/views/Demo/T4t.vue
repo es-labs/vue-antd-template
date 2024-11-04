@@ -1,6 +1,7 @@
 <template>
   <div>
     <div class="table-operations">
+      <a-button @click="find">Reload</a-button>
       <a-button @click="filterOpen">Filter</a-button>
       <a-button v-if="table?.config?.create" @click="() => formOpen(null)">Create</a-button>
       <a-button v-if="table?.config?.delete !== 0" @click="deleteItems">Delete</a-button>
@@ -63,7 +64,12 @@
             <a-textarea v-if="colUiType(colObj, 'textarea')" v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]" />
             <a-select v-else-if="colUiType(colObj, 'select')" v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]" />
             <div v-else-if="colUiType(colObj, 'files')">
-              <a-upload :file-list="table.formFiles[col]" :before-upload="(file) => beforeUpload(file,col)" @remove="(file) => handleRemove(file,col)">
+              <a-upload
+                :file-list="table.formFiles[col]"
+                :before-upload="(file) => beforeUpload(file,col)"
+                @remove="(file) => handleRemove(file,col)"
+                v-bind="table.formColAttrs[col]"
+              >
                 <a-button>
                   Select File
                 </a-button>
@@ -387,6 +393,7 @@ export default {
     });
 
     return {
+      find,
       colShow: (val) => (formMode.value === 'add' && val.add !== 'hide') || (formMode.value === 'edit' && val.edit !== 'hide'),
       colUiType: (val, uiType) => val?.ui?.tag === uiType,
       onLinkClick: (event, column, record) => { // TBD

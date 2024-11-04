@@ -23,10 +23,10 @@
   },
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",
-    "@es-labs/esm": "^0.0.25",
+    "@es-labs/esm": "^0.0.26",
     "@sentry/vue": "^8.36.0",
     "ant-design-vue": "^4.2.5",
-    "pinia": "^2.2.5",
+    "pinia": "^2.2.6",
     "vue": "^3.3.8",
     "vue-router": "^4.4.5"
   },
