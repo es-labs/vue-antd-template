@@ -28,8 +28,8 @@ export default {
     { path: '/demo/web-cam', name: 'Web Cam', component: () => import('./views/Demo/DemoWebCam.vue') },
     { path: '/demo/sign-pad', name: 'Sign Pad', component: async () => import('./views/Demo/DemoSignPad.vue') },
     {
-      path: '/t4ta/:table?',
-      name: 'T4ta',
+      path: '/t4t-link/:table?',
+      name: 'T4t-Link',
       component: async () => import('./views/Demo/T4t.vue'),
       props: route => ({
         tableName: route.params.table,

@@ -1,12 +1,14 @@
 <template>
   <div>
     <div class="table-operations">
+      <h1>{{ table?.config?.displayName || props.tableName }}</h1>
       <a-button @click="find">Reload</a-button>
       <a-button @click="filterOpen">Filter</a-button>
       <a-button v-if="table?.config?.create" @click="() => formOpen(null)">Create</a-button>
       <a-button v-if="table?.config?.delete !== 0" @click="deleteItems">Delete</a-button>
       <a-button v-if="table?.config?.import" @click="importCsv">Import</a-button>
       <a-button v-if="table?.config?.export" @click="exportCsv">Export</a-button>
+      <a-button v-if="props?.filterKeys" @click="goBack">Back</a-button>
     </div>
     <a-table
       :columns="table.columns"
@@ -24,13 +26,8 @@
       <!-- <template #action="item">
         <a-button @click="() => console.log(item)">{{ item.text }}</a-button>
       </template> -->
-      <template #bodyCell="{ column, text, record }">
-        <template v-if="column?.ui?.link">
-          <div @click="(e) => onLinkClick(e, column, record)">{{ column.ui.link.childTbl }}</div>
-        </template>
-      </template>
     </a-table>
-    <a-drawer title="Filters" :width="512" :open="filterShow" :body-style="{ paddingBottom: '80px' }" @close="filterClose" placement="left">
+    <a-drawer title="Filters (Max 10)" :width="512" :open="filterShow" :body-style="{ paddingBottom: '80px' }" @close="filterClose" placement="left">
       <a-form layout="vertical">
         <a-form-item v-for="(filter, index) of table.filters" :key="index">
           <a-input-group compact>
@@ -52,7 +49,7 @@
       </a-form>
       <a-button :disabled="table.filters.length > 9" style="margin-bottom: 8px" @click="filterAdd">Add Filter</a-button>
       <div class="t4t-drawer">
-        <a-button type="primary" @click="filterApply">Apply</a-button>
+        <a-button type="primary" @click="filterApply" style="margin-right: 8px">Apply</a-button>
       </div>
     </a-drawer>
     <a-drawer :title="formMode" :width="480" :open="!!formMode" :body-style="{ paddingBottom: '80px' }" @close="formClose">
@@ -73,7 +70,9 @@
                 <a-button>
                   Select File
                 </a-button>
-              </a-upload>{{ table.formData[col] }}
+              </a-upload>
+              <div>{{ table.formData[col] }}</div>
+              <a-image :alt="table.formData[col]" :width="200" :src="openImg(col)" />
             </div>
             <a-input v-else v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]"/>
             <!-- <div v-else>[{{ index }}] {{ table.formData[col] }}</div><br/> -->
@@ -92,11 +91,16 @@
   </div>
 </template>
 <script>
-// TODO
+// TODO:
+// filter file inputs...
+// handle multiple images display...
+// using OSS for files
 // 1. validation
 // 2. required * label in form
 // 3. clear all filters button
-// filters, create, delete (multi select), import, export to CSV? upload
+// UPLOAD CSV
+// AUTO COMPLETE
+// filters, create, delete (multi select), import, export to CSV
 // i18n
 
 import { reactive, ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
@@ -166,6 +170,7 @@ export default {
       console.log('TBD deleteItems', rowSelection.selectedRowKeys)
     }
 
+    // File Handling
     const handleRemove = (file, col) => {
       const index = table.formFiles[col].indexOf(file)
       const newFileList = table.formFiles[col].slice()
@@ -222,9 +227,8 @@ export default {
         if (table.formFiles[col]?.length) {
           table.formData[col] = ''
           for (const file of table.formFiles[col]) {
-            // const ext = file.name.split('.').pop()
             table.formData[col] = table.formData[col] ? table.formData[col] + ',' + file.name : file.name
-            formData.append(col, file, file.name) // if there is more than 1 file?
+            formData.append(col, file, file.name)
           }
         } else { // TBD clearing file
           // table.formData[col] = ''
@@ -271,7 +275,6 @@ export default {
           record[_col] = JSON.stringify(record[_col])
         }
       }
-      // if (colObj.type === 'link') record[_col] = 'aa'
       return record[_col]
     }
 
@@ -286,13 +289,21 @@ export default {
       }
       return record
     }
-
     // const hasSelected = computed(() => state.selectedRowKeys.length > 0);
     const find = async () => {
       if (table.loading) return
       table.loading = true
       try {
-        const { results, total } = await t4tFe.find(table.filters, null, table.pagination.current, table.pagination.pageSize)
+        const filters = [ ...table.filters ]
+        const { filterKeys, filterVals } = props // child table filter...
+        if (filterKeys?.length && filterVals?.length) {
+          const filterKeysA = filterKeys.split(',')
+          const filterValsA = filterVals.split(',')
+          for (const [index,value] of  filterKeysA.entries()) {
+            filters.push({ andOr: "and", col: filterKeysA[index], op: "=", val: filterValsA[index] })
+          }
+        }
+        const { results, total } = await t4tFe.find(filters, null, table.pagination.current, table.pagination.pageSize)
         // console.log('columns', table.columns, 'results', results, total)
         table.data = results.map(result => mapRecord(result)) // format the results...
         table.pagination.total = total
@@ -303,11 +314,12 @@ export default {
       table.loading = false
     }
 
-    const getRowKey = (record) => table.keyCols.map(keyCol => record[keyCol]).join('|')
+    // const getRowKey = (record) => table.keyCols.map(keyCol => record[keyCol]).join('|')
 
     onMounted(async () => {
       t4tFe.setFetch(http)
       t4tFe.setTableName(props.tableName)
+      // console.log(props, context)
 
       if (store.loading === false) {
         store.loading = true
@@ -330,6 +342,33 @@ export default {
             add: val.add,
             edit: val.edit,
             ui: val.ui,
+            customCell: (record, rowIndex, column) => {
+              return {
+                onClick: (event) => {
+                  // console.log('onClick', rowIndex, record, column, event)
+                  if (column?.__type === 'link') {
+                    const key = column.dataIndex
+                    const col = table.config.cols[key]
+                    console.log(col)
+                    let fvals = ''
+                    const keys_a = col.link.keys.split(',')
+                    for (const kk of keys_a) {
+                      if (fvals) fvals += ',' + record[kk]
+                      else fvals = record[kk]
+                    }
+                    // console.log(col.link.ctable, col.link.ckeys, fvals)
+                    router.push({
+                      path: '/t4t-link',
+                      name: 'T4t-Link',
+                      query: { fkeys: col.link.ckeys, fvals },
+                      params: { table: col.link.ctable }
+                    })
+                  } else {
+                    formOpen(record)
+                  }
+                },
+              }
+            },
           }
           if (!val.hide) table.columns.push(col)
         }
@@ -340,10 +379,9 @@ export default {
     })
 
     const handleTableChange = async (pagination, filters, sorter) => {
-      console.log('handleTableChange', pagination, filters, sorter)
+      // console.log('handleTableChange', pagination, filters, sorter) // use own filters
       table.pagination = { ...pagination }
       table.sorter = { ...sorter }
-      table.filters = { ...filters } // use our own filters instead
       if (store.loading === false) {
         store.loading = true
         await find()
@@ -351,26 +389,11 @@ export default {
       }
     }
 
-    const customRow = (record) => {
-      return {
-        // xxx, // props
-        onClick: (event) => {
-          // console.log('onClick', event, record)
-          // TBD Handle Row Click - open form or go to related table...
-          formOpen(record)
-        }, // click row
-        onDblclick: (event) => console.log('dblCLick'), // double click row
-        // onContextmenu: (event) => {}  // right button click row
-        // onMouseenter: (event) => {}   // mouse enter row
-        // onMouseleave: (event) => {}   // mouse leave row
-      }
-    }
-    const customHeaderRow = (column) => {
-      return {
-        // onClick: () => console.log(column), // click header row
-      }
-    }
+    // onClick, onDblclick, onMouseenter, onMouseleave, onContextmenu: (event) => {}
+    const customRow = (record, index) => ({})
+    const customHeaderRow = (column) => ({})
 
+    // CSV
     const importCsv = () => {}
     const exportCsv = () => {}
 
@@ -393,20 +416,18 @@ export default {
     });
 
     return {
+      props,
+      goBack: () => router.go(-1),
       find,
       colShow: (val) => (formMode.value === 'add' && val.add !== 'hide') || (formMode.value === 'edit' && val.edit !== 'hide'),
       colUiType: (val, uiType) => val?.ui?.tag === uiType,
-      onLinkClick: (event, column, record) => { // TBD
-        // console.log(column, record)
-        // console.log(router.push)
-        router.push({
-          path: '/t4ta',
-          name: 'T4ta',
-          query: { fkeys: 'aa,bb', fvals: '11,22' },
-          params: { table: 'student_subject' }
-        })
-        event.stopPropagation()
-        // send to child table
+      openImg: (col) => { 
+        // SQ%20112_AKE11221SQ_20241029_0001.jpg
+        // TBD handle multiple files
+        const file = table.formData[col]
+        const path = table.config.cols[col]?.ui?.url
+        // console.log(path, file)
+        return path + file + ''
       },
       table,
       handleTableChange,
