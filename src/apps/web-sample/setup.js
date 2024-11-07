@@ -30,7 +30,7 @@ export default {
     {
       path: '/t4t-link/:table?',
       name: 'T4t-Link',
-      component: async () => import('./views/Demo/T4t.vue'),
+      component: async () => import('./views/T4t.vue'),
       props: route => ({
         tableName: route.params.table,
         filterKeys: route.query.fkeys,
@@ -38,7 +38,7 @@ export default {
       }),
       hidden: true
     },
-    { path: '/t4t', name: 'T4t', component: async () => import('./views/Demo/T4t.vue'), props: { tableName: 'student' } },
+    { path: '/t4t', name: 'T4t', component: async () => import('./views/T4t.vue'), props: { tableName: 'student' } },
     
     { path: '/visuals/g2-chart1', name: 'G2 Chart1', component: async () => import('./views/Visuals/DemoChart1.vue') },
     { path: '/visuals/leaflet-map', name: 'Leaflet', component: () => import('./views/Visuals/DemoLeaflet.vue') },

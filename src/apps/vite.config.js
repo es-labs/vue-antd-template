@@ -7,7 +7,6 @@ export default ({ command, mode }) => {
   const env = dotenv.config({ path: path.join(__dirname, '.env.' + mode) }).parsed
   // console.log(__dirname, mode, command, env) // command = serve, build
   if (!env) return console.error(`Vite Error: env undefined for mode: ${mode}`)
-
   return {
     define: {
       __VUE_PROD_DEVTOOLS__: false
@@ -23,7 +22,7 @@ export default ({ command, mode }) => {
     optimizeDeps: {
       include: ['src/apps/node_modules/leaflet']
     },
-    publicDir: 'public',
+    publicDir: 'src/apps/public',
     plugins: [
       vue({
         template: {

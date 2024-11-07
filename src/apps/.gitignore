@@ -8,6 +8,7 @@
 !package.json
 !vite.config.js
 !common
+!public
 
 # EDIT BELOW - comment out environments you want in your project
 
