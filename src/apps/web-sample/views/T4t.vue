@@ -1,14 +1,14 @@
 <template>
-  <div>
+  <div class="main-container">
     <div class="table-operations">
-      <h1>{{ table?.config?.displayName || props.tableName }}</h1>
-      <a-button @click="find">Reload</a-button>
-      <a-button @click="filterOpen">Filter</a-button>
-      <a-button v-if="table?.config?.create" @click="() => formOpen(null)">Create</a-button>
-      <a-button v-if="table?.config?.delete !== 0" @click="deleteItems">Delete</a-button>
-      <a-button v-if="table?.config?.import" @click="importCsv">Import</a-button>
-      <a-button v-if="table?.config?.export" @click="exportCsv">Export</a-button>
-      <a-button v-if="props?.filterKeys" @click="goBack">Back</a-button>
+      <a-label class="title-label">{{ table?.config?.displayName || props.tableName }}</a-label>
+      <a-button @click="find" class="button-variation-1"><a-label class="button-variation-1-label">Reload</a-label></a-button>
+      <a-button @click="filterOpen" class="button-variation-1"><a-label class="button-variation-1-label">Filter</a-label></a-button>
+      <a-button v-if="table?.config?.create" @click="() => formOpen(null)" class="button-variation-2"><a-label class="button-variation-2-label">+</a-label></a-button>
+      <a-button v-if="table?.config?.delete !== 0" @click="deleteItems" class="button-variation-2"><a-label class="button-variation-2-label">-</a-label></a-button>
+      <a-button v-if="table?.config?.import" @click="importCsv" class="button-variation-3"><a-label class="button-variation-3-label">Import</a-label></a-button>
+      <a-button v-if="table?.config?.export" @click="exportCsv" class="button-variation-3"><a-label class="button-variation-3-label">Export</a-label></a-button>
+      <a-button v-if="props?.filterKeys" @click="goBack" class="button-variation-1"><a-label class="button-variation-1-label">Back</a-label></a-button>
     </div>
     <a-table
       :columns="table.columns"
@@ -47,9 +47,9 @@
           </a-input-group>
         </a-form-item>
       </a-form>
-      <a-button :disabled="table.filters.length > 9" style="margin-bottom: 8px" @click="filterAdd">Add Filter</a-button>
+      <a-button :disabled="table.filters.length > 9" style="margin-bottom: 8px" @click="filterAdd" class="button-variation-1"><a-label class="button-variation-1-label">Add Filter</a-label></a-button>
       <div class="t4t-drawer">
-        <a-button type="primary" @click="filterApply" style="margin-right: 8px">Apply</a-button>
+        <a-button type="primary" @click="filterApply" style="margin-left: 25px" class="button-variation-2"><a-label class="button-variation-2-label">Apply</a-label></a-button>
       </div>
     </a-drawer>
     <a-drawer :title="formMode" :width="480" :open="!!formMode" :body-style="{ paddingBottom: '80px' }" @close="formClose">
@@ -84,25 +84,13 @@
         <!-- TBD date, time date & time -->
       </a-form>
       <div class="t4t-drawer">
-        <a-button style="margin-right: 8px" @click="formClose">Cancel</a-button>
-        <a-button style="margin-right: 10px" type="primary" @click="formSubmit">Submit</a-button>
+        <a-button style="margin-left: 25px" @click="formSubmit" class="button-variation-2"><a-label class="button-variation-2-label">Save Changes</a-label></a-button>
+        <a-button style="margin-left: 10px" @click="formClose" class="button-variation-1"><a-label class="button-variation-1-label">Cancel</a-label></a-button>
       </div>
     </a-drawer>
   </div>
 </template>
 <script>
-// TODO:
-// filter file inputs...
-// handle multiple images display...
-// using OSS for files
-// 1. validation
-// 2. required * label in form
-// 3. clear all filters button
-// UPLOAD CSV
-// AUTO COMPLETE
-// filters, create, delete (multi select), import, export to CSV
-// i18n
-
 import { reactive, ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { CloseOutlined } from '@ant-design/icons-vue'
 import { notification } from 'ant-design-vue'
@@ -458,23 +446,5 @@ export default {
 </script>
 
 <style scoped>
-.table-operations {
-  margin-bottom: 16px;
-}
-
-.table-operations > button {
-  margin-right: 8px;
-}
-
-.t4t-drawer {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  border-top: 1px solid #e9e9e9;
-  padding: 10px 0px 10px 0px;
-  background: #fff;
-  text-align: right;
-  z-index: 1;
-}
+  @import 'T4t.css';
 </style>
