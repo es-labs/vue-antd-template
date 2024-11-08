@@ -1,14 +1,14 @@
 <template>
   <div class="main-container">
+    <span class="title-label">{{ table?.config?.displayName || props.tableName }}</span>
     <div class="table-operations">
-      <a-label class="title-label">{{ table?.config?.displayName || props.tableName }}</a-label>
-      <a-button @click="find" class="button-variation-1"><a-label class="button-variation-1-label">Reload</a-label></a-button>
-      <a-button @click="filterOpen" class="button-variation-1"><a-label class="button-variation-1-label">Filter</a-label></a-button>
-      <a-button v-if="table?.config?.create" @click="() => formOpen(null)" class="button-variation-2"><a-label class="button-variation-2-label">+</a-label></a-button>
-      <a-button v-if="table?.config?.delete !== 0" @click="deleteItems" class="button-variation-2"><a-label class="button-variation-2-label">-</a-label></a-button>
-      <a-button v-if="table?.config?.import" @click="importCsv" class="button-variation-3"><a-label class="button-variation-3-label">Import</a-label></a-button>
-      <a-button v-if="table?.config?.export" @click="exportCsv" class="button-variation-3"><a-label class="button-variation-3-label">Export</a-label></a-button>
-      <a-button v-if="props?.filterKeys" @click="goBack" class="button-variation-1"><a-label class="button-variation-1-label">Back</a-label></a-button>
+      <a-button @click="find" class="button-variation-1"><span class="button-variation-1-label">Reload</span></a-button>
+      <a-button @click="filterOpen" class="button-variation-1"><span class="button-variation-1-label">Filter</span></a-button>
+      <a-button v-if="table?.config?.create" @click="() => formOpen(null)" class="button-variation-2"><span class="button-variation-2-label">Create</span></a-button>
+      <a-button v-if="table?.config?.delete" @click="deleteItems" class="button-variation-2"><span class="button-variation-2-label">Delete</span></a-button>
+      <a-button v-if="table?.config?.import" @click="importCsv" class="button-variation-3"><span class="button-variation-3-label">Import</span></a-button>
+      <a-button v-if="table?.config?.export" @click="exportCsv" class="button-variation-3"><span class="button-variation-3-label">Export</span></a-button>
+      <a-button v-if="props?.filterKeys" @click="goBack" class="button-variation-1"><span class="button-variation-1-label">Back</span></a-button>
     </div>
     <a-table
       :columns="table.columns"
@@ -22,6 +22,7 @@
       :customRow="customRow"
       :customHeaderRow="customHeaderRow"
       :row-selection="rowSelection"
+      class="main-table"
     >
       <!-- <template #action="item">
         <a-button @click="() => console.log(item)">{{ item.text }}</a-button>
@@ -47,9 +48,10 @@
           </a-input-group>
         </a-form-item>
       </a-form>
-      <a-button :disabled="table.filters.length > 9" style="margin-bottom: 8px" @click="filterAdd" class="button-variation-1"><a-label class="button-variation-1-label">Add Filter</a-label></a-button>
+      <a-button :disabled="table.filters.length > 9" style="margin-bottom: 8px" @click="filterAdd" class="button-variation-1"><span class="button-variation-1-label">Add Filter</span></a-button>
+      <a-button :disabled="table.filters.length === 0" style="margin-bottom: 8px; margin-left: 8px" @click="filterClearAll" class="button-variation-1"><span class="button-variation-1-label">Clear All</span></a-button>
       <div class="t4t-drawer">
-        <a-button type="primary" @click="filterApply" style="margin-left: 25px" class="button-variation-2"><a-label class="button-variation-2-label">Apply</a-label></a-button>
+        <a-button type="primary" @click="filterApply" style="margin-left: 25px" class="button-variation-2"><span class="button-variation-2-label">Apply</span></a-button>
       </div>
     </a-drawer>
     <a-drawer :title="formMode" :width="480" :open="!!formMode" :body-style="{ paddingBottom: '80px' }" @close="formClose">
@@ -84,8 +86,8 @@
         <!-- TBD date, time date & time -->
       </a-form>
       <div class="t4t-drawer">
-        <a-button style="margin-left: 25px" @click="formSubmit" class="button-variation-2"><a-label class="button-variation-2-label">Save Changes</a-label></a-button>
-        <a-button style="margin-left: 10px" @click="formClose" class="button-variation-1"><a-label class="button-variation-1-label">Cancel</a-label></a-button>
+        <a-button v-if="table?.config?.update" style="margin-left: 25px" @click="formSubmit" class="button-variation-2"><span class="button-variation-2-label">Save Changes</span></a-button>
+        <a-button style="margin-left: 10px" @click="formClose" class="button-variation-1"><span class="button-variation-1-label">Cancel</span></a-button>
       </div>
     </a-drawer>
   </div>
@@ -141,17 +143,6 @@ export default {
 
     // Filters
     const filterShow = ref(false)
-    const filterOpen = () => (filterShow.value = true)
-    const filterClose = () => (filterShow.value = false)
-    const filterApply = async () => {
-      if (store.loading === false) {
-        store.loading = true
-        await find()
-        store.loading = false
-      }
-    }
-    const filterAdd = () => table.filters.push({ ...filterTemplate })
-    const filterDelete = (index) => table.filters.splice(index, 1)
 
     // Deletion
     const deleteItems = async () => {
@@ -250,9 +241,7 @@ export default {
         console.log('selectedRowKeys changed: ', selectedRowKeys)
         rowSelection.selectedRowKeys = selectedRowKeys
       }
-
     })
-
     const mapRecordCol = (record, _col) => {
       const colObj = table.config.cols[_col]
       if (colObj?.options) {
@@ -265,7 +254,6 @@ export default {
       }
       return record[_col]
     }
-
     const mapRecord = (record) => {
       for (const _col in table.config.cols) {
         const tableCol = table.config.cols[_col]
@@ -315,53 +303,62 @@ export default {
           table.config = await t4tFe.getConfig()
         } catch (e) {
           console.log('table config error', e.toString())
+          alert('Error Loading Table Configuration')
         }
-        console.log('TABLE CONFIG', table.config)
-        for (const key in table.config.cols) {
-          const val = table.config.cols[key]
-          if (val.multiKey || val.auto === 'pk') table.keyCols.push(key)
+        if (table.config) {
+          try {
+            console.log('TABLE CONFIG', table.config)
+            for (const key in table.config.cols) {
+              const val = table.config.cols[key]
+              if (val.multiKey || val.auto === 'pk') table.keyCols.push(key)
 
-          const col = {
-            title: val.label,
-            dataIndex: key,
-            filter: val.filter,
-            sorter: val.sort,
-            __type: val.type || 'text', // aka type
-            add: val.add,
-            edit: val.edit,
-            ui: val.ui,
-            customCell: (record, rowIndex, column) => {
-              return {
-                onClick: (event) => {
-                  // console.log('onClick', rowIndex, record, column, event)
-                  if (column?.__type === 'link') {
-                    const key = column.dataIndex
-                    const col = table.config.cols[key]
-                    console.log(col)
-                    let fvals = ''
-                    const keys_a = col.link.keys.split(',')
-                    for (const kk of keys_a) {
-                      if (fvals) fvals += ',' + record[kk]
-                      else fvals = record[kk]
-                    }
-                    // console.log(col.link.ctable, col.link.ckeys, fvals)
-                    router.push({
-                      path: '/t4t-link',
-                      name: 'T4t-Link',
-                      query: { fkeys: col.link.ckeys, fvals },
-                      params: { table: col.link.ctable }
-                    })
-                  } else {
-                    formOpen(record)
+              const col = {
+                title: val.label,
+                dataIndex: key,
+                filter: val.filter,
+                sorter: val.sort,
+                __type: val.type || 'text', // aka type
+                add: val.add,
+                edit: val.edit,
+                ui: val.ui,
+                customCell: (record, rowIndex, column) => {
+                  return {
+                    onClick: (event) => {
+                      // console.log('onClick', rowIndex, record, column, event)
+                      if (column?.__type === 'link') {
+                        const key = column.dataIndex
+                        const col = table.config.cols[key]
+                        console.log(col)
+                        let fvals = ''
+                        const keys_a = col.link.keys.split(',')
+                        for (const kk of keys_a) {
+                          if (fvals) fvals += ',' + record[kk]
+                          else fvals = record[kk]
+                        }
+                        // console.log(col.link.ctable, col.link.ckeys, fvals)
+                        // TOCHECK replace with t4tfe parentFilter?
+                        router.push({
+                          path: '/t4t-link',
+                          name: 'T4t-Link',
+                          query: { fkeys: col.link.ckeys, fvals },
+                          params: { table: col.link.ctable }
+                        })
+                      } else {
+                        formOpen(record)
+                      }
+                    },
                   }
                 },
               }
-            },
+              if (!val.hide) table.columns.push(col)
+            }
+            table.filterCols = table.columns.filter((col) => col.filter).map((col) => ({ value: col.dataIndex, label: col.title }))
+            await find()
+          } catch (e) {
+            console.log('table load error', e.toString())
+            alert('Error Loading Table Data')
           }
-          if (!val.hide) table.columns.push(col)
         }
-        table.filterCols = table.columns.filter((col) => col.filter).map((col) => ({ value: col.dataIndex, label: col.title }))
-        await find()
         store.loading = false
       }
     })
@@ -410,7 +407,6 @@ export default {
       colShow: (val) => (formMode.value === 'add' && val.add !== 'hide') || (formMode.value === 'edit' && val.edit !== 'hide'),
       colUiType: (val, uiType) => val?.ui?.tag === uiType,
       openImg: (col) => { 
-        // SQ%20112_AKE11221SQ_20241029_0001.jpg
         // TBD handle multiple files
         const file = table.formData[col]
         const path = table.config.cols[col]?.ui?.url
@@ -423,7 +419,19 @@ export default {
       customHeaderRow,
 
       // filters
-      filterShow, filterOpen, filterClose, filterAdd, filterApply, filterDelete,
+      filterShow,
+      filterApply: async () => {
+        if (store.loading === false) {
+          store.loading = true
+          await find()
+          store.loading = false
+        }
+      },
+      filterOpen: () => (filterShow.value = true),
+      filterClose: () => (filterShow.value = false),
+      filterAdd: () => table.filters.push({ ...filterTemplate }),
+      filterClearAll: () => table.filters = [],
+      filterDelete: (index) => table.filters.splice(index, 1),
 
       // csv
       importCsv, exportCsv,
