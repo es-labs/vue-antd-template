@@ -6,7 +6,12 @@
       <a-button @click="filterOpen" class="button-variation-1"><span class="button-variation-1-label">Filter</span></a-button>
       <a-button v-if="table?.config?.create" @click="() => formOpen(null)" class="button-variation-2"><span class="button-variation-2-label">Create</span></a-button>
       <a-button v-if="table?.config?.delete" @click="deleteItems" class="button-variation-2"><span class="button-variation-2-label">Delete</span></a-button>
-      <a-button v-if="table?.config?.import" @click="importCsv" class="button-variation-3"><span class="button-variation-3-label">Import</span></a-button>
+      <a-upload
+        style="margin-right: 8px;" v-if="table?.config?.import" name="csv-file" :before-upload="importCsv" :show-upload-list="false" :max-count="1"
+        accept="text/csv"
+      >
+        <a-button class="button-variation-1"><span class="button-variation-1-label">Import</span></a-button>
+      </a-upload>
       <a-button v-if="table?.config?.export" @click="exportCsv" class="button-variation-3"><span class="button-variation-3-label">Export</span></a-button>
       <a-button v-if="props?.filterKeys" @click="goBack" class="button-variation-1"><span class="button-variation-1-label">Back</span></a-button>
     </div>
@@ -80,10 +85,7 @@
             <!-- <div v-else>[{{ index }}] {{ table.formData[col] }}</div><br/> -->
           </a-form-item>
         </template>
-        <!-- TBD single autocomplete ? -->
-        <!-- TBD multi autocomplete ? -->
-        <!-- TBD multi select -->
-        <!-- TBD date, time date & time -->
+        <!-- TBD single autocomplete, multi autocomplete, multi select, date, time date & time -->
       </a-form>
       <div class="t4t-drawer">
         <a-button v-if="table?.config?.update" style="margin-left: 25px" @click="formSubmit" class="button-variation-2"><span class="button-variation-2-label">Save Changes</span></a-button>
@@ -96,10 +98,12 @@
 import { reactive, ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { CloseOutlined } from '@ant-design/icons-vue'
 import { notification } from 'ant-design-vue'
-import * as t4tFe from '@es-labs/esm/t4t-fe'
+import { useRouter } from 'vue-router'
 import { http } from '/src/plugins/fetch'
 import { useMainStore } from '/src/store'
-import { useRouter } from 'vue-router'
+
+import * as t4tFe from '@es-labs/esm/t4t-fe' // Reference - https://github.com/es-labs/jscommon/blob/main/libs/esm/t4t-fe.js
+import { jsonToCsv, downloadData } from '@es-labs/esm/util'
 
 const filterTemplate = { col: '', op: '=', andOr: 'and', val: '' }
 const DEFAULT_PAGE_SIZE = 10
@@ -111,6 +115,7 @@ export default {
     CloseOutlined
   },
   setup(props, context) {
+    console.log('t4t - v0.0.2')
     const store = useMainStore()
     const router = useRouter()
     // const loading = store.loading
@@ -141,12 +146,30 @@ export default {
       scrollX: 1800,
     })
 
-    // Filters
-    const filterShow = ref(false)
+
+    const filterShow = ref(false) // Filter drawer
 
     // Deletion
     const deleteItems = async () => {
-      console.log('TBD deleteItems', rowSelection.selectedRowKeys)
+      const numSelected = rowSelection.selectedRowKeys.length
+      const { deleteLimit } = table.config 
+      if (numSelected > deleteLimit) {
+        return alert(`Limit is ${deleteLimit} record. ${numSelected} currently selected`)
+      }
+      const message = 'Delete Items'
+      const duration = 3
+      if (store.loading === false) {
+        store.loading = true
+        try {
+          await t4tFe.remove(rowSelection.selectedRowKeys)
+          await find()
+          notification.open({ message, duration, description: 'Success' })
+        } catch (e) {
+          console.log('t4t delete error', e.toString())
+          notification.open({ message, duration, description: 'Error' })
+        }
+        store.loading = false
+      }
     }
 
     // File Handling
@@ -196,10 +219,10 @@ export default {
           if (col?.ui?.tag === 'files') table.formFiles[col.dataIndex] = [] // add file
         }
       } catch (e) {
+        console.log('formOpen', e.toString())
       }
       formMode.value = mode
     }
-    const formClose = () => (formMode.value = false)
     const formSubmit = async () => {
       const formData = new FormData()
       for (const col in table.formFiles) {
@@ -379,8 +402,45 @@ export default {
     const customHeaderRow = (column) => ({})
 
     // CSV
-    const importCsv = () => {}
-    const exportCsv = () => {}
+    const importCsv = async (file) => {
+      try {
+        const message = 'Import CSV'
+        const duration = 3
+        await t4tFe.upload(file)
+        notification.open({ message, duration, description: 'Success' })
+      } catch (e) {
+        notification.open({ message, duration, description: 'Failed' })
+        console.log(e)
+      }
+      return false
+    }
+    const exportCsv = async () => {
+      // FIX REPEATING CODE START
+      const filters = [ ...table.filters ]
+      const { filterKeys, filterVals } = props // child table filter...
+      if (filterKeys?.length && filterVals?.length) {
+        const filterKeysA = filterKeys.split(',')
+        const filterValsA = filterVals.split(',')
+        for (const [index,value] of  filterKeysA.entries()) {
+          filters.push({ andOr: "and", col: filterKeysA[index], op: "=", val: filterValsA[index] })
+        }
+      }
+      // FIX REPEATING CODE END
+
+      const sorter = null
+      const message = 'Export CSV'
+      const duration = 3
+      try {
+        const data = await t4tFe.download(filters, sorter)
+        downloadData(data.csv, (new Date()).toISOString() + '-' + props.tableName + '.csv')
+        notification.open({ message, duration, description: 'Success' })
+      } catch (e) {
+        notification.open({ message, duration, description: 'Failed' })
+        console.log(e)
+      }
+    }
+
+    // t4tFe.autocomplete
 
     //responsive table height
     const tableHeight = ref(0);
@@ -437,7 +497,8 @@ export default {
       importCsv, exportCsv,
 
       // forms
-      formMode, formOpen, formClose, formSubmit,
+      formMode, formOpen, formSubmit,
+      formClose: () => formMode.value = false,
 
       // others
       rowSelection,
