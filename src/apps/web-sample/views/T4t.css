@@ -1,6 +1,6 @@
 .main-container {
    background-color: #FFFFFF;
-   padding: 16 px;
+   padding: 0px;
    border-radius: 10px;
 }
 
@@ -9,6 +9,7 @@
    font-size: 18px;
    font-weight: bold;
    margin-right: 8px;
+   padding-bottom: 8px;
 }
 
 .table-operations {

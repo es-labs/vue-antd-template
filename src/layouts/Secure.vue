@@ -18,9 +18,9 @@
       <a-layout-header style="background: #fff; padding: 0">
         <menu-unfold-outlined v-if="collapsed" class="trigger" @click="() => (collapsed = !collapsed)" />
         <menu-fold-outlined v-else class="trigger" @click="() => (collapsed = !collapsed)" />
-        <span>Demo App</span>
+        <span>Sample App</span>
       </a-layout-header>
-      <a-layout-content :style="{ overflowY: 'auto', margin: '16px 12px', padding: '16px', background: '#fff', height: 'calc(100vh - 96px)' }">
+      <a-layout-content :style="{ overflowY: 'auto', margin: '8px 8px', padding: '8px', background: '#fff', height: 'calc(100vh - 96px)' }">
         <a-breadcrumb style="margin: 8px 0">
           <a-breadcrumb-item>Home</a-breadcrumb-item>
           <a-breadcrumb-item>Dashboard</a-breadcrumb-item>

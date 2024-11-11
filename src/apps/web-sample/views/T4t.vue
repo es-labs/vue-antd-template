@@ -1,6 +1,6 @@
 <template>
   <div class="main-container">
-    <span class="title-label">{{ table?.config?.displayName || props.tableName }}</span>
+    <div class="title-label">{{ table?.config?.displayName || props.tableName }}</div>
     <div class="table-operations">
       <a-button @click="find" class="button-variation-1"><span class="button-variation-1-label">Reload</span></a-button>
       <a-button @click="filterOpen" class="button-variation-1"><span class="button-variation-1-label">Filter</span></a-button>
@@ -180,7 +180,13 @@ export default {
       table.formFiles[col] = newFileList
     }
     const beforeUpload = (file, col) => {
-      table.formFiles[col] = [...(table.formFiles[col] || []), file]
+      console.log('beforeUpload')
+      const maxFiles = table.config.cols[col]?.ui?.attrs?.maxCount || 0
+      if (table.formFiles[col].length === maxFiles) {
+        alert(`Maximum ${maxFiles} Files Exceeded. Remove a file before adding`) // have a problem, can keep popping up...
+      } else {
+        table.formFiles[col] = [...(table.formFiles[col] || []), file]
+      }
       return false
     }
 
@@ -443,21 +449,18 @@ export default {
     // t4tFe.autocomplete
 
     //responsive table height
-    const tableHeight = ref(0);
-
+    const tableHeight = ref(0)
+    const OFFSET_HEIGHT = 306 // IMPORTANT! - Adjust based on your layout (headers, footers, etc.)
     const handleResize = () => {
-      const windowHeight = window.innerHeight;
-      const offsetHeight = 320; // Adjust based on your layout (headers, footers, etc.)
-      tableHeight.value = windowHeight - offsetHeight;
+      const windowHeight = window.innerHeight
+      tableHeight.value = windowHeight - OFFSET_HEIGHT
     };
-
     onMounted(() => {
       handleResize();
-      window.addEventListener("resize", handleResize);
+      window.addEventListener("resize", handleResize)
     });
-
     onBeforeUnmount(() => {
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("resize", handleResize)
     });
 
     return {
