@@ -28,6 +28,7 @@
       :customHeaderRow="customHeaderRow"
       :row-selection="rowSelection"
       class="main-table"
+      @resizeColumn="handleResizeColumn"
     >
       <!-- <template #action="item">
         <a-button @click="() => console.log(item)">{{ item.text }}</a-button>
@@ -43,7 +44,7 @@
             <a-select style="width: 75px" placeholder="Operation" v-model:value="filter.op">
               <a-select-option v-for="op of table.filterOps" :key="op" :value="op">{{ op }}</a-select-option>
             </a-select>
-            <a-input style="width: 125px" placeholder="Value" v-model:value="filter.val" />
+            <a-input style="width: 125px" placeholder="Value" v-model:value="filter.val" :type="table?.config?.cols[filter?.col]?.ui?.attrs?.type || 'text'" />
             <a-select style="width: 75px" placeholder="And Or" v-model:value="filter.andOr">
               <a-select-option v-for="andOr of table.filterAndOr" :key="andOr" :value="andOr">{{ andOr }}</a-select-option>
             </a-select>
@@ -378,6 +379,18 @@ export default {
                     },
                   }
                 },
+                resizable: true, // these 2 for resizing
+                width: 100,
+                ellipsis: true,
+                customRender (e) {
+                  const { column, text } = e
+                  const attrsType  = column?.ui?.attrs?.type
+                  if (attrsType === 'datetime-local') {
+                    if (column?.ui?.tz === 'iso') return (new Date(text)).toISOString()
+                    else return (new Date(text)).toLocaleString()
+                  }
+                  return e.text
+                },
               }
               if (!val.hide) table.columns.push(col)
             }
@@ -509,6 +522,7 @@ export default {
 
       //responsive table height
       tableHeight,
+      handleResizeColumn: (w, col) => col.width = w,
 
       // files
       handleRemove, beforeUpload
