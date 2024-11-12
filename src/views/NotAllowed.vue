@@ -8,7 +8,7 @@
 
 <script>
 import { useRouter } from 'vue-router'
-const store = useMainStore()
+import { useMainStore } from '/src/store'
 import { INITIAL_SECURE_PATH, INITIAL_PUBLIC_PATH } from '/config.js'
 
 export default {
