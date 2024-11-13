@@ -105,8 +105,9 @@ import { useMainStore } from '/src/store'
 
 import * as t4tFe from '@es-labs/esm/t4t-fe' // Reference - https://github.com/es-labs/jscommon/blob/main/libs/esm/t4t-fe.js
 import { jsonToCsv, downloadData } from '@es-labs/esm/util'
+import { getTzOffsetISO } from '@es-labs/esm/datetime'
 
-const filterTemplate = { col: '', op: '=', andOr: 'and', val: '' }
+const FILTER_TEMPLATE = { col: '', op: '=', andOr: 'and', val: '' }
 const DEFAULT_PAGE_SIZE = 10
 
 export default {
@@ -300,7 +301,14 @@ export default {
       if (table.loading) return
       table.loading = true
       try {
-        const filters = [ ...table.filters ]
+        const filters = JSON.parse( JSON.stringify( table.filters )); // [ ...table.filters ]
+        for (const [index, filter] of filters.entries()) { // convert filter data here...
+          const attrsType  = table.config.cols[filter?.col]?.ui?.attrs?.type
+          if (attrsType === 'datetime-local') {
+            filters[index].val += ':00' + getTzOffsetISO()
+            console.log('xxxx', filters[index])
+          }
+        }
         const { filterKeys, filterVals } = props // child table filter...
         if (filterKeys?.length && filterVals?.length) {
           const filterKeysA = filterKeys.split(',')
@@ -313,7 +321,6 @@ export default {
         // console.log('columns', table.columns, 'results', results, total)
         table.data = results.map(result => mapRecord(result)) // format the results...
         table.pagination.total = total
-        // console.log(table.filters)
       } catch (e) {
         alert('Error find' + e.toString())
       }
@@ -505,7 +512,7 @@ export default {
       },
       filterOpen: () => (filterShow.value = true),
       filterClose: () => (filterShow.value = false),
-      filterAdd: () => table.filters.push({ ...filterTemplate }),
+      filterAdd: () => table.filters.push({ ...FILTER_TEMPLATE }),
       filterClearAll: () => table.filters = [],
       filterDelete: (index) => table.filters.splice(index, 1),
 
