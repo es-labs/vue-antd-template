@@ -2,7 +2,7 @@
   <div class="main-container">
     <div class="title-label">{{ table?.config?.displayName || props.tableName }}</div>
     <div class="table-operations">
-      <a-button @click="find" class="button-variation-1"><span class="button-variation-1-label">Reload</span></a-button>
+      <a-button @click="fetchData" class="button-variation-1"><span class="button-variation-1-label">Reload</span></a-button>
       <a-button @click="filterOpen" class="button-variation-1"><span class="button-variation-1-label">Filter</span></a-button>
       <a-button v-if="table?.config?.create" @click="() => formOpen(null)" class="button-variation-2"><span class="button-variation-2-label">Create</span></a-button>
       <a-button v-if="table?.config?.delete" @click="deleteItems" class="button-variation-2"><span class="button-variation-2-label">Delete</span></a-button>
@@ -82,11 +82,21 @@
               <div>{{ table.formData[col] }}</div>
               <a-image :alt="table.formData[col]" :width="200" :src="openImg(col)" />
             </div>
+            <a-auto-complete
+              v-else-if="colUiType(colObj, 'autocomplete')"
+              v-model:value="table.formData[col]"
+              v-bind="table.formColAttrs[col]"
+              :options="table.formColAc[col].options"
+              style="width: 200px"
+              placeholder="input here"
+              @select="(value) => onAcSelect(col, value)"
+              @search="debouncedAcSearch"
+            />
             <a-input v-else v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]"/>
             <!-- <div v-else>[{{ index }}] {{ table.formData[col] }}</div><br/> -->
           </a-form-item>
         </template>
-        <!-- TBD single autocomplete, multi autocomplete, multi select, date, time date & time -->
+        <!-- TBD single autocomplete, multi autocomplete, multi select -->
       </a-form>
       <div class="t4t-drawer">
         <a-button v-if="table?.config?.update" style="margin-left: 25px" @click="formSubmit" class="button-variation-2"><span class="button-variation-2-label">Save Changes</span></a-button>
@@ -104,11 +114,18 @@ import { http } from '/src/plugins/fetch'
 import { useMainStore } from '/src/store'
 
 import * as t4tFe from '@es-labs/esm/t4t-fe' // Reference - https://github.com/es-labs/jscommon/blob/main/libs/esm/t4t-fe.js
-import { jsonToCsv, downloadData } from '@es-labs/esm/util'
+import { jsonToCsv, downloadData, debounce } from '@es-labs/esm/util'
 import { getTzOffsetISO } from '@es-labs/esm/datetime'
 
 const FILTER_TEMPLATE = { col: '', op: '=', andOr: 'and', val: '' }
 const DEFAULT_PAGE_SIZE = 10
+
+/*
+<AutoComplete
+  ...,
+  onSearch={debounce(handleSearch, 300)} // 300 is your required delay
+/>
+*/
 
 export default {
   name: 'T4t',
@@ -145,6 +162,7 @@ export default {
       formRules: {}, // To Remove
       formCols: {},
       formColAttrs: {}, // attributes for your inputs
+      formColAc: {}, // autocomplete properties
       scrollX: 1800,
     })
 
@@ -164,7 +182,7 @@ export default {
         store.loading = true
         try {
           await t4tFe.remove(rowSelection.selectedRowKeys)
-          await find()
+          await fetchData()
           notification.open({ message, duration, description: 'Success' })
         } catch (e) {
           console.log('t4t delete error', e.toString())
@@ -225,7 +243,9 @@ export default {
           //
           table.formData[col.dataIndex] = mapRecordCol(table.formData, col.dataIndex)
           if (col?.ui?.tag === 'files') table.formFiles[col.dataIndex] = [] // add file
+          if (col?.ui?.tag === 'autocomplete') table.formColAc[col.dataIndex] = { options: [], value: table.formData[col.dataIndex] }
         }
+        console.log('table.formData', table.formData)
       } catch (e) {
         console.log('formOpen', e.toString())
       }
@@ -255,7 +275,7 @@ export default {
           } else {
             await t4tFe.update(table.formKey, formData)
           }
-          await find()
+          await fetchData()
           notification.open({ message, duration, description: 'Success' })
         } catch (e) {
           console.log('t4t submit error', e.toString())
@@ -297,7 +317,7 @@ export default {
       return record
     }
     // const hasSelected = computed(() => state.selectedRowKeys.length > 0);
-    const find = async () => {
+    const fetchData = async () => {
       if (table.loading) return
       table.loading = true
       try {
@@ -306,7 +326,6 @@ export default {
           const attrsType  = table.config.cols[filter?.col]?.ui?.attrs?.type
           if (attrsType === 'datetime-local') {
             filters[index].val += ':00' + getTzOffsetISO()
-            console.log('xxxx', filters[index])
           }
         }
         const { filterKeys, filterVals } = props // child table filter...
@@ -348,7 +367,6 @@ export default {
             for (const key in table.config.cols) {
               const val = table.config.cols[key]
               if (val.multiKey || val.auto === 'pk') table.keyCols.push(key)
-
               const col = {
                 title: val.label,
                 dataIndex: key,
@@ -402,7 +420,7 @@ export default {
               if (!val.hide) table.columns.push(col)
             }
             table.filterCols = table.columns.filter((col) => col.filter).map((col) => ({ value: col.dataIndex, label: col.title }))
-            await find()
+            await fetchData()
           } catch (e) {
             console.log('table load error', e.toString())
             alert('Error Loading Table Data')
@@ -418,7 +436,7 @@ export default {
       table.sorter = { ...sorter }
       if (store.loading === false) {
         store.loading = true
-        await find()
+        await fetchData()
         store.loading = false
       }
     }
@@ -483,10 +501,15 @@ export default {
       window.removeEventListener("resize", handleResize)
     });
 
+    const acSearch = (text) => {
+      console.log('debounced', col)
+    }
+    const debouncedAcSearch = debounce(acSearch, 3000);
+
     return {
       props,
       goBack: () => router.go(-1),
-      find,
+      fetchData,
       colShow: (val) => (formMode.value === 'add' && val.add !== 'hide') || (formMode.value === 'edit' && val.edit !== 'hide'),
       colUiType: (val, uiType) => val?.ui?.tag === uiType,
       openImg: (col) => { 
@@ -506,7 +529,7 @@ export default {
       filterApply: async () => {
         if (store.loading === false) {
           store.loading = true
-          await find()
+          await fetchData()
           store.loading = false
         }
       },
@@ -532,7 +555,19 @@ export default {
       handleResizeColumn: (w, col) => col.width = w,
 
       // files
-      handleRemove, beforeUpload
+      handleRemove, beforeUpload,
+
+      // autocomplete
+      onAcSearch: async (col, value) => {
+        // value, label
+        console.log('search', col, value)
+        debounce(debouncedSearch, 500)
+      },
+      debouncedAcSearch,
+      onAcSelect: (col, text) => {
+        // value, label
+        console.log('select', col, text)
+      },
     }
   }
 }

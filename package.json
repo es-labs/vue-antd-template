@@ -1,14 +1,14 @@
 {
   "name": "vue-antd-template",
   "description": "vue SPA + antdv + vite template",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "author": "aaronjxz@gmail.com",
   "license": "MIT",
   "type": "module",
   "engines": {
-    "node": ">=18",
-    "npm": ">=9"
+    "node": ">=20",
+    "npm": ">=10"
   },
   "scripts": {
     "build": "vite build --config src/apps/vite.config.js",
