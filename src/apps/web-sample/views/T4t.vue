@@ -80,7 +80,7 @@
                 </a-button>
               </a-upload>
               <div>{{ table.formData[col] }}</div>
-              <a-image :alt="table.formData[col]" :width="200" :src="openImg(col)" />
+              <a-image v-if="table.formData[col]" :alt="table.formData[col]" :width="200" :src="openImg(col)" />
             </div>
             <a-auto-complete
               v-else-if="colUiType(colObj, 'autocomplete')"
@@ -89,8 +89,8 @@
               :options="table.formColAc[col].options"
               style="width: 200px"
               placeholder="input here"
-              @select="(value) => onAcSelect(col, value)"
-              @search="debouncedAcSearch"
+              @select="(value, option) => onAcSelect(col, value, option)"
+              @search="(value) =>  debouncedAcSearch(value, col, table.formData)"
             />
             <a-input v-else v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]"/>
             <!-- <div v-else>[{{ index }}] {{ table.formData[col] }}</div><br/> -->
@@ -229,21 +229,29 @@ export default {
         }
         const cols = table.columns.filter((col) => col[mode] !== 'hide' && col.__type !== 'link')
         for (let col of cols) {
-          table.formCols[col.dataIndex] = col
-          table.formData[col.dataIndex] = mode === 'add' ? '' : rv[col.dataIndex] // get the data // TBD May need formatting?
-          table.formColAttrs[col.dataIndex] = {
+          const colName = col.dataIndex 
+          table.formCols[colName] = col
+          table.formData[colName] = mode === 'add' ? '' : rv[colName] // get the data // TBD May need formatting?
+          table.formColAttrs[colName] = {
             ...col.ui?.attrs,
             // TBD... permissions for adding and editing...
             disabled: (mode === 'add' && col.add === 'readonly') || (mode === 'edit' && col.edit === 'readonly'),
             required: (mode === 'add' && col.add === 'required') || (mode === 'edit' && col.edit === 'required'),
           }
           // if (col?.ui?.tag === 'select') {
-          //   console.log('yyyy', table.formColAttrs[col.dataIndex], table.formData[col.dataIndex])
+          //   console.log('yyyy', table.formColAttrs[colName], table.formData[colName])
           // }
           //
-          table.formData[col.dataIndex] = mapRecordCol(table.formData, col.dataIndex)
-          if (col?.ui?.tag === 'files') table.formFiles[col.dataIndex] = [] // add file
-          if (col?.ui?.tag === 'autocomplete') table.formColAc[col.dataIndex] = { options: [], value: table.formData[col.dataIndex] }
+          // Do For Form - table.formData[colName] = mapRecordCol(table.formData, colName)
+          if (col?.ui?.tag === 'files') table.formFiles[colName] = [] // add file
+          if (col?.ui?.tag === 'autocomplete') {
+            table.formColAc[colName] = { options: [ ] }
+            table.formData[colName] = {
+                key: table.formData[colName].key,
+                label: table.formData[colName].text,
+                value: table.formData[colName].text,
+            }
+          }
         }
         console.log('table.formData', table.formData)
       } catch (e) {
@@ -253,15 +261,21 @@ export default {
     }
     const formSubmit = async () => {
       const formData = new FormData()
-      for (const col in table.formFiles) {
-        if (table.formFiles[col]?.length) {
-          table.formData[col] = ''
-          for (const file of table.formFiles[col]) {
-            table.formData[col] = table.formData[col] ? table.formData[col] + ',' + file.name : file.name
-            formData.append(col, file, file.name)
+      // TBD need to convert record to a format for write update...
+      for (const col in table.formData) {
+        if (table.formFiles[col]) { // handle files
+          if (table.formFiles[col].length) {
+            table.formData[col] = ''
+            for (const file of table.formFiles[col]) {
+              table.formData[col] = table.formData[col] ? table.formData[col] + ',' + file.name : file.name
+              formData.append(col, file, file.name)
+            }
+          } else { // TBD clearing file
+            // table.formData[col] = ''
           }
-        } else { // TBD clearing file
-          // table.formData[col] = ''
+        }
+        if (table.config.cols[col]?.ui?.tag === 'autocomplete') {
+          table.formData[col] = table.formData[col]?.key
         }
       }
       formData.append('json', JSON.stringify(table.formData))
@@ -295,13 +309,14 @@ export default {
     })
     const mapRecordCol = (record, _col) => {
       const colObj = table.config.cols[_col]
-      if (colObj?.options) {
+      if (colObj?.ui?.tag === 'autocomplete' && colObj.options) {
         const { display } = colObj.options
         if (display && record[_col][display]) {
           record[_col] = record[_col][display]
         } else if (typeof record[_col] !== 'string') { // TBD handle display === both
           record[_col] = JSON.stringify(record[_col])
         }
+      } else if (colObj?.ui?.tag === 'select') { // TBD display label
       }
       return record[_col]
     }
@@ -501,11 +516,6 @@ export default {
       window.removeEventListener("resize", handleResize)
     });
 
-    const acSearch = (text) => {
-      console.log('debounced', col)
-    }
-    const debouncedAcSearch = debounce(acSearch, 3000);
-
     return {
       props,
       goBack: () => router.go(-1),
@@ -557,16 +567,21 @@ export default {
       // files
       handleRemove, beforeUpload,
 
-      // autocomplete
-      onAcSearch: async (col, value) => {
+      // autocomplete - search
+      debouncedAcSearch: debounce(async (text, col, record) => {
+        console.log('debounced2', text, col, record) // do the search here...
+        const res = await t4tFe.autocomplete (text, col, record)
+        table.formColAc[col].options = res.map(item => ({
+          key: item.key,
+          label: item.text,
+          value: item.text,
+        }))
+      }, 500), // when tab key pressed or focus lost,
+      // autocomplete - select
+      onAcSelect: (col, text, option) => {
         // value, label
-        console.log('search', col, value)
-        debounce(debouncedSearch, 500)
-      },
-      debouncedAcSearch,
-      onAcSelect: (col, text) => {
-        // value, label
-        console.log('select', col, text)
+        console.log('select', col, text, option) // actually the value..., displayed is also the value...
+        table.formData[col] = option
       },
     }
   }
