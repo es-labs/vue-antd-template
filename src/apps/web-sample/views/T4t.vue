@@ -2,7 +2,7 @@
   <div class="main-container">
     <div class="title-label">{{ table?.config?.displayName || props.tableName }}</div>
     <div class="table-operations">
-      <a-button @click="fetchData" class="button-variation-1"><span class="button-variation-1-label">Reload</span></a-button>
+      <a-button @click="filterApply" class="button-variation-1"><span class="button-variation-1-label">Reload</span></a-button>
       <a-button @click="filterOpen" class="button-variation-1"><span class="button-variation-1-label">Filter</span></a-button>
       <a-button v-if="table?.config?.create" @click="() => formOpen(null)" class="button-variation-2"><span class="button-variation-2-label">Create</span></a-button>
       <a-button v-if="table?.config?.delete" @click="deleteItems" class="button-variation-2"><span class="button-variation-2-label">Delete</span></a-button>
@@ -383,6 +383,7 @@ export default {
                 filter: val.filter,
                 sorter: val.sort,
                 auto: val.auto,
+                required: val.required,
                 __type: val.type || 'text', // aka type
                 add: val.add,
                 edit: val.edit,
@@ -515,21 +516,9 @@ export default {
     return {
       props,
       goBack: () => router.go(-1),
-      fetchData,
       colShow: (val) => (formMode.value === 'add' && val.add) || (formMode.value === 'edit' && val.edit),
       colUiType: (val, uiType) => val?.ui?.tag === uiType,
-      colRequired: (val) => {
-        let isRequired = false
-        const labelName = table.formCols[`${val}`].title
-        let message = `${labelName} is required`
-        const getColProp = table.formCols[`${val}`][`${formMode.value}`]
-
-        if(getColProp && getColProp === 'required') {
-          isRequired = true;
-        }
-
-        return [{ required: isRequired, message: message }]
-      },
+      colRequired: (val) => [{ required: !!table.formColAttrs[val].required, message: `${table.formCols[val].title} is required` }],
       openImg: (col) => { 
         // TBD handle multiple files
         const file = table.formData[col]
@@ -544,7 +533,7 @@ export default {
 
       // filters
       filterShow,
-      filterApply: async () => {
+      filterApply: async () => { // also used for reload
         if (store.loading === false) {
           store.loading = true
           await fetchData()
