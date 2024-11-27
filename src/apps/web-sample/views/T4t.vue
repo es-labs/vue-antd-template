@@ -120,13 +120,6 @@ import { getTzOffsetISO } from '@es-labs/esm/datetime'
 const FILTER_TEMPLATE = { col: '', op: '=', andOr: 'and', val: '' }
 const DEFAULT_PAGE_SIZE = 10
 
-/*
-<AutoComplete
-  ...,
-  onSearch={debounce(handleSearch, 300)} // 300 is your required delay
-/>
-*/
-
 export default {
   name: 'T4t',
   props: ['tableName', 'filterKeys', 'filterVals'],
@@ -218,7 +211,6 @@ export default {
       table.formKey = null
       let rv = {}
       const mode = item ? 'edit' : 'add'
-
       try {
         if (mode === 'edit') {
           if (table.loading) return
@@ -227,21 +219,24 @@ export default {
           table.formKey = item.__key
           table.loading = false
         }
-        const cols = table.columns.filter((col) => col[mode] !== 'hide' && col.__type !== 'link')
-        for (let col of cols) {
+        const filteredFormCols = table.columns.filter((col) => { //
+          return col[mode] // mode is found
+            && col.__type !== 'link' // column is not link type
+            && !(col.auto && mode === 'add') // column is not auto or column is auto but mode is not add
+        })
+        console.log('filteredFormCols', filteredFormCols)
+        for (let col of filteredFormCols) {
           const colName = col.dataIndex 
           table.formCols[colName] = col
-          table.formData[colName] = mode === 'add' ? '' : rv[colName] // get the data // TBD May need formatting?
+          table.formData[colName] = mode === 'add' ? table.config.cols[colName].default || '' : rv[colName] // get the data // TBD May need formatting?
           table.formColAttrs[colName] = {
             ...col.ui?.attrs,
-            // TBD... permissions for adding and editing...
-            disabled: (mode === 'add' && col.add === 'readonly') || (mode === 'edit' && col.edit === 'readonly'),
-            required: (mode === 'add' && col.add === 'required') || (mode === 'edit' && col.edit === 'required'),
+            disabled: (mode === 'add' && col.add === 'readonly') || (mode === 'edit' && (col.edit === 'readonly' || col.auto)),
+            required: col.required,
           }
           // if (col?.ui?.tag === 'select') {
           //   console.log('yyyy', table.formColAttrs[colName], table.formData[colName])
           // }
-          //
           // Do For Form - table.formData[colName] = mapRecordCol(table.formData, colName)
           if (col?.ui?.tag === 'files') table.formFiles[colName] = [] // add file
           if (col?.ui?.tag === 'autocomplete') {
@@ -387,6 +382,7 @@ export default {
                 dataIndex: key,
                 filter: val.filter,
                 sorter: val.sort,
+                auto: val.auto,
                 __type: val.type || 'text', // aka type
                 add: val.add,
                 edit: val.edit,
@@ -520,7 +516,7 @@ export default {
       props,
       goBack: () => router.go(-1),
       fetchData,
-      colShow: (val) => (formMode.value === 'add' && val.add !== 'hide') || (formMode.value === 'edit' && val.edit !== 'hide'),
+      colShow: (val) => (formMode.value === 'add' && val.add) || (formMode.value === 'edit' && val.edit),
       colUiType: (val, uiType) => val?.ui?.tag === uiType,
       openImg: (col) => { 
         // TBD handle multiple files
