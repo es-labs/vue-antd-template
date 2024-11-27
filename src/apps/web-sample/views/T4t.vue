@@ -63,7 +63,7 @@
     <a-drawer :title="formMode" :width="480" :open="!!formMode" :body-style="{ paddingBottom: '80px' }" @close="formClose">
       <a-form layout="vertical" :model="table.formData" :rules="table.formRules">
         <template v-for="(colObj, col, index) in table.formCols" :key="col">
-          <a-form-item :label="colObj.title" v-if="colShow(colObj)">
+          <a-form-item :label="colObj.title" :rules="colRequired(colObj.dataIndex)" v-if="colShow(colObj)">
             <!-- <a-input v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]"/> -->
             <!-- <div>{{ index }} {{ table.formData[col] }}</div><br/> -->
             <a-textarea v-if="colUiType(colObj, 'textarea')" v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]" />
@@ -518,6 +518,18 @@ export default {
       fetchData,
       colShow: (val) => (formMode.value === 'add' && val.add) || (formMode.value === 'edit' && val.edit),
       colUiType: (val, uiType) => val?.ui?.tag === uiType,
+      colRequired: (val) => {
+        let isRequired = false
+        const labelName = table.formCols[`${val}`].title
+        let message = `${labelName} is required`
+        const getColProp = table.formCols[`${val}`][`${formMode.value}`]
+
+        if(getColProp && getColProp === 'required') {
+          isRequired = true;
+        }
+
+        return [{ required: isRequired, message: message }]
+      },
       openImg: (col) => { 
         // TBD handle multiple files
         const file = table.formData[col]
