@@ -386,11 +386,7 @@ export default {
                 dataIndex: key,
                 filter: val.filter,
                 sorter: val.sort,
-                auto: val.auto,
-                required: val.required,
                 __type: val.type || 'text', // aka type
-                add: val.add,
-                edit: val.edit,
                 ui: val.ui,
                 customCell: (record, rowIndex, column) => {
                   return {
