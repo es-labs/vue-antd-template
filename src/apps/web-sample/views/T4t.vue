@@ -63,7 +63,7 @@
     <a-drawer :title="formMode" :width="480" :open="!!formMode" :body-style="{ paddingBottom: '80px' }" @close="formClose">
       <a-form layout="vertical" :model="table.formData" :rules="table.formRules">
         <template v-for="(colObj, col, index) in table.formCols" :key="col">
-          <a-form-item :label="colObj.title" :rules="colRequired(colObj.dataIndex)" v-if="colShow(colObj)">
+          <a-form-item :label="colObj.label" :rules="colRequired(col)" v-if="colShow(colObj)">
             <!-- <a-input v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]"/> -->
             <!-- <div>{{ index }} {{ table.formData[col] }}</div><br/> -->
             <a-textarea v-if="colUiType(colObj, 'textarea')" v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]" />
@@ -89,8 +89,8 @@
               :options="table.formColAc[col].options"
               style="width: 200px"
               placeholder="input here"
-              @select="(value, option) => onAcSelect(col, value, option)"
-              @search="(value) =>  debouncedAcSearch(value, col, table.formData)"
+              @select="(value, option)=>onAcSelect(col, value, option)"
+              @search="(value)=>debouncedAcSearch(value, col, table.formData)"
             />
             <a-input v-else v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]"/>
             <!-- <div v-else>[{{ index }}] {{ table.formData[col] }}</div><br/> -->
@@ -164,6 +164,7 @@ export default {
 
     // Deletion
     const deleteItems = async () => {
+      if (!confirm('Delete Items?')) return
       const numSelected = rowSelection.selectedRowKeys.length
       const { deleteLimit } = table.config 
       if (numSelected > deleteLimit) {
@@ -219,14 +220,16 @@ export default {
           table.formKey = item.__key
           table.loading = false
         }
-        const filteredFormCols = table.columns.filter((col) => { //
-          return col[mode] // mode is found
-            && col.__type !== 'link' // column is not link type
+
+        for (const colName in table.config.cols) {
+          const col = table.config.cols[colName]
+          if (!(
+            col[mode] // mode is found
+            && col.type !== 'link' // column is not link type
             && !(col.auto && mode === 'add') // column is not auto or column is auto but mode is not add
-        })
-        console.log('filteredFormCols', filteredFormCols)
-        for (let col of filteredFormCols) {
-          const colName = col.dataIndex 
+            && !(col.hide && col.hide !== 'blank') // column is not hide or column is hide but blank
+          )) continue;
+
           table.formCols[colName] = col
           table.formData[colName] = mode === 'add' ? table.config.cols[colName].default || '' : rv[colName] // get the data // TBD May need formatting?
           table.formColAttrs[colName] = {
@@ -248,7 +251,9 @@ export default {
             }
           }
         }
-        console.log('table.formData', table.formData)
+        // console.log('table.formData', table.formData)
+        // console.log('table.formCols', table.formCols)
+        console.log('table.formColAttrs', table.formColAttrs)
       } catch (e) {
         console.log('formOpen', e.toString())
       }
@@ -296,8 +301,7 @@ export default {
     }
     const rowSelection = reactive({
       selectedRowKeys: [],
-      // Check here to configure the default column
-      onChange: (selectedRowKeys) => {
+      onChange: (selectedRowKeys) => { // Check here to configure the default column
         console.log('selectedRowKeys changed: ', selectedRowKeys)
         rowSelection.selectedRowKeys = selectedRowKeys
       }
@@ -398,9 +402,9 @@ export default {
                         console.log(col)
                         let fvals = ''
                         const keys_a = col.link.keys.split(',')
-                        for (const kk of keys_a) {
-                          if (fvals) fvals += ',' + record[kk]
-                          else fvals = record[kk]
+                        for (const linkKey of keys_a) {
+                          if (fvals) fvals += ',' + record[linkKey]
+                          else fvals = record[linkKey]
                         }
                         // console.log(col.link.ctable, col.link.ckeys, fvals)
                         // TOCHECK replace with t4tfe parentFilter?
@@ -462,8 +466,13 @@ export default {
       try {
         const message = 'Import CSV'
         const duration = 3
-        await t4tFe.upload(file)
-        notification.open({ message, duration, description: 'Success' })
+        const { data } = await t4tFe.upload(file)
+        if (data.errorCount > 0) {
+          notification.open({ message, duration, description: 'Errors - downloading...' })
+          downloadData(data.errors.join('\n'), 'import-errors-' + props.tableName + '.csv')
+        } else {
+          notification.open({ message, duration, description: 'Success' })
+        }
       } catch (e) {
         notification.open({ message, duration, description: 'Failed' })
         console.log(e)
@@ -518,7 +527,7 @@ export default {
       goBack: () => router.go(-1),
       colShow: (val) => (formMode.value === 'add' && val.add) || (formMode.value === 'edit' && val.edit),
       colUiType: (val, uiType) => val?.ui?.tag === uiType,
-      colRequired: (val) => [{ required: !!table.formColAttrs[val].required, message: `${table.formCols[val].title} is required` }],
+      colRequired: (val) => [{ required: !!table.formColAttrs[val]?.required, message: `${table.formCols[val]?.label} is required` }],
       openImg: (col) => { 
         // TBD handle multiple files
         const file = table.formData[col]
