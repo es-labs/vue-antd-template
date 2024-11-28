@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",
-    "@es-labs/esm": "^0.0.30",
+    "@es-labs/esm": "^0.0.31",
     "@sentry/vue": "^8.41.0",
     "ant-design-vue": "^4.2.6",
     "pinia": "^2.2.7",
