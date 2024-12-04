@@ -257,7 +257,7 @@ export default {
       } catch (e) {
         console.log('formOpen', e.toString())
       }
-      formMode.value = mode
+      if (Object.keys(table.formCols).length !== 0) formMode.value = mode
     }
     const formSubmit = async () => {
       const formData = new FormData()
@@ -381,7 +381,7 @@ export default {
             for (const key in table.config.cols) {
               const val = table.config.cols[key]
               if (val.multiKey || val.auto === 'pk') table.keyCols.push(key)
-              const col = {
+              const column = {
                 title: val.label,
                 dataIndex: key,
                 filter: val.filter,
@@ -429,7 +429,7 @@ export default {
                   return e.text
                 },
               }
-              if (!val.hide) table.columns.push(col)
+              if (!val.hide) table.columns.push(column)
             }
             table.filterCols = table.columns.filter((col) => col.filter).map((col) => ({ value: col.dataIndex, label: col.title }))
             await fetchData()
