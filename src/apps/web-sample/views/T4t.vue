@@ -465,7 +465,7 @@ export default {
         const { data } = await t4tFe.upload(file)
         if (data.errorCount > 0) {
           notification.open({ message, duration, description: 'Errors - downloading...' })
-          downloadData(data.errors.join('\n'), 'import-errors-' + props.tableName + '.csv')
+          downloadData(data.errors.join('\n'), (new Date()).toISOString() + '-import-errors-' + props.tableName + '.csv')
         } else {
           notification.open({ message, duration, description: 'Success' })
         }
