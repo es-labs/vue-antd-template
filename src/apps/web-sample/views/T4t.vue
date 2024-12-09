@@ -115,7 +115,7 @@ import { useMainStore } from '/src/store'
 
 import * as t4tFe from '@es-labs/esm/t4t-fe' // Reference - https://github.com/es-labs/jscommon/blob/main/libs/esm/t4t-fe.js
 import { jsonToCsv, downloadData, debounce } from '@es-labs/esm/util'
-import { getTzOffsetISO } from '@es-labs/esm/datetime'
+import { getTzOffsetISO, getYmdhmsUtc } from '@es-labs/esm/datetime'
 
 const FILTER_TEMPLATE = { col: '', op: '=', andOr: 'and', val: '' }
 const DEFAULT_PAGE_SIZE = 10
@@ -465,7 +465,7 @@ export default {
         const { data } = await t4tFe.upload(file)
         if (data.errorCount > 0) {
           notification.open({ message, duration, description: 'Errors - downloading...' })
-          downloadData(data.errors.join('\n'), (new Date()).toISOString() + '-import-errors-' + props.tableName + '.csv')
+          downloadData(data.errors.join('\n'), getYmdhmsUtc() + '-import-errors-' + props.tableName + '.csv')
         } else {
           notification.open({ message, duration, description: 'Success' })
         }
