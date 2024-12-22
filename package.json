@@ -25,21 +25,21 @@
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",
     "@es-labs/esm": "^0.0.32",
-    "@sentry/vue": "^8.42.0",
+    "@sentry/vue": "^8.47.0",
     "ant-design-vue": "^4.2.6",
     "pinia": "^2.3.0",
     "vue": "^3.3.8",
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.49.0",
+    "@playwright/test": "^1.49.1",
     "@vitejs/plugin-vue": "^5.2.1",
     "dotenv": "^16.4.7",
-    "eslint": "^9.16.0",
+    "eslint": "^9.17.0",
     "eslint-plugin-vue": "^9.32.0",
-    "msw": "^2.6.8",
+    "msw": "^2.7.0",
     "prettier": "^3.4.2",
-    "vite": "^6.0.3"
+    "vite": "^6.0.5"
   },
   "msw": {
     "workerDirectory": "public"

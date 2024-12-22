@@ -115,7 +115,7 @@ import { useMainStore } from '/src/store'
 
 import * as t4tFe from '@es-labs/esm/t4t-fe' // Reference - https://github.com/es-labs/jscommon/blob/main/libs/esm/t4t-fe.js
 import { jsonToCsv, downloadData, debounce } from '@es-labs/esm/util'
-import { getTzOffsetISO, getYmdhmsUtc } from '@es-labs/esm/datetime'
+import { getLocaleDateTimeTzISO, getTzOffsetISO, getYmdhmsUtc } from '@es-labs/esm/datetime'
 
 const FILTER_TEMPLATE = { col: '', op: '=', andOr: 'and', val: '' }
 const DEFAULT_PAGE_SIZE = 10
@@ -242,13 +242,15 @@ export default {
           // }
           // Do For Form - table.formData[colName] = mapRecordCol(table.formData, colName)
           if (col?.ui?.tag === 'files') table.formFiles[colName] = [] // add file
-          if (col?.ui?.tag === 'autocomplete') {
+          else if (col?.ui?.tag === 'autocomplete') {
             table.formColAc[colName] = { options: [ ] }
             table.formData[colName] = {
                 key: table.formData[colName].key,
                 label: table.formData[colName].text,
                 value: table.formData[colName].text,
             }
+          } else if (col?.ui?.attrs?.type === 'datetime-local') {
+            table.formData[colName] = getLocaleDateTimeTzISO(table.formData[colName]).substring(0, 16)
           }
         }
         // console.log('table.formData', table.formData)
@@ -339,7 +341,7 @@ export default {
         for (const [index, filter] of filters.entries()) { // convert filter data here...
           const attrsType  = table.config.cols[filter?.col]?.ui?.attrs?.type
           if (attrsType === 'datetime-local') {
-            filters[index].val += ':00' + getTzOffsetISO()
+            filters[index].val += ':00' + getTzOffsetISO() // convert to UTC
           }
         }
         const { filterKeys, filterVals } = props // child table filter...
@@ -423,7 +425,7 @@ export default {
                   const { column, text } = e
                   const attrsType  = column?.ui?.attrs?.type
                   if (attrsType === 'datetime-local') {
-                    if (column?.ui?.tz === 'iso') return (new Date(text)).toISOString()
+                    if (column?.ui?.tz === 'utc') return (new Date(text)).toISOString()
                     else return (new Date(text)).toLocaleString()
                   }
                   return e.text
