@@ -263,24 +263,29 @@ export default {
     }
     const formSubmit = async () => {
       const formData = new FormData()
-      // TBD need to convert record to a format for write update...
+      const jsonData = {}
+      // input processing...
       for (const col in table.formData) {
+        jsonData[col] = table.formData[col]
+
         if (table.formFiles[col]) { // handle files
           if (table.formFiles[col].length) {
-            table.formData[col] = ''
+            jsonData[col] = ''
             for (const file of table.formFiles[col]) {
-              table.formData[col] = table.formData[col] ? table.formData[col] + ',' + file.name : file.name
+              jsonData[col] = jsonData[col] ? jsonData[col] + ',' + file.name : file.name
               formData.append(col, file, file.name)
             }
           } else { // TBD clearing file
-            // table.formData[col] = ''
+            // jsonData[col] = ''
           }
         }
         if (table.config.cols[col]?.ui?.tag === 'autocomplete') {
-          table.formData[col] = table.formData[col]?.key
+          jsonData[col] = table.formData[col]?.key
+        } else if (table.config.cols[col]?.ui?.attrs?.type === 'datetime-local') {
+          jsonData[col] = (new Date(table.formData[col])).toISOString() // 2024-12-24 08:00 - 16 chars... convert to ISO
         }
       }
-      formData.append('json', JSON.stringify(table.formData))
+      formData.append('json', JSON.stringify(jsonData))
       if (store.loading === false) {
         store.loading = true
         const message = formMode.value === 'add' ? 'Add' : 'Update'
