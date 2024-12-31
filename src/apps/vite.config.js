@@ -22,6 +22,7 @@ export default ({ command, mode }) => {
     optimizeDeps: {
       include: ['src/apps/node_modules/leaflet']
     },
+    // root: 'src/apps',
     publicDir: 'src/apps/public',
     plugins: [
       vue({
