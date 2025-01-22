@@ -4,6 +4,7 @@ import path from 'path'
 import * as dotenv from 'dotenv'
 
 export default ({ command, mode }) => {
+  console.log(__dirname)
   const env = dotenv.config({ path: path.join(__dirname, '.env.' + mode) }).parsed
   // console.log(__dirname, mode, command, env) // command = serve, build
   if (!env) return console.error(`Vite Error: env undefined for mode: ${mode}`)
@@ -12,13 +13,16 @@ export default ({ command, mode }) => {
       __VUE_PROD_DEVTOOLS__: false
     },
     base: env.BASE_PATH || '/', // set to '/vite' for dev:build, '/' otherwise
-    // build: {
-    //   sourcemap: true,
-    //   rollupOptions: {
-    //     external: [ 'react' ] // ignore react stuff
-    //     input: { main: path.resolve(__dirname, 'index.html') }
-    //   }
-    // },
+    build: {
+      // sourcemap: true,
+      // rollupOptions: {
+      //   // external: [ 'react' ] // ignore react stuff
+      //   input: {
+      //     app: path.resolve(__dirname, 'index.html'),
+      //     main: path.resolve(__dirname, 'index.html')
+      //   }
+      // }
+    },
     optimizeDeps: {
       include: ['src/apps/node_modules/leaflet']
     },
