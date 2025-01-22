@@ -13,10 +13,12 @@
         <a-button class="button-variation-1"><span class="button-variation-1-label">Import</span></a-button>
       </a-upload>
       <a-button v-if="table?.config?.export" @click="exportCsv" class="button-variation-3"><span class="button-variation-3-label">Export</span></a-button>
+      <a-button v-if="table?.config?.columns" @click="ColumnsOpen" class="button-variation-1"><span class="button-variation-1-label">Columns</span></a-button>
       <a-button v-if="props?.filterKeys" @click="goBack" class="button-variation-1"><span class="button-variation-1-label">Back</span></a-button>
     </div>
     <a-table
-      :columns="table.columns"
+      :key="tableKey"
+      :columns="table.columnsView"
       :data-source="table.data"
       :pagination="table.pagination"
       :scroll="{ x: table.scrollX, y: tableHeight }"
@@ -60,7 +62,20 @@
         <a-button type="primary" @click="filterApply" style="margin-left: 25px" class="button-variation-2"><span class="button-variation-2-label">Apply</span></a-button>
       </div>
     </a-drawer>
-    <a-drawer :title="formMode" :width="480" :open="!!formMode" :body-style="{ paddingBottom: '80px' }" @close="formClose">
+    <a-drawer title="Visible Columns" :width="512" :open="columnsShow" :body-style="{ paddingBottom: '80px' }" @close="ColumnsClose" placement="left">
+      <a-form layout="horizontal">
+          <a-row>
+            <a-col :span="12" v-for="(col, index) of table.columns" :key="index">
+              <a-checkbox value="A" :checked="isColumnVisible(col.dataIndex)" @change="(e) => handleCheckboxColumnsChange(e, col.dataIndex)"
+                >{{ col.title }}</a-checkbox>
+            </a-col>
+          </a-row>
+      </a-form>
+      <div class="t4t-drawer">
+        <a-button type="primary" @click="ColumnsApply" style="margin-left: 25px" class="button-variation-2"><span class="button-variation-2-label">Apply</span></a-button>
+      </div>
+    </a-drawer>
+    <a-drawer :title="formMode" :width="680" :open="!!formMode" :body-style="{ paddingBottom: '80px' }" @close="formClose">
       <a-form layout="vertical" :model="table.formData" :rules="table.formRules">
         <template v-for="(colObj, col, index) in table.formCols" :key="col">
           <a-form-item :label="colObj.label" :rules="colRequired(col)" v-if="colShow(colObj)">
@@ -87,8 +102,8 @@
               v-model:value="table.formData[col]"
               v-bind="table.formColAttrs[col]"
               :options="table.formColAc[col].options"
-              style="width: 200px"
-              placeholder="input here"
+              style="width: 100%"
+              placeholder="Type to find options"
               @select="(value, option)=>onAcSelect(col, value, option)"
               @search="(value)=>debouncedAcSearch(value, col, table.formData)"
             />
@@ -143,6 +158,7 @@ export default {
       filterOps: ['like', '=', '!=', '>=', '>', '<', '<='], // isNull, isEmpty
       filterAndOr: ['and', 'or'],
 
+      columnsView: [],
       keyCols: [],
       data: [],
       loading: false,
@@ -159,8 +175,10 @@ export default {
       scrollX: 1800,
     })
 
-
     const filterShow = ref(false) // Filter drawer
+    const columnsShow = ref(false) // Columns drawer
+    const selectedColumns = ref([]) // temprorary selected columns
+    const tableKey = ref(0); // to force re-render
 
     // Deletion
     const deleteItems = async () => {
@@ -437,6 +455,10 @@ export default {
                 },
               }
               if (!val.hide) table.columns.push(column)
+              if (val.view!==false) {
+                table.columnsView.push(column)
+                selectedColumns.value.push(column)
+              }
             }
             table.filterCols = table.columns.filter((col) => col.filter).map((col) => ({ value: col.dataIndex, label: col.title }))
             await fetchData()
@@ -448,6 +470,41 @@ export default {
         store.loading = false
       }
     })
+
+    // Check if a column is visible (exists in selectedColumns)
+    const isColumnVisible = (dataIndex) => {
+      return selectedColumns.value.some((col) => col.dataIndex === dataIndex);
+    };
+
+    // Handle checkbox change event
+    const handleCheckboxColumnsChange = (e, dataIndex) => {
+      const isChecked = e.target.checked;
+      if (isChecked) {
+        // Add the column to the selected list if checked
+        if (!selectedColumns.value.some((col) => col.dataIndex === dataIndex)) {
+          const columnToAdd = table.columns.find((col) => col.dataIndex === dataIndex);
+          if (columnToAdd) {
+            selectedColumns.value.push(columnToAdd);
+          }
+        }
+      } else {
+        // Remove the column from the selected list if unchecked
+        selectedColumns.value = selectedColumns.value.filter(
+          (col) => col.dataIndex !== dataIndex
+        );
+      }
+
+      // Reorder selectedColumns to match the order in table.columns
+      selectedColumns.value = table.columns.filter((col) =>
+        selectedColumns.value.some((selectedCol) => selectedCol.dataIndex === col.dataIndex)
+      );
+    };
+
+    // Apply column changes to the table
+    const applyColumnChanges = async () => {
+      table.columnsView = [...selectedColumns.value];
+      tableKey.value += 1; // Force re-render
+    };
 
     const handleTableChange = async (pagination, filters, sorter) => {
       // console.log('handleTableChange', pagination, filters, sorter) // use own filters
@@ -474,7 +531,7 @@ export default {
           notification.open({ message, duration, description: 'Errors - downloading...' })
           downloadData(data.errors.join('\n'), getYmdhmsUtc() + '-import-errors-' + props.tableName + '.csv')
         } else {
-          notification.open({ message, duration, description: 'Success' })
+          notification.open({ message, duration, description: data?.message || 'Success' })
         }
       } catch (e) {
         notification.open({ message, duration, description: 'Failed' })
@@ -557,6 +614,21 @@ export default {
       filterAdd: () => table.filters.push({ ...FILTER_TEMPLATE }),
       filterClearAll: () => table.filters = [],
       filterDelete: (index) => table.filters.splice(index, 1),
+
+      //columns
+      tableKey,
+      isColumnVisible,
+      handleCheckboxColumnsChange,
+      columnsShow,
+      ColumnsOpen: () => (columnsShow.value = true),
+      ColumnsClose: () => (columnsShow.value = false),
+      ColumnsApply: async () => {
+        applyColumnChanges()
+      },
+      ColumnsReset: async () => {
+        selectedColumns.value = table.columns
+        applyColumnChanges()
+      },  
 
       // csv
       importCsv, exportCsv,
