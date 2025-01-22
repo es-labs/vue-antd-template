@@ -91,6 +91,7 @@
           <a-form-item :label="colObj.label" :rules="colRequired(col)" v-if="colShow(colObj)">
             <!-- <a-input v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]"/> -->
             <!-- <div>{{ index }} {{ table.formData[col] }}</div><br/> -->
+            <QuillEditor v-if="colUiType(colObj, 'textarea-editor')" v-model:modelValue="table.formData[col]" v-bind="table.formColAttrs[col]" />
             <a-textarea v-if="colUiType(colObj, 'textarea')" v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]" />
             <a-select v-else-if="colUiType(colObj, 'select')" v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]" />
             <div v-else-if="colUiType(colObj, 'files')">
@@ -142,6 +143,7 @@ import * as t4tFe from '@es-labs/esm/t4t-fe' // Reference - https://github.com/e
 import { jsonToCsv, downloadData, debounce } from '@es-labs/esm/util'
 import { getLocaleDateTimeTzISO, getTzOffsetISO, getYmdhmsUtc } from '@es-labs/esm/datetime'
 import { SearchOutlined } from "@ant-design/icons-vue"; // Import the search icon
+import QuillEditor from '../components/QuillEditor.vue'
 
 const FILTER_TEMPLATE = { col: '', op: '=', andOr: 'and', val: '' }
 const DEFAULT_PAGE_SIZE = 10
@@ -151,7 +153,8 @@ export default {
   props: ['tableName', 'filterKeys', 'filterVals'],
   components: {
     CloseOutlined,
-    SearchOutlined
+    SearchOutlined,
+    QuillEditor
   },
   setup(props, context) {
     console.log('t4t - v0.0.2')
