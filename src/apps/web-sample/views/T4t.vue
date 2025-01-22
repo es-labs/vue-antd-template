@@ -519,6 +519,9 @@ export default {
                     } 
                     return text
                   }
+                  if(column?.ui?.tag === 'select') {
+                    return (column?.ui?.attrs?.options?.find(option => option.value === text)?.label)
+                  }
                   return e.text
                 },
               }
