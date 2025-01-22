@@ -522,6 +522,7 @@ export default {
                   if(column?.ui?.tag === 'select') {
                     return (column?.ui?.attrs?.options?.find(option => option.value === text)?.label)
                   }
+                  if(column?.ui?.tag === 'autocomplete' && text === '{"key":null,"text":null}') return '-'
                   return e.text
                 },
               }
