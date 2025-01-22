@@ -1,6 +1,6 @@
 .main-container {
    background-color: #FFFFFF;
-   padding: 0px;
+   padding: 20px;
    border-radius: 10px;
 }
 
@@ -8,13 +8,24 @@
    color: #173F6C;
    font-size: 18px;
    font-weight: bold;
-   margin-right: 8px;
    padding-bottom: 8px;
 }
 
 .table-operations {
    margin-bottom: 16px;
  }
+
+.search-container {
+   margin-top: 16px;
+   width: 50%;
+}
+
+.search-icon{
+   color: rgba(0, 0, 0, 0.25);
+   width:20px;
+   height:20px;
+   font-size:20px;
+}
  
  .table-operations > button {
    margin-right: 10px;
@@ -68,3 +79,7 @@
 .button-variation-2:focus {
   box-shadow: 0 0 0 2px #173F6C;
 }
+ 
+ .main-table {
+   scrollbar-color: #2DA8E0 #f1f1f1;
+ }

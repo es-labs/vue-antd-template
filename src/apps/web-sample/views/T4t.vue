@@ -13,10 +13,22 @@
         <a-button class="button-variation-1"><span class="button-variation-1-label">Import</span></a-button>
       </a-upload>
       <a-button v-if="table?.config?.export" @click="exportCsv" class="button-variation-3"><span class="button-variation-3-label">Export</span></a-button>
+      <a-button v-if="table?.config?.columns" @click="ColumnsOpen" class="button-variation-1"><span class="button-variation-1-label">Columns</span></a-button>
       <a-button v-if="props?.filterKeys" @click="goBack" class="button-variation-1"><span class="button-variation-1-label">Back</span></a-button>
+      <a-form-item class="search-container" v-if="table?.config?.search && table?.searchColumns.length > 0" >
+        <a-input class="mt-4"  
+          placeholder="Search by keyword"
+          v-model:value="searchKeyword"
+          @pressEnter="handleSearch">
+          <template #suffix>
+            <SearchOutlined style="" class="search-icon" />
+          </template>
+          </a-input>
+      </a-form-item>
     </div>
     <a-table
-      :columns="table.columns"
+      :key="tableKey"
+      :columns="table.columnsView"
       :data-source="table.data"
       :pagination="table.pagination"
       :scroll="{ x: table.scrollX, y: tableHeight }"
@@ -60,12 +72,26 @@
         <a-button type="primary" @click="filterApply" style="margin-left: 25px" class="button-variation-2"><span class="button-variation-2-label">Apply</span></a-button>
       </div>
     </a-drawer>
-    <a-drawer :title="formMode" :width="480" :open="!!formMode" :body-style="{ paddingBottom: '80px' }" @close="formClose">
+    <a-drawer title="Visible Columns" :width="512" :open="columnsShow" :body-style="{ paddingBottom: '80px' }" @close="ColumnsClose" placement="left">
+      <a-form layout="horizontal">
+          <a-row>
+            <a-col :span="12" v-for="(col, index) of table.columns" :key="index">
+              <a-checkbox value="A" :checked="isColumnVisible(col.dataIndex)" @change="(e) => handleCheckboxColumnsChange(e, col.dataIndex)"
+                >{{ col.title }}</a-checkbox>
+            </a-col>
+          </a-row>
+      </a-form>
+      <div class="t4t-drawer">
+        <a-button type="primary" @click="ColumnsApply" style="margin-left: 25px" class="button-variation-2"><span class="button-variation-2-label">Apply</span></a-button>
+      </div>
+    </a-drawer>
+    <a-drawer :title="formMode" :width="680" :open="!!formMode" :body-style="{ paddingBottom: '80px' }" @close="formClose">
       <a-form layout="vertical" :model="table.formData" :rules="table.formRules">
         <template v-for="(colObj, col, index) in table.formCols" :key="col">
           <a-form-item :label="colObj.label" :rules="colRequired(col)" v-if="colShow(colObj)">
             <!-- <a-input v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]"/> -->
             <!-- <div>{{ index }} {{ table.formData[col] }}</div><br/> -->
+            <QuillEditor v-if="colUiType(colObj, 'textarea-editor')" v-model:modelValue="table.formData[col]" v-bind="table.formColAttrs[col]" />
             <a-textarea v-if="colUiType(colObj, 'textarea')" v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]" />
             <a-select v-else-if="colUiType(colObj, 'select')" v-model:value="table.formData[col]" v-bind="table.formColAttrs[col]" />
             <div v-else-if="colUiType(colObj, 'files')">
@@ -87,8 +113,8 @@
               v-model:value="table.formData[col]"
               v-bind="table.formColAttrs[col]"
               :options="table.formColAc[col].options"
-              style="width: 200px"
-              placeholder="input here"
+              style="width: 100%"
+              placeholder="Type to find options"
               @select="(value, option)=>onAcSelect(col, value, option)"
               @search="(value)=>debouncedAcSearch(value, col, table.formData)"
             />
@@ -106,7 +132,7 @@
   </div>
 </template>
 <script>
-import { reactive, ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { reactive, ref, computed, watch, onMounted, onBeforeUnmount, h } from 'vue'
 import { CloseOutlined } from '@ant-design/icons-vue'
 import { notification } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
@@ -116,6 +142,8 @@ import { useMainStore } from '/src/store'
 import * as t4tFe from '@es-labs/esm/t4t-fe' // Reference - https://github.com/es-labs/jscommon/blob/main/libs/esm/t4t-fe.js
 import { jsonToCsv, downloadData, debounce } from '@es-labs/esm/util'
 import { getLocaleDateTimeTzISO, getTzOffsetISO, getYmdhmsUtc } from '@es-labs/esm/datetime'
+import { SearchOutlined } from "@ant-design/icons-vue"; // Import the search icon
+import QuillEditor from '../components/QuillEditor.vue'
 
 const FILTER_TEMPLATE = { col: '', op: '=', andOr: 'and', val: '' }
 const DEFAULT_PAGE_SIZE = 10
@@ -124,7 +152,9 @@ export default {
   name: 'T4t',
   props: ['tableName', 'filterKeys', 'filterVals'],
   components: {
-    CloseOutlined
+    CloseOutlined,
+    SearchOutlined,
+    QuillEditor
   },
   setup(props, context) {
     console.log('t4t - v0.0.2')
@@ -138,11 +168,15 @@ export default {
       pagination: { pageSize: DEFAULT_PAGE_SIZE, total: 0, current: 1 }, // start at page 1, 8 records per page
       sorter: null, // single sort only
 
+      searchColumns: [],
+      searchs: [],
+
       filters: [],
       filterCols: [],
       filterOps: ['like', '=', '!=', '>=', '>', '<', '<='], // isNull, isEmpty
       filterAndOr: ['and', 'or'],
 
+      columnsView: [],
       keyCols: [],
       data: [],
       loading: false,
@@ -159,8 +193,11 @@ export default {
       scrollX: 1800,
     })
 
-
     const filterShow = ref(false) // Filter drawer
+    const columnsShow = ref(false) // Columns drawer
+    const selectedColumns = ref([]) // temprorary selected columns
+    const tableKey = ref(0); // to force re-render
+    const searchKeyword = ref(""); //searchKeyword
 
     // Deletion
     const deleteItems = async () => {
@@ -342,7 +379,21 @@ export default {
       if (table.loading) return
       table.loading = true
       try {
-        const filters = JSON.parse( JSON.stringify( table.filters )); // [ ...table.filters ]
+        // Determine which filters to use
+        let filtersToUse;
+        if (table.searchs.length === 0 && table.filters.length === 0) {
+          // If both searchs and filters are empty, use an empty array (no filters)
+          filtersToUse = [];
+        } else if (table.filters.length === 0) {
+          // If table.filters is empty, use only table.searchs
+          filtersToUse = [...table.searchs];
+        } else {
+          // Otherwise, combine table.searchs and table.filters
+          filtersToUse = [...table.searchs, ...table.filters];
+        }
+
+        // Deep clone filters
+        const filters = JSON.parse(JSON.stringify(filtersToUse));
         for (const [index, filter] of filters.entries()) { // convert filter data here...
           const attrsType  = table.config.cols[filter?.col]?.ui?.attrs?.type
           if (attrsType === 'datetime-local') {
@@ -366,6 +417,36 @@ export default {
       }
       table.loading = false
     }
+
+    // Handle search
+    const handleSearch = () => {
+      // Check if searchKeyword is empty
+      if (searchKeyword.value.trim() === "") {
+        // If searchKeyword is empty, clear all search filters
+        table.searchs = []; // Clear search filters in table.searchs
+        table.filters = table.filters.filter((filter) => filter.type !== "search"); // Clear search filters in table.filters
+
+        // Fetch all data without search filters
+        fetchData();
+        return;
+      }
+
+      // Add new search filters for each search column
+      if (searchKeyword.value) {
+        console.log(searchKeyword.value, "search")
+        table.searchColumns.forEach((col) => {
+          table.searchs.push({
+            col: col.dataIndex,
+            op: "like",
+            andOr: "or",
+            val: `%${searchKeyword.value}%`, // Use "like" for partial matching
+          });
+        });
+      }
+
+      // Fetch data with updated filters
+      fetchData();
+    };
 
     // const getRowKey = (record) => table.keyCols.map(keyCol => record[keyCol]).join('|')
 
@@ -433,10 +514,27 @@ export default {
                     if (column?.ui?.tz === 'utc') return (new Date(text)).toISOString()
                     else return (new Date(text)).toLocaleString()
                   }
+                  if (attrsType === 'image') {
+                    if (text && text!=='NULL') {
+                      const path = column?.ui?.url + text;
+                      return h("img", { src: path, width: 100, style: 'border:1px soild #2DA8E0' }); // Use h to create the img element
+
+                    } 
+                    return text
+                  }
+                  if(column?.ui?.tag === 'select') {
+                    return (column?.ui?.attrs?.options?.find(option => option.value === text)?.label)
+                  }
+                  if(column?.ui?.tag === 'autocomplete' && text === '{"key":null,"text":null}') return '-'
                   return e.text
                 },
               }
               if (!val.hide) table.columns.push(column)
+              if (val.search) table.searchColumns.push(column)
+              if (val.view!==false) {
+                table.columnsView.push(column)
+                selectedColumns.value.push(column)
+              }
             }
             table.filterCols = table.columns.filter((col) => col.filter).map((col) => ({ value: col.dataIndex, label: col.title }))
             await fetchData()
@@ -448,6 +546,41 @@ export default {
         store.loading = false
       }
     })
+
+    // Check if a column is visible (exists in selectedColumns)
+    const isColumnVisible = (dataIndex) => {
+      return selectedColumns.value.some((col) => col.dataIndex === dataIndex);
+    };
+
+    // Handle checkbox change event
+    const handleCheckboxColumnsChange = (e, dataIndex) => {
+      const isChecked = e.target.checked;
+      if (isChecked) {
+        // Add the column to the selected list if checked
+        if (!selectedColumns.value.some((col) => col.dataIndex === dataIndex)) {
+          const columnToAdd = table.columns.find((col) => col.dataIndex === dataIndex);
+          if (columnToAdd) {
+            selectedColumns.value.push(columnToAdd);
+          }
+        }
+      } else {
+        // Remove the column from the selected list if unchecked
+        selectedColumns.value = selectedColumns.value.filter(
+          (col) => col.dataIndex !== dataIndex
+        );
+      }
+
+      // Reorder selectedColumns to match the order in table.columns
+      selectedColumns.value = table.columns.filter((col) =>
+        selectedColumns.value.some((selectedCol) => selectedCol.dataIndex === col.dataIndex)
+      );
+    };
+
+    // Apply column changes to the table
+    const applyColumnChanges = async () => {
+      table.columnsView = [...selectedColumns.value];
+      tableKey.value += 1; // Force re-render
+    };
 
     const handleTableChange = async (pagination, filters, sorter) => {
       // console.log('handleTableChange', pagination, filters, sorter) // use own filters
@@ -557,6 +690,25 @@ export default {
       filterAdd: () => table.filters.push({ ...FILTER_TEMPLATE }),
       filterClearAll: () => table.filters = [],
       filterDelete: (index) => table.filters.splice(index, 1),
+
+      //search
+      handleSearch,
+      searchKeyword,
+
+      //columns
+      tableKey,
+      isColumnVisible,
+      handleCheckboxColumnsChange,
+      columnsShow,
+      ColumnsOpen: () => (columnsShow.value = true),
+      ColumnsClose: () => (columnsShow.value = false),
+      ColumnsApply: async () => {
+        applyColumnChanges()
+      },
+      ColumnsReset: async () => {
+        selectedColumns.value = table.columns
+        applyColumnChanges()
+      },  
 
       // csv
       importCsv, exportCsv,
