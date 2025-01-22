@@ -131,7 +131,7 @@
   </div>
 </template>
 <script>
-import { reactive, ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { reactive, ref, computed, watch, onMounted, onBeforeUnmount, h } from 'vue'
 import { CloseOutlined } from '@ant-design/icons-vue'
 import { notification } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
@@ -510,6 +510,14 @@ export default {
                   if (attrsType === 'datetime-local') {
                     if (column?.ui?.tz === 'utc') return (new Date(text)).toISOString()
                     else return (new Date(text)).toLocaleString()
+                  }
+                  if (attrsType === 'image') {
+                    if (text && text!=='NULL') {
+                      const path = column?.ui?.url + text;
+                      return h("img", { src: path, width: 100, style: 'border:1px soild #2DA8E0' }); // Use h to create the img element
+
+                    } 
+                    return text
                   }
                   return e.text
                 },
