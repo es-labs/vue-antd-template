@@ -474,7 +474,7 @@ export default {
           notification.open({ message, duration, description: 'Errors - downloading...' })
           downloadData(data.errors.join('\n'), getYmdhmsUtc() + '-import-errors-' + props.tableName + '.csv')
         } else {
-          notification.open({ message, duration, description: 'Success' })
+          notification.open({ message, duration, description: data?.message || 'Success' })
         }
       } catch (e) {
         notification.open({ message, duration, description: 'Failed' })
@@ -578,7 +578,7 @@ export default {
 
       // autocomplete - search
       debouncedAcSearch: debounce(async (text, col, record) => {
-        console.log('debounced2', text, col, record) // do the search here...
+        // console.log('debounced2', text, col, record) // do the search here...
         const res = await t4tFe.autocomplete (text, col, record)
         table.formColAc[col].options = res.map(item => ({
           key: item.key,
