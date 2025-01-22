@@ -15,6 +15,16 @@
       <a-button v-if="table?.config?.export" @click="exportCsv" class="button-variation-3"><span class="button-variation-3-label">Export</span></a-button>
       <a-button v-if="table?.config?.columns" @click="ColumnsOpen" class="button-variation-1"><span class="button-variation-1-label">Columns</span></a-button>
       <a-button v-if="props?.filterKeys" @click="goBack" class="button-variation-1"><span class="button-variation-1-label">Back</span></a-button>
+      <a-form-item class="search-container" v-if="table?.config?.search && table?.searchColumns.length > 0" >
+        <a-input class="mt-4"  
+          placeholder="Search by keyword"
+          v-model:value="searchKeyword"
+          @pressEnter="handleSearch">
+          <template #suffix>
+            <SearchOutlined style="" class="search-icon" />
+          </template>
+          </a-input>
+      </a-form-item>
     </div>
     <a-table
       :key="tableKey"
@@ -131,6 +141,7 @@ import { useMainStore } from '/src/store'
 import * as t4tFe from '@es-labs/esm/t4t-fe' // Reference - https://github.com/es-labs/jscommon/blob/main/libs/esm/t4t-fe.js
 import { jsonToCsv, downloadData, debounce } from '@es-labs/esm/util'
 import { getLocaleDateTimeTzISO, getTzOffsetISO, getYmdhmsUtc } from '@es-labs/esm/datetime'
+import { SearchOutlined } from "@ant-design/icons-vue"; // Import the search icon
 
 const FILTER_TEMPLATE = { col: '', op: '=', andOr: 'and', val: '' }
 const DEFAULT_PAGE_SIZE = 10
@@ -139,7 +150,8 @@ export default {
   name: 'T4t',
   props: ['tableName', 'filterKeys', 'filterVals'],
   components: {
-    CloseOutlined
+    CloseOutlined,
+    SearchOutlined
   },
   setup(props, context) {
     console.log('t4t - v0.0.2')
@@ -152,6 +164,9 @@ export default {
       scroll: { x: 1800, y: 240 },
       pagination: { pageSize: DEFAULT_PAGE_SIZE, total: 0, current: 1 }, // start at page 1, 8 records per page
       sorter: null, // single sort only
+
+      searchColumns: [],
+      searchs: [],
 
       filters: [],
       filterCols: [],
@@ -179,6 +194,7 @@ export default {
     const columnsShow = ref(false) // Columns drawer
     const selectedColumns = ref([]) // temprorary selected columns
     const tableKey = ref(0); // to force re-render
+    const searchKeyword = ref(""); //searchKeyword
 
     // Deletion
     const deleteItems = async () => {
@@ -360,7 +376,21 @@ export default {
       if (table.loading) return
       table.loading = true
       try {
-        const filters = JSON.parse( JSON.stringify( table.filters )); // [ ...table.filters ]
+        // Determine which filters to use
+        let filtersToUse;
+        if (table.searchs.length === 0 && table.filters.length === 0) {
+          // If both searchs and filters are empty, use an empty array (no filters)
+          filtersToUse = [];
+        } else if (table.filters.length === 0) {
+          // If table.filters is empty, use only table.searchs
+          filtersToUse = [...table.searchs];
+        } else {
+          // Otherwise, combine table.searchs and table.filters
+          filtersToUse = [...table.searchs, ...table.filters];
+        }
+
+        // Deep clone filters
+        const filters = JSON.parse(JSON.stringify(filtersToUse));
         for (const [index, filter] of filters.entries()) { // convert filter data here...
           const attrsType  = table.config.cols[filter?.col]?.ui?.attrs?.type
           if (attrsType === 'datetime-local') {
@@ -384,6 +414,36 @@ export default {
       }
       table.loading = false
     }
+
+    // Handle search
+    const handleSearch = () => {
+      // Check if searchKeyword is empty
+      if (searchKeyword.value.trim() === "") {
+        // If searchKeyword is empty, clear all search filters
+        table.searchs = []; // Clear search filters in table.searchs
+        table.filters = table.filters.filter((filter) => filter.type !== "search"); // Clear search filters in table.filters
+
+        // Fetch all data without search filters
+        fetchData();
+        return;
+      }
+
+      // Add new search filters for each search column
+      if (searchKeyword.value) {
+        console.log(searchKeyword.value, "search")
+        table.searchColumns.forEach((col) => {
+          table.searchs.push({
+            col: col.dataIndex,
+            op: "like",
+            andOr: "or",
+            val: `%${searchKeyword.value}%`, // Use "like" for partial matching
+          });
+        });
+      }
+
+      // Fetch data with updated filters
+      fetchData();
+    };
 
     // const getRowKey = (record) => table.keyCols.map(keyCol => record[keyCol]).join('|')
 
@@ -455,6 +515,7 @@ export default {
                 },
               }
               if (!val.hide) table.columns.push(column)
+              if (val.search) table.searchColumns.push(column)
               if (val.view!==false) {
                 table.columnsView.push(column)
                 selectedColumns.value.push(column)
@@ -614,6 +675,10 @@ export default {
       filterAdd: () => table.filters.push({ ...FILTER_TEMPLATE }),
       filterClearAll: () => table.filters = [],
       filterDelete: (index) => table.filters.splice(index, 1),
+
+      //search
+      handleSearch,
+      searchKeyword,
 
       //columns
       tableKey,
