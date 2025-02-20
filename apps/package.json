@@ -1,0 +1,23 @@
+{
+  "name": "apps",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "sample": "vite --config web-sample/vite.config.js --mode development",
+    "sample2": "vite --config web-sample2/vite.config.js --mode development",
+    "sample2:build": "vite build --config web-sample2/vite.config.js --mode development",
+    "tbd-local:reload": "vite --force --config apps/vite.config.js",
+    "tbd-local:mocked": "vite --config apps/vite.config.js --mode mocked",
+    "test": "echo \"Remember to run frontend and backend before test...\" && playwright test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chart.js": "^4.4.8",
+    "leaflet": "^1.9.4",
+    "rxjs": "^7.8.1",
+    "vue-chartjs": "^5.3.2"
+  }
+}

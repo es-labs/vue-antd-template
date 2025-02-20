@@ -11,11 +11,6 @@
     "npm": ">=10"
   },
   "scripts": {
-    "build": "vite build --config src/apps/vite.config.js",
-    "dev": "vite --config src/apps/vite.config.js --mode dev",
-    "local": "vite --config src/apps/vite.config.js",
-    "local:reload": "vite --force --config src/apps/vite.config.js",
-    "local:mocked": "vite --config src/apps/vite.config.js --mode mocked",
     "lint": "eslint .",
     "lint:fix": "eslint . --ext .js,.vue --fix",
     "prettier:check": "prettier --check **/*.{js,json,vue}",
@@ -25,21 +20,21 @@
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",
     "@es-labs/esm": "^0.0.32",
-    "@sentry/vue": "^8.50.0",
+    "@sentry/vue": "^8.55.0",
     "ant-design-vue": "^4.2.6",
-    "pinia": "^2.3.1",
+    "pinia": "^3.0.1",
     "vue": "^3.3.8",
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.49.1",
+    "@playwright/test": "^1.50.1",
     "@vitejs/plugin-vue": "^5.2.1",
     "dotenv": "^16.4.7",
-    "eslint": "^9.18.0",
+    "eslint": "^9.20.1",
     "eslint-plugin-vue": "^9.32.0",
     "msw": "^2.7.0",
-    "prettier": "^3.4.2",
-    "vite": "^6.0.11"
+    "prettier": "^3.5.1",
+    "vite": "^6.1.1"
   },
   "msw": {
     "workerDirectory": "public"
