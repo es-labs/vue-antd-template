@@ -1,5 +1,5 @@
 # custom code area - DO NOT EDIT
-src/apps/*
+apps/*
 
 # build files and packages
 dist
