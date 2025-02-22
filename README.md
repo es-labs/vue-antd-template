@@ -19,8 +19,7 @@
 
 **Important notes** - **TO UPDATE!**
 - DO NOT develop custom code using `apps/web-sample` or `apps/web-sample2`. Rename it or copy it to another folder name
-- Update `apps/package.json` file add entry in npm script to run
-- userland changes ONLY in the web application folders in the `apps` folder, NEVER outside thos folders. Contact template maintainer if you need something outside `apps`
+- Update only your own application folders, `apps/package.json` or `apps/.gitignore` for userland changes, NEVER other filer or folders. Contact template maintainer if you need something outside those.
 - do note any conflicts to resolve when merging from upstream
 
 3 - Updating the template
@@ -29,8 +28,7 @@
 # Commit and push to remote before running commands below
 git fetch upstream # includes tags
 git pull upstream <branch or tag> --no-rebase
-# NO MORE IN USE git merge upstream/<branch or tag> --allow-unrelated-histories
-# There may be some template related merge conflicts to resolve.
+# add option "--allow-unrelated-histories" if there conflicts to resolve.
 ```
 
 **Suggested Conventions**
