@@ -22,26 +22,26 @@
         </div>
       </div>
       <p v-if="errorMessage">{{ errorMessage }}</p>
-      <p>version {{ VERSION }} {{ isMobile ? 'Mobile' : 'Not Mobile' }}</p>
+      <p>{{ isMobile ? 'Mobile' : 'Not Mobile' }}</p>
     </form>
   </div>
 </template>
 
 <script>
 import { ref, onMounted, onBeforeUnmount, onUnmounted } from 'vue'
-import { useMainStore } from '../store'
+import { useMainStore } from '../store.js'
 import { useRoute } from 'vue-router'
-import { useMediaQuery } from '../plugins/useMediaQuery'
+import { useMediaQuery } from '../../common/plugins/useMediaQuery'
 
 import parseJwt from '@es-labs/esm/parse-jwt.js'
 
-import { http } from '../plugins/fetch.js'
-import { useI18n } from '../plugins/i18n.js'
+import { http } from '../../common/plugins/fetch.js'
+import { useI18n } from '../../common/plugins/i18n.js'
 import { AlertFilled } from '@ant-design/icons-vue'
 
 export default {
   setup(props, context) {
-    const { VITE_REFRESH_URL, VERSION, MODE } = import.meta.env
+    const { VITE_REFRESH_URL, MODE } = import.meta.env
 
     const store = useMainStore()
     const route = useRoute()
@@ -176,7 +176,6 @@ export default {
       oauthLogin,
       i18n,
       isMobile,
-      VERSION,
       forced
     }
   }

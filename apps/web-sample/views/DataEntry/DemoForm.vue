@@ -119,8 +119,8 @@ import { useRouter } from 'vue-router'
 import { ref, reactive, toRaw, watch, onMounted, computed, onBeforeUnmount } from 'vue'
 import { InboxOutlined } from '@ant-design/icons-vue'
 
-import { http } from '../../plugins/fetch.js'
-import { ws } from '../../plugins/ws.js'
+import { http } from '../../../common/plugins/fetch.js'
+import { ws } from '../../../common/plugins/ws.js'
 
 const { VITE_API_URL } = import.meta.env
 

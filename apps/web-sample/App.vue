@@ -4,18 +4,19 @@
 
 <script>
 // :key="$route.fullPath" // this is causing problems
-import { LAYOUTS } from './config.js'
+import layoutPublic from './layouts/Public.vue' // you can change this to your own layout
+import layoutSecure from './layouts/Secure.vue' // as above
 
 import { computed } from 'vue'
-import { useMainStore } from './store'
+import { useMainStore } from './store.js'
 
-import { http } from './plugins/fetch.js'
-import { provideI18n } from './plugins/i18n.js'
+import { http } from '../common/plugins/fetch.js'
+import { provideI18n } from '../common/plugins/i18n.js'
 
 export default {
   components: {
-    'layout-public': LAYOUTS.layoutPublic, // store.user determines if public or secure
-    'layout-secure': LAYOUTS.layoutSecure
+    'layout-public': layoutPublic, // store.user determines if public or secure
+    'layout-secure': layoutSecure
   },
 
   setup(props, context) {

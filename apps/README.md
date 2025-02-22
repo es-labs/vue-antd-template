@@ -7,64 +7,41 @@
 TBD - To Redo
 
 ```
-+- public/
-|  +- img/
-|  |  +- icons/
-|  |  +- splash/
-|  +- static/
-|  +- favicon.ico
-|  +- manifest.json
-|  +- robots.txt
-|  +- service-worker.js
-|  +- sitemap.xml
-|  +- style.css
-+- src/
-|  +- apps/
-|  |  +- common/ : codes here user may not need to touch much
-|  |     +- msw.js : for mock service worker [NEED TO SPECIFY PATH TO MOCKS]
-|  |     +- pwa.js : for PWA (work in progress)
-|  |     +- sentry.js : for error reporting
-|  |  +- web-<Your-Custom-Frontend>/: folder with prefix "-web" are your custom frontend code (your frontend repo)
-|  |  +- web-sample/
-|  |     +- components/
-|  |     +- layouts/
-|  |     +- mocks/ : for msw
-|  |     +- setups/ : used by setup.js
-|  |     +  +- authGuard.js : authGuard setup and initial paths
-|  |     +  +- ws.js : websocket open / close
-|  |     +- style/
-|  |     +  +- main.css # overall custom styling (import in setup.js)
-|  |     +  +- signin.css # custom styling for SignIn.vue
-|  |     +- tests/
-|  |     +  +- example.spec.js
-|  |     +- views/
-|  |     +- .gitignore: for your repo
-|  |     +- playwright.config.js
-|  |     +  setup.js : custom frontend setup export (important!)
-|  |     +- store.js : custom frontend store
-|  |  +- .env.sample
-|  |  +- .gitignore
-|  |  +- init.js : pre and post createApp calls
-|  |  +- package.json
-|  |  +- README.md
++- apps/
+|  +- common/ : codes here user may not need to touch much, commonly used in project
+|  |  +- plugins/ : i18n, fetch, ws (websocket), useMediaQuery
+|  |  +- views/ : NotFound, NotAllowed, EmptyView
+|  |  +- msw.js : for mock service worker [NEED TO SPECIFY PATH TO MOCKS]
+|  |  +- pwa.js : for PWA (work in progress)
+|  |  +- sentry.js : for error reporting
+|  +- web-sample/
+|  |  +- components/
+|  |  +- envs/ : dotenv files here
+|  |  +- layouts/ : your layouts here
+|  |  +- mocks/ : for msw
+|  |  +- public/ : web public html folder
+|  |  +- setups/ : see README.md in here
+|  |  +- style/ : see README.md in here
+|  |  +- tests/ : example.spec.js
+|  |  +- views/ : your pages here
+|  |  +- App.vue
+|  |  +- index.html
+|  |  +- main.js
+|  |  +- playwright.config.js
+|  |  +- router.js
+|  |  +- store.js : or store/index.js
 |  |  +- vite.config.js
-|  +- layouts/
-|  +- plugins/ : i18n, fetch, ws (websocket), useMediaQuery
-|  +- views/
-|  +- App.vue
-|  +- main.js
-|  +- pwa-init.js
-|  +- router.js
-|  +- services.js
-|  +- store.js
-+- .env.development.sample : to create other envs
-+- .eslintignore
-+- .eslintrc.js
+|  +- web-sample2/ : a second sample web app
+|  +- web-<Your-Custom-Frontend>/: folder with prefix "-web" are your custom frontend code (your frontend repo)
+|  +- .gitignore
+|  +- package.json
+|  +- README.md
 +- .gitguardian.yml
 +- .gitignore
 +- .prettierrc.js
-+- config.js
-+- index.html
++- CHANGELOG.md
++- eslint.config.js
 +- package.json
 +- README.md
++- setup-upstream.sh
 ```

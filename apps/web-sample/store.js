@@ -1,9 +1,10 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import router from './router.js'
-import { http } from './plugins/fetch.js'
+import { http } from '../common/plugins/fetch.js'
 // import aaa from 'https://unpkg.com/swrv@0.3.0/esm/index.js' - will error
-import { INITIAL_SECURE_PATH, INITIAL_PUBLIC_PATH } from './config.js'
+
+const { VITE_INITIAL_SECURE_PATH, VITE_INITIAL_PUBLIC_PATH } = import.meta.env
 
 // name of the store
 // it is used in devtools and allows restoring state
@@ -17,11 +18,11 @@ export const useMainStore = defineStore('main', () => {
       if (payload.forced) {
         //  forced - refresh token error
         user.value = null
-        await router.push(INITIAL_PUBLIC_PATH)
+        await router.push(VITE_INITIAL_PUBLIC_PATH)
       } else {
         // sign in ok
         user.value = { ...payload }
-        await router.push(INITIAL_SECURE_PATH)
+        await router.push(VITE_INITIAL_SECURE_PATH)
       }
     } else {
       // sign in failed
@@ -30,11 +31,11 @@ export const useMainStore = defineStore('main', () => {
       try {
         if (VITE_LOGOUT_URL) await http.get(VITE_LOGOUT_URL)
         user.value = null
-        await router.push(INITIAL_PUBLIC_PATH)
+        await router.push(VITE_INITIAL_PUBLIC_PATH)
       } catch (e) {
         if (e.toString() === 'TypeError: Failed to fetch' || (e.data && e.data.message !== 'Token Expired Error')) {
           user.value = null
-          await router.push(INITIAL_PUBLIC_PATH)
+          await router.push(VITE_INITIAL_PUBLIC_PATH)
         }
       }
     }
