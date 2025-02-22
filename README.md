@@ -65,7 +65,7 @@ npm run sample2 # run 2nd sample web application in <project root>/apps/web-samp
 **Note For Login**
 
 Login using one of the following:  
-- Mocked [NOTE: API calls to protected Endpoints WILL FAIL!]:
+- Faked Login: [NOTE: API calls to protected Endpoints WILL FAIL!]:
   - Login: fake a user and login, no backend needed, just click button
   - Login Callback: fake a callback and set fake user and login, no backend needed, just click button
 - Login: normal login with OTP, express server needs to be run
