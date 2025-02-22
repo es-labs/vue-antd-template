@@ -18,9 +18,9 @@
 2 - Setup for your custom code
 
 **Important notes** - **TO UPDATE!**
-- DO NOT develop custom code using `apps/app-sample`. Rename it or copy it to another folder name
-- In apps/apploader.js, change `app-sample` to the folder you are using
-- userland changes ONLY in the `apps` folder, NEVER outside the folder. Contact template maintainer if you need something outside `apps`
+- DO NOT develop custom code using `apps/web-sample` or `apps/web-sample2`. Rename it or copy it to another folder name
+- Update `apps/package.json` file add entry in npm script to run
+- userland changes ONLY in the web application folders in the `apps` folder, NEVER outside thos folders. Contact template maintainer if you need something outside `apps`
 - do note any conflicts to resolve when merging from upstream
 
 3 - Updating the template
@@ -57,11 +57,15 @@ npm i
 # Note your custom development folder is `<project root>/src/apps/web-sample`
 
 npm run sample # run 1st sample web application
-# OR
-npm run local:mocked # run locally with mock service worker (many other API calls will fail because they are not mocked)
 ```
 
-Visit `http://127.0.0.1:8080` to view application
+Visit `http://127.0.0.1:8080` or to view application
+
+
+```bash
+# TBD
+npm run local:mocked # run locally with mock service worker (many other API calls will fail because they are not mocked)
+```
 
 **Note For Login**
 
@@ -81,7 +85,7 @@ E2E Tests:
 npx playwright install chromium
 npx playwright test --browser=chromium
 
-cd apps/web-sample
+cd apps
 npm run test:e2e
 ```
 
@@ -96,19 +100,23 @@ See [apps/README.md]()
 Setting up your custom frontend
 
 **Notes:**
-- `.env.[MODE]` indicates the environment file to use (command to use: npx vite build --mode $1)
-  - e.g. npx vite build --config src/apps/vite.config.js --mode ${{ github.event.inputs.env }}
-- `src/apps/apploader.js` will specify the path to `setup.js` of in your custom code folder
-- see **src/apps/web-sample/setup.js** on the frontend setup especially the ROUTES property
-- ROUTES property
-  - use kebab-case, will be converted to Capital Case in menu display
-  - only up to 1 submenu level
-    - /first-level
-    - /submenu/second-level
-  - paths
-    - '~/xxx.js' from **<project>/src** folder
-    - '/xxx.js' from **<project>** folder
-
+- `apps/web-sample` is a sample skeleton that can be used as scaffolding
+  - `envs` folder
+    - `.env` is common to all environments for the app
+    - `.env.[MODE]` indicates the environment file to use (command to use: npx vite build --mode $1)
+  - `ROUTES` property
+    - use kebab-case, will be converted to Capital Case in menu display
+    - only up to 1 submenu level
+      - /first-level
+      - /submenu/second-level
+    - paths
+      - '~/xxx.js' from **<project>/src** folder
+      - '/xxx.js' from **<project>** folder
+- When you create a new application
+  - create it in the `apps` folder
+  - add folder entry to `apps/.gitignore` so that the folder can be included in git
+  - add new entry in the package.json folder to run the application
+    - e.g. npx vite build --config apps/<your-app-name>/vite.config.js --mode <environment>
 
 ### Sample Deployment - WIP
 
