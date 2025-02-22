@@ -13,29 +13,33 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 
-export default {
-  name: 'DemoFiller',
-  props: {
-    testId: {
-      type: Number,
-      default: -1
-    }
-  },
-  setup(props, context) {
-    const route = useRoute()
-    const routeParam = ref(route.params.param)
-    console.log('props', props)
-    console.log('route', route)
-
-    // console.log('Filler props', props, context)
-    return {
-      props,
-      routeParam
-    }
+const props = defineProps({
+  testId: {
+    type: Number,
+    default: -1
   }
-}
+})
+
+const route = useRoute()
+const routeParam = ref(route.params.param)
+console.log('props', props)
+console.log('route', route)
+
+// TODELETE
+// export default {
+//   name: 'DemoFiller',
+//   props: {
+//   },
+//   setup(props, context) {
+//     // console.log('Filler props', props, context)
+//     return {
+//       props,
+//       routeParam
+//     }
+//   }
+// }
 </script>

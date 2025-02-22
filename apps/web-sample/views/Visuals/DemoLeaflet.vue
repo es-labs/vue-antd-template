@@ -5,7 +5,7 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 // NOSONAR
@@ -19,19 +19,15 @@ import 'leaflet/dist/leaflet.css'
 
 import { onMounted } from 'vue'
 
-export default {
-  setup() {
-    onMounted(async () => {
-      const map = L.map('map').setView([51.505, -0.09], 13)
+onMounted(async () => {
+  const map = L.map('map').setView([51.505, -0.09], 13)
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      }).addTo(map)
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map)
 
-      L.marker([51.5, -0.09]).addTo(map).bindPopup('A pretty CSS3 popup.<br> Easily customizable.').openPopup()
-    })
-  }
-}
+  L.marker([51.5, -0.09]).addTo(map).bindPopup('A pretty CSS3 popup.<br> Easily customizable.').openPopup()
+})
 </script>
 
 <style scoped>

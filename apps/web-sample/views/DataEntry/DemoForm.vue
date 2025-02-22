@@ -111,7 +111,7 @@
   </a-collapse>
 </template>
 
-<script>
+<script setup>
 // v-model:fileList="form1.files"
 import { useAppStore } from '../../store.js'
 import { useRouter } from 'vue-router'
@@ -124,17 +124,13 @@ import { ws } from '../../../common/plugins/ws.js'
 
 const { VITE_API_URL } = import.meta.env
 
-export default {
-  components: {
-    InboxOutlined
-  },
-  setup() {
-    const appStore = useAppStore()
-    const router = useRouter()
-    const submitResult = ref('')
-    const mockData = ref([]) // transfer
-    const targetKeys = ref([])
-    const getMock = () => {
+const appStore = useAppStore()
+const router = useRouter()
+const submitResult = ref('')
+const mockData = ref([]) // transfer
+const targetKeys = ref([])
+
+const getMock = () => {
       const keys = []
       const mData = []
 
@@ -155,40 +151,42 @@ export default {
 
       mockData.value = mData
       targetKeys.value = keys
-    }
+}
 
-    const handleChange = (keys, direction, moveKeys) => {
+const handleChange = (keys, direction, moveKeys) => {
       targetKeys.value = keys
       // console.log(keys, direction, moveKeys)
-    }
-    onMounted(() => {
+}
+
+onMounted(() => {
       getMock()
       // ws.setMessage((e) => {
       //   console.log('ws onmessage', e.data)
       //   appStore.message = e.data
       // })
-    })
-    onBeforeUnmount(() => {
+})
+
+onBeforeUnmount(() => {
       // ws.setMessage((e) => console.log('ws onmessage', e.data))
-    })
+})
 
-    // accordian
-    const activeKey = ref(['1'])
-    watch(activeKey, (val) => console.log(val))
+// accordian
+const activeKey = ref(['1'])
+watch(activeKey, (val) => console.log(val))
 
-    // form
-    const formState = reactive({
-      name: '',
-      region: undefined,
-      // date1: undefined,
-      // delivery: false,
-      type: [],
-      resource: '',
-      desc: '',
-      rating: 5
-    })
+// form
+const formState = reactive({
+  name: '',
+  region: undefined,
+  // date1: undefined,
+  // delivery: false,
+  type: [],
+  resource: '',
+  desc: '',
+  rating: 5
+})
 
-    const onSubmit = async () => {
+const onSubmit = async () => {
       console.log('submit!')
       try {
         const body = toRaw(formState)
@@ -200,14 +198,15 @@ export default {
         console.log('onSubmit Error', e.toString())
         submitResult.value = e.toString()
       }
-    }
+}
 
-    const form1 = reactive({
+const form1 = reactive({
       files: [],
       text: 'abcd',
       number: 3
-    })
-    const onSubmit1 = async () => {
+})
+
+const onSubmit1 = async () => {
       try {
         console.log('submit', form1.files)
 
@@ -228,12 +227,14 @@ export default {
       } catch (e) {
         console.log('onSubmit1 Error', e.toString())
       }
-    }
-    const handleRemove = (file) => {
+}
+
+const handleRemove = (file) => {
       const newFileList = form1.files.filter((f) => f.uid !== file.uid) // do not handle if same filename
       form1.files = newFileList
-    }
-    const beforeUpload = (file) => {
+}
+
+const beforeUpload = (file) => {
       console.log('beforeUpload', file)
       const found = form1.files.find((f) => f.name === file.name)
       console.log(form1.files)
@@ -244,60 +245,30 @@ export default {
         // remove from list?...
       }
       return false
-    }
-
-    watch(
-      () => appStore.form,
-      (currentValue, oldValue) => {
-        console.log('watch', currentValue, oldValue)
-      },
-      { deep: true }
-    )
-
-    const wsMsg = ref('') // websockets
-    const onWsMsg = (e) => {
-      ws.send(wsMsg.value)
-    }
-
-    const goToNotFound = () => router.push('/notfound')
-    const goToForbidden = () => router.push('/forbidden')
-
-    return {
-      form1,
-      onSubmit1,
-      beforeUpload,
-      handleRemove,
-
-      submitResult,
-      activeKey, // form
-
-      mockData, // transfer
-      targetKeys,
-      handleChange,
-      getMock,
-
-      // form
-      labelCol: {
-        span: 4
-      },
-      wrapperCol: {
-        span: 14
-      },
-      formState,
-      onSubmit,
-
-      appStore,
-
-      storeCounter: computed({
-        get: () => appStore.counter,
-        set: (val) => (appStore.counter = val)
-      }),
-
-      wsMsg,
-      onWsMsg, // websockets
-      goToNotFound,
-      goToForbidden
-    }
-  }
 }
+
+watch(
+  () => appStore.form,
+  (currentValue, oldValue) => {
+    console.log('watch', currentValue, oldValue)
+  },
+  { deep: true }
+)
+
+const wsMsg = ref('') // websockets
+const onWsMsg = (e) => {
+  ws.send(wsMsg.value)
+}
+
+ const goToNotFound = () => router.push('/notfound')
+ const goToForbidden = () => router.push('/forbidden')
+
+const labelCol = { span: 4 }
+const wrapperCol = { span: 14 }
+
+const storeCounter = computed({
+  get: () => appStore.counter,
+  set: (val) => (appStore.counter = val)
+})
+
 </script>

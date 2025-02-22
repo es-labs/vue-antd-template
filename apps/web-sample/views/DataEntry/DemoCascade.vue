@@ -18,66 +18,55 @@
     </a-form-item>
   </a-form>
 </template>
-<script>
-import { ref, reactive, toRaw, watch, onMounted, computed } from 'vue'
+<script setup>
+import { reactive, toRaw, onMounted, computed } from 'vue'
 import { useAppStore } from '../../store.js'
 
-export default {
-  setup() {
-    // a-select - allowClear (handle event)
-    // TODO select / clear all
+// a-select - allowClear (handle event)
+// TODO select / clear all
 
-    const appStore = useAppStore()
-    onMounted(() => {})
+const appStore = useAppStore()
+onMounted(() => {})
 
-    const formState = reactive({
-      regions: [],
-      regionList: ['Asia', 'Europe', 'NA', 'SA', 'Africa', 'ME'],
+const formState = reactive({
+  regions: [],
+  regionList: ['Asia', 'Europe', 'NA', 'SA', 'Africa', 'ME'],
+  countries: [],
+  countriesList: [],
+  countriesMasterList: {
+    Asia: ['Russia', 'Japan', 'Burma', 'Indonesia', 'Afghanistan'],
+    Europe: ['Russia', 'Germany', 'France', 'Poland', 'Sweden', 'Italy'],
+    NA: ['United States', 'Canada'],
+    SA: ['Brazil', 'Argentina', 'Ecuador'],
+    Africa: ['Egypt', 'Nigeria', 'Kenya', 'Liberia'],
+    ME: ['Egypt', 'Saudi Arabia', 'Afghanistan']
+  }
+})
 
-      countries: [],
-      countriesList: [],
-      countriesMasterList: {
-        Asia: ['Russia', 'Japan', 'Burma', 'Indonesia', 'Afghanistan'],
-        Europe: ['Russia', 'Germany', 'France', 'Poland', 'Sweden', 'Italy'],
-        NA: ['United States', 'Canada'],
-        SA: ['Brazil', 'Argentina', 'Ecuador'],
-        Africa: ['Egypt', 'Nigeria', 'Kenya', 'Liberia'],
-        ME: ['Egypt', 'Saudi Arabia', 'Afghanistan']
-      }
-    })
+const onSubmit = () => {
+  console.log('submit!', toRaw(formState))
+}
 
-    const onSubmit = () => {
-      console.log('submit!', toRaw(formState))
-    }
-
-    const blurRegion = () => {
-      console.log('blurRegion!', toRaw(formState))
-      const keys = {}
-      const list = []
-      const newCountries = []
-
-      for (const region of formState.regions) {
-        for (const country of formState.countriesMasterList[region]) {
-          if (!keys[country]) {
-            list.push(country)
-            keys[country] = true
-            const item = formState.countries.find((item) => item === country)
-            if (item) {
-              newCountries.push(item)
-            }
-          }
+const blurRegion = () => {
+  console.log('blurRegion!', toRaw(formState))
+  const keys = {}
+  const list = []
+  const newCountries = []
+  for (const region of formState.regions) {
+    for (const country of formState.countriesMasterList[region]) {
+      if (!keys[country]) {
+        list.push(country)
+        keys[country] = true
+        const item = formState.countries.find((item) => item === country)
+        if (item) {
+          newCountries.push(item)
         }
       }
-      formState.countries = [...newCountries]
-      formState.countriesList = [...list]
-    }
-
-    return {
-      formState,
-      onSubmit,
-      blurRegion,
-      storeCounter: computed(() => appStore.counter)
     }
   }
+  formState.countries = [...newCountries]
+  formState.countriesList = [...list]
 }
+
+const storeCounter = computed(() => appStore.counter)
 </script>

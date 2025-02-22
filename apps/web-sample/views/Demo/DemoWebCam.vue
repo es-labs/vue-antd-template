@@ -11,17 +11,9 @@
 <script>
 import '@es-labs/esm/web-cam.js' // served from express /esm static route
 
-export default {
-  name: 'WebCam',
-  setup() {
-    const snappedFn = (e) => {
-      alert('see console log for snapped picture data')
-      console.log('snappedFn', e.detail)
-    }
-    return {
-      snappedFn
-    }
-  }
+const snappedFn = (e) => {
+  alert('see console log for snapped picture data')
+  console.log('snappedFn', e.detail)
 }
 </script>
 

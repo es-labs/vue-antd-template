@@ -32,7 +32,7 @@
   </a-layout>
 </template>
 
-<script>
+<script setup>
 // :key="$route.fullPath" // this is causing problems
 import { onMounted, onUnmounted, onBeforeUnmount, ref, reactive, computed } from 'vue'
 import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons-vue'
@@ -42,76 +42,60 @@ import { onLogin, onLogout } from '../setups/events.js'
 
 import idleTimer from '@es-labs/esm/idle.js'
 
-export default {
-  name: 'LayoutSecure',
-  components: {
-    MenuUnfoldOutlined,
-    MenuFoldOutlined
-  },
-  setup(props, context) {
-    const store = useMainStore()
-    const loading = store.loading
+const store = useMainStore()
+// const loading = store.loading
+const mappedRoutes = reactive([])
+const subMenus = reactive({})
+const loading = computed(() => store.loading)
+const selectedKeys = ref(['1'])
+const collapsed = ref(false)
 
-    const mappedRoutes = reactive([])
-    const subMenus = reactive({})
+const toPascalCase = (str) => {
+  str = str.replace(/-\w/g, (x) => ` ${x[1].toUpperCase()}`)
+  return str[0].toUpperCase() + str.substring(1, str.length)
+}
 
-    const toPascalCase = (str) => {
-      str = str.replace(/-\w/g, (x) => ` ${x[1].toUpperCase()}`)
-      return str[0].toUpperCase() + str.substring(1, str.length)
-    }
+onMounted(async () => {
+  console.log('SECURE mounted!')
+  idleTimer.timeouts.push({ time: 300, fn: () => alert('Idle Timeout Test'), stop: true })
+  idleTimer.start()
 
-    onMounted(async () => {
-      console.log('SECURE mounted!')
-      idleTimer.timeouts.push({ time: 300, fn: () => alert('Idle Timeout Test'), stop: true })
-      idleTimer.start()
-
-      SECURE_ROUTES.filter((route) => route.meta.layout === 'layout-secure').forEach((route) => {
-        if (!route.hidden) {
-          const pathLen = route.path.split('/').length
-          if (pathLen === 2 || pathLen === 3) {
-            const submenu = pathLen === 3 ? route.path.split('/', 2)[1] : ''
-            // console.log('submenu', route, '-', submenu, '-', pathLen)
-            if (submenu) {
-              if (!subMenus[submenu]) {
-                // first time
-                subMenus[submenu] = []
-                mappedRoutes.push({ ...route, submenu: submenu })
-              }
-              subMenus[submenu].push({ ...route }) // add item
-            } else {
-              mappedRoutes.push({ ...route, submenu: '' }) // add item
-            }
+  SECURE_ROUTES.filter((route) => route.meta.layout === 'layout-secure').forEach((route) => {
+    if (!route.hidden) {
+      const pathLen = route.path.split('/').length
+      if (pathLen === 2 || pathLen === 3) {
+        const submenu = pathLen === 3 ? route.path.split('/', 2)[1] : ''
+        // console.log('submenu', route, '-', submenu, '-', pathLen)
+        if (submenu) {
+          if (!subMenus[submenu]) {
+            // first time
+            subMenus[submenu] = []
+            mappedRoutes.push({ ...route, submenu: submenu })
           }
+          subMenus[submenu].push({ ...route }) // add item
+        } else {
+          mappedRoutes.push({ ...route, submenu: '' }) // add item
         }
-      })
-      onLogin && onLogin()
-    })
-    onUnmounted(() => {
-      console.log('SECURE unmounted')
-    })
-    onBeforeUnmount(() => {
-      // close WS
-      idleTimer.stop()
-      onLogout && onLogout()
-    })
+      }
+    }
+  })
+  onLogin && onLogin()
+})
+onUnmounted(() => {
+  console.log('SECURE unmounted')
+})
+onBeforeUnmount(() => {
+  // close WS
+  idleTimer.stop()
+  onLogout && onLogout()
+})
 
-    const logout = async () => {
-      console.time('time-logout')
-      store.loading = true
-      await store.doLogin(null)
-      store.loading = false
-      console.timeEnd('time-logout')
-    }
-    return {
-      loading: computed(() => store.loading),
-      logout,
-      selectedKeys: ref(['1']),
-      collapsed: ref(false),
-      mappedRoutes,
-      subMenus,
-      toPascalCase
-    }
-  }
+const logout = async () => {
+  console.time('time-logout')
+  store.loading = true
+  await store.doLogin(null)
+  store.loading = false
+  console.timeEnd('time-logout')
 }
 </script>
 

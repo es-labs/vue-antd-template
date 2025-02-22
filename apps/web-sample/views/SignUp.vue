@@ -8,13 +8,7 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'SignUp',
-  setup(props, context) {
-    return {}
-  }
-}
+<script setup>
 </script>
 
 <style scoped>

@@ -31,79 +31,63 @@
     </a-form-item>
   </a-form>
 </template>
-<script>
+<script setup>
 import { ref, reactive, toRaw, onMounted } from 'vue'
 import { SettingOutlined } from '@ant-design/icons-vue'
 import { http } from '../../../common/plugins/fetch.js'
 const { VITE_API_URL } = import.meta.env
 
-export default {
-  components: {
-    SettingOutlined
-  },
-  setup() {
-    const formState = reactive({
-      continents: [], // Level 1
-      continentsList: [],
+const formState = reactive({
+  continents: [], // Level 1
+  continentsList: [],
+  countriesEast: [], // Level 2
+  countriesEastList: [],
+  countriesWest: [], // Level 2
+  countriesWestList: [],
+  westCountryStates: [], // Level 3
+  westCountryStatesList: []
+})
 
-      countriesEast: [], // Level 2
-      countriesEastList: [],
+onMounted(async () => {
+  try {
+    const { data } = await http.get(VITE_API_URL + '/api/custom-app/cascade/continents')
+    formState.continentsList = [...data]
+  } catch (e) {
+    console.log(e.toString())
+  }
+})
 
-      countriesWest: [], // Level 2
-      countriesWestList: [],
-
-      westCountryStates: [], // Level 3
-      westCountryStatesList: []
-    })
-
-    onMounted(async () => {
-      try {
-        const { data } = await http.get(VITE_API_URL + '/api/custom-app/cascade/continents')
-        formState.continentsList = [...data]
-      } catch (e) {
-        console.log(e.toString())
-      }
-    })
-
-    const onCheckAllChange = (e) => {
-      if (e.target.checked === true) {
-        formState.continents = [...formState.continentsList]
-        blurSelect() // select all countriesEast / countriesWest
-      } else {
-        formState.continents = []
-        blurSelect() // clear all countriesEast / countriesWest
-      }
-    }
-
-    const blurSelect = async () => {
-      // get the countries from continent
-      const { data } = await http.get(VITE_API_URL + '/api/custom-app/cascade/countries?continents=' + formState.continents.join(','))
-      formState.countriesEastList = data.countriesEastList // update from filteered masterlist in db
-      formState.countriesWestList = data.countriesWestList // update from filteered masterlist in db
-      formState.countriesWest = formState.countriesWestList.filter((x) => formState.countriesWest.includes(x)) // intersection
-      formState.countriesEast = formState.countriesEastList.filter((x) => formState.countriesEast.includes(x)) // intersection
-      blurSelect2()
-    }
-
-    const blurSelect2 = async () => {
-      const { data } = await http.get(VITE_API_URL + '/api/custom-app/cascade/states?countries=' + formState.countriesWest.join(','))
-      formState.westCountryStatesList = data // update from filteered masterlist in db
-      formState.westCountryStates = formState.westCountryStatesList.filter((x) => formState.westCountryStates.includes(x)) // intersection
-    }
-
-    const onSubmit = async () => {
-      console.log('submit!', toRaw(formState))
-    }
-
-    return {
-      labelCol: { span: 4 }, // form
-      wrapperCol: { span: 14 },
-      formState,
-      onSubmit,
-      blurSelect,
-      blurSelect2,
-      onCheckAllChange
-    }
+const onCheckAllChange = (e) => {
+  if (e.target.checked === true) {
+    formState.continents = [...formState.continentsList]
+    blurSelect() // select all countriesEast / countriesWest
+  } else {
+    formState.continents = []
+    blurSelect() // clear all countriesEast / countriesWest
   }
 }
+
+const blurSelect = async () => {
+  // get the countries from continent
+  const { data } = await http.get(VITE_API_URL + '/api/custom-app/cascade/countries?continents=' + formState.continents.join(','))
+  formState.countriesEastList = data.countriesEastList // update from filteered masterlist in db
+  formState.countriesWestList = data.countriesWestList // update from filteered masterlist in db
+  formState.countriesWest = formState.countriesWestList.filter((x) => formState.countriesWest.includes(x)) // intersection
+  formState.countriesEast = formState.countriesEastList.filter((x) => formState.countriesEast.includes(x)) // intersection
+  blurSelect2()
+}
+
+const blurSelect2 = async () => {
+  const { data } = await http.get(VITE_API_URL + '/api/custom-app/cascade/states?countries=' + formState.countriesWest.join(','))
+  formState.westCountryStatesList = data // update from filteered masterlist in db
+  formState.westCountryStates = formState.westCountryStatesList.filter((x) => formState.westCountryStates.includes(x)) // intersection
+}
+
+const onSubmit = async () => {
+  console.log('submit!', toRaw(formState))
+}
+
+const labelCol = { span: 4 } // form
+const wrapperCol = { span: 14 }
+
 </script>

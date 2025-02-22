@@ -27,7 +27,7 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { ref, onMounted, onBeforeUnmount, onUnmounted } from 'vue'
 import { useMainStore } from '../store.js'
 import { useRoute } from 'vue-router'
@@ -37,147 +37,126 @@ import parseJwt from '@es-labs/esm/parse-jwt.js'
 
 import { http } from '../../common/plugins/fetch.js'
 import { useI18n } from '../../common/plugins/i18n.js'
-import { AlertFilled } from '@ant-design/icons-vue'
 
-export default {
-  setup(props, context) {
-    const { VITE_REFRESH_URL, MODE } = import.meta.env
+const { VITE_REFRESH_URL, MODE } = import.meta.env
+const store = useMainStore()
+const route = useRoute()
+const i18n = useI18n()
+const loading = store.loading
+const email = ref('test')
+const password = ref('test')
+const errorMessage = ref('')
+const mode = ref('login') // login, otp
+const otp = ref('')
 
-    const store = useMainStore()
-    const route = useRoute()
+const forced = ref(false)
+let otpCount = 0
+let otpId = ''
 
-    const i18n = useI18n()
-    const loading = store.loading
-    const email = ref('test')
-    const password = ref('test')
-    const errorMessage = ref('')
-    const mode = ref('login') // login, otp
-    const otp = ref('')
+const isMobile = useMediaQuery('(max-width: 425px)')
 
-    const forced = ref(false)
-    let otpCount = 0
-    let otpId = ''
+const setToLogin = () => {
+  // reset email and password
+  mode.value = 'login' // ui-reactive...
+  otp.value = ''
+  otpCount = 0 // non-ui-reactive
+}
 
-    const isMobile = useMediaQuery('(max-width: 425px)')
+onUnmounted(() => console.log('signIn unmounted'))
 
-    const setToLogin = () => {
-      // reset email and password
-      mode.value = 'login' // ui-reactive...
-      otp.value = ''
-      otpCount = 0 // non-ui-reactive
-    }
-
-    onUnmounted(() => console.log('signIn unmounted'))
-    onMounted(async () => {
+onMounted(async () => {
       console.log('signIn mounted!', route.hash) // deal with hashes here if necessary
       setToLogin()
       otp.value = '111111'
       errorMessage.value = ''
       store.loading = false
+})
+
+onBeforeUnmount(() => {
+  // console.log('signIn onBeforeUnmount')
+})
+
+const _setUser = async (data, decoded) => {
+  // store user
+  await store.doLogin(decoded)
+  // id, groups, access_token, refresh_token
+}
+
+const login = async () => {
+  console.log('login clicked', forced.value)
+  if (forced.value) {
+    _setUser(null, {
+      id: 1,
+      access_token: '',
+      refresh_token: ''
     })
-
-    onBeforeUnmount(() => {
-      // console.log('signIn onBeforeUnmount')
+    return
+  }
+  if (store.value) return
+  store.loading = true
+  errorMessage.value = ''
+  try {
+    const { data } = await http.post('/api/auth/login', {
+      email: email.value,
+      password: password.value
     })
-
-    const _setUser = async (data, decoded) => {
-      // store user
-      await store.doLogin(decoded)
-      // id, groups, access_token, refresh_token
+    if (data.otp) {
+      // OTP
+      mode.value = 'otp'
+      otpId = data.otp
+      otpCount = 0
+    } else {
+      // logged in
+      const decoded = parseJwt(data.access_token)
+      http.setTokens({ access: data.access_token, refresh: data.refresh_token })
+      http.setOptions({ refreshUrl: VITE_REFRESH_URL })
+      _setUser(data, decoded)
     }
+  } catch (e) {
+    // fetch failed
+    // auth failed
+    console.log('login error', e.toString(), e)
+    errorMessage.value = e?.data?.message || e.toString()
+  }
+  store.loading = false
+}
 
-    const login = async () => {
-      console.log('login clicked', forced.value)
-      if (forced.value) {
-        _setUser(null, {
-          id: 1,
-          access_token: '',
-          refresh_token: ''
-        })
-        return
-      }
-      if (store.value) return
-      store.loading = true
-      errorMessage.value = ''
-      try {
-        const { data } = await http.post('/api/auth/login', {
-          email: email.value,
-          password: password.value
-        })
-        if (data.otp) {
-          // OTP
-          mode.value = 'otp'
-          otpId = data.otp
-          otpCount = 0
-        } else {
-          // logged in
-          const decoded = parseJwt(data.access_token)
-          http.setTokens({ access: data.access_token, refresh: data.refresh_token })
-          http.setOptions({ refreshUrl: VITE_REFRESH_URL })
-          _setUser(data, decoded)
-        }
-      } catch (e) {
-        // fetch failed
-        // auth failed
-        console.log('login error', e.toString(), e)
-        errorMessage.value = e?.data?.message || e.toString()
-      }
-      store.loading = false
+const otpLogin = async () => {
+  if (store.loading) return
+  store.loading = true
+  errorMessage.value = ''
+  try {
+    http.setOptions({ refreshUrl: VITE_REFRESH_URL })
+    const { data } = await http.post('/api/auth/otp', { id: otpId, pin: otp.value })
+    // logged in
+    const decoded = parseJwt(data.access_token)
+    http.setTokens({ access: data.access_token, refresh: data.refresh_token })
+    http.setOptions({ refreshUrl: VITE_REFRESH_URL })
+    _setUser(data, decoded)
+  } catch (e) {
+    if (e.data.message === 'Token Expired Error') {
+      errorMessage.value = 'OTP Expired'
+      setToLogin()
+    } else if (otpCount < 3) {
+      otpCount++
+      errorMessage.value = 'OTP Error'
+    } else {
+      errorMessage.value = 'OTP Tries Exceeded'
+      setToLogin()
     }
+  }
+  store.loading = false
+}
 
-    const otpLogin = async () => {
-      if (store.loading) return
-      store.loading = true
-      errorMessage.value = ''
-      try {
-        http.setOptions({ refreshUrl: VITE_REFRESH_URL })
-        const { data } = await http.post('/api/auth/otp', { id: otpId, pin: otp.value })
-        // logged in
-        const decoded = parseJwt(data.access_token)
-        http.setTokens({ access: data.access_token, refresh: data.refresh_token })
-        http.setOptions({ refreshUrl: VITE_REFRESH_URL })
-        _setUser(data, decoded)
-      } catch (e) {
-        if (e.data.message === 'Token Expired Error') {
-          errorMessage.value = 'OTP Expired'
-          setToLogin()
-        } else if (otpCount < 3) {
-          otpCount++
-          errorMessage.value = 'OTP Error'
-        } else {
-          errorMessage.value = 'OTP Tries Exceeded'
-          setToLogin()
-        }
-      }
-      store.loading = false
-    }
-
-    const oauthLogin = () => {
-      alert('Please set appropriate callback URL at oauth side')
-      if (MODE === 'mocked') {
-        window.location.assign('/callback#mocked')
-      } else {
-        const OAUTH_URL = 'https://github.com/login/oauth/authorize?scope=user:email&client_id'
-        const OAUTH_CLIENT_ID = 'a355948a635c2a2066e2'
-        http.setOptions({ refreshUrl: VITE_REFRESH_URL })
-        window.location.replace(`${OAUTH_URL}=${OAUTH_CLIENT_ID}`)
-      }
-    }
-
-    return {
-      email, // data
-      password,
-      errorMessage,
-      loading,
-      mode,
-      otp,
-      login, // method
-      otpLogin,
-      oauthLogin,
-      i18n,
-      isMobile,
-      forced
-    }
+const oauthLogin = () => {
+  alert('Please set appropriate callback URL at oauth side')
+  if (MODE === 'mocked') {
+    window.location.assign('/callback#mocked')
+  } else {
+    const OAUTH_URL = 'https://github.com/login/oauth/authorize?scope=user:email&client_id'
+    const OAUTH_CLIENT_ID = 'a355948a635c2a2066e2'
+    http.setOptions({ refreshUrl: VITE_REFRESH_URL })
+    window.location.replace(`${OAUTH_URL}=${OAUTH_CLIENT_ID}`)
   }
 }
 </script>

@@ -6,29 +6,19 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import '@es-labs/esm/sign-pad.js'
 import { ref, onMounted } from 'vue'
 
-export default {
-  name: 'SignPad',
-  setup() {
-    const imageDataUrl = ref('')
+const imageDataUrl = ref('')
 
-    onMounted(async () => {
-      console.log('Demo Signpad')
-    })
+onMounted(async () => {
+  console.log('Demo Signpad')
+})
 
-    const signDataFn = (e) => {
-      alert('see console log for signature data')
-      console.log('imageDataUrl', imageDataUrl.value)
-    }
-
-    return {
-      imageDataUrl,
-      signDataFn
-    }
-  }
+const signDataFn = (e) => {
+  alert('see console log for signature data')
+  console.log('imageDataUrl', imageDataUrl.value)
 }
 </script>
 

@@ -7,3 +7,8 @@ Always finding new things to implement / improve in this list!
 - [chore] update packages
   - eslint major version change
   - sentry major version change
+
+### 0.0.3
+- update packages
+- able to build and deploy multiple web apps
+- use vue `<script setup>`

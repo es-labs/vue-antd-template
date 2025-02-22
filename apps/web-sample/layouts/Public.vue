@@ -5,18 +5,12 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { computed, onMounted, onUnmounted } from 'vue'
 import { useMainStore } from '../store'
-export default {
-  name: 'LayoutPublic',
-  setup(props, context) {
-    const store = useMainStore()
-    onMounted(() => console.log('PUBLIC mounted!'))
-    onUnmounted(() => console.log('PUBLIC unmounted'))
-    return {
-      loading: computed(() => store.loading)
-    }
-  }
-}
+
+const store = useMainStore()
+onMounted(() => console.log('PUBLIC mounted!'))
+onUnmounted(() => console.log('PUBLIC unmounted'))
+const loading = computed(() => store.loading)
 </script>

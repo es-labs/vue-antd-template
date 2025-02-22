@@ -112,7 +112,7 @@
   -->
 </template>
 
-<script>
+<script setup>
 import { ArrowUpOutlined, ArrowDownOutlined, UserOutlined } from '@ant-design/icons-vue'
 
 const data = [
@@ -121,20 +121,6 @@ const data = [
   { name: 'Charity', title: 'Data Engineer' },
   { name: 'Love', title: 'Data Scientist' }
 ]
-
-export default {
-  name: 'DashBoard',
-  components: {
-    ArrowUpOutlined,
-    ArrowDownOutlined,
-    UserOutlined
-  },
-  setup() {
-    return {
-      data
-    }
-  }
-}
 </script>
 
 <style>

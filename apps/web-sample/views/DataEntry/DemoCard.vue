@@ -29,25 +29,13 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { ref, onMounted, reactive } from 'vue'
 import { SettingOutlined, EditOutlined, EllipsisOutlined } from '@ant-design/icons-vue'
 
-export default {
-  components: {
-    SettingOutlined,
-    EditOutlined,
-    EllipsisOutlined
-  },
-  setup() {
-    const formState = reactive({
-      fieldA: ''
-    })
-    return {
-      formState
-    }
-  }
-}
+const formState = reactive({
+  fieldA: ''
+})
 </script>
 
 <style>

@@ -6,47 +6,38 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useMainStore } from '../store.js'
 
 const { VITE_INITIAL_SECURE_PATH } = import.meta.env
 
-export default {
-  name: 'CallBack',
-  setup(props, context) {
-    const route = useRoute()
-    const store = useMainStore()
-    const router = useRouter()
+const route = useRoute()
+const store = useMainStore()
+const router = useRouter()
 
-    const hash = ref('No Hash Found')
+const hash = ref('No Hash Found')
 
-    const _setMockUser = async () => {
-      const decoded = {
-        id: 'Aaa',
-        groups: 'MyGroup,AnotherGroup'
-      }
-      // store user
-      await store.doLogin(decoded)
-    }
-
-    onMounted(async () => {
-      // NOSONAR const { hash, href, port, hostname, protocol, ...etc } = window.location
-      console.log('Callback mounted!', route.hash, route) // deal with hashes here if necessary
-      hash.value = route.hash.substring(1) // <access_token>;<refresh_token>;<groups JSON string>
-      // verify first, if ok, do login, else send to forbidden // split(';')
-
-      if (hash.value === 'mocked') {
-        alert('re-directing to callback')
-        _setMockUser()
-        router.push(VITE_INITIAL_SECURE_PATH) // still needed or does _setUser() handle this? TODO!
-      }
-    })
-
-    return {
-      hash
-    }
+const _setMockUser = async () => {
+  const decoded = {
+    id: 'Aaa',
+    groups: 'MyGroup,AnotherGroup'
   }
+  // store user
+  await store.doLogin(decoded)
 }
+
+onMounted(async () => {
+  // NOSONAR const { hash, href, port, hostname, protocol, ...etc } = window.location
+  console.log('Callback mounted!', route.hash, route) // deal with hashes here if necessary
+  hash.value = route.hash.substring(1) // <access_token>;<refresh_token>;<groups JSON string>
+  // verify first, if ok, do login, else send to forbidden // split(';')
+
+  if (hash.value === 'mocked') {
+    alert('re-directing to callback')
+    _setMockUser()
+    router.push(VITE_INITIAL_SECURE_PATH) // still needed or does _setUser() handle this? TODO!
+  }
+})
 </script>
