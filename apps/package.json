@@ -1,6 +1,6 @@
 {
-  "name": "apps",
-  "version": "1.0.0",
+  "name": "vue-antd-template-apps",
+  "version": "0.0.0",
   "description": "",
   "type": "module",
   "scripts": {

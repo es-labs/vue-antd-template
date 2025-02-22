@@ -1,7 +1,7 @@
 {
   "name": "vue-antd-template",
   "description": "vue SPA + antdv + vite template",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "private": true,
   "author": "aaronjxz@gmail.com",
   "license": "MIT",
