@@ -17,6 +17,9 @@
     </div>
 
     <p>
+      <button @click="router.push('/dun-no-what-is-this')">Go an unknown route</button>
+    </p>
+    <p>
       <span>Count is: {{ count }}</span>
       <button @click="count++">increment</button>
     </p>
@@ -43,11 +46,13 @@
 <script>
 // NOSONAR unref, toRef, toRefs, isRef, isProxy, isReactive, isReadonly, defineComponent, getCurrentInstance, reactive, readonly, watch, watchEffect
 import { onMounted, onUpdated, onUnmounted, onBeforeUnmount, ref, computed, reactive, onBeforeUpdate } from 'vue'
-import { useMainStore } from '../store.js'
-import { http } from '../plugins/fetch.js'
+import { useMainStore } from '../../store.js'
+import { http } from '../../../common/plugins/fetch.js'
 
 import { fromEvent } from 'rxjs'
 import { switchMap, debounceTime, distinctUntilChanged, map } from 'rxjs/operators'
+
+import { useRouter } from 'vue-router'
 
 export default {
   name: 'DemoTest',
@@ -56,7 +61,7 @@ export default {
     const divs = ref([])
 
     // const route = useRoute()
-    // const router = useRouter()
+    const router = useRouter()
     // const obj = reactive({ count: 0 })
 
     const store = useMainStore()
@@ -185,6 +190,7 @@ export default {
     }
 
     return {
+      router,
       testObjectReactive,
       testObjectRef,
 

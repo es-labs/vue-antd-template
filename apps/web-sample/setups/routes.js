@@ -1,8 +1,8 @@
 export const ROUTES = [
   // you can change this to your custom views for Not Found and Not Allowed (Forbidden) view
   // { path: '/:catchAll(.*)', name: 'catchAll', redirect: { name: 'SignIn' }, meta: { requiresAuth: false, layout: 'layout-public' } },
-  { path: '/forbidden', name: 'NotAllowed', component: () => import('../views/NotAllowed.vue') },
-  { path: '/:catchAll(.*)', name: 'NotFound', component: () => import('../views/NotFound.vue') }
+  { path: '/forbidden', name: 'NotAllowed', component: () => import('../../common/views/NotAllowed.vue') },
+  { path: '/:catchAll(.*)', name: 'NotFound', component: () => import('../../common/views/NotFound.vue') }
 ]
 export const PUBLIC_ROUTES = [
   { path: '/', name: 'Home', component: () => import('../views/SignIn.vue') },

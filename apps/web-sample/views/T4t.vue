@@ -110,7 +110,7 @@ import { reactive, ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { CloseOutlined } from '@ant-design/icons-vue'
 import { notification } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
-import { http } from '../plugins/fetch.js'
+import { http } from '../../common/plugins/fetch.js'
 import { useMainStore } from '../store.js'
 
 import * as t4tFe from '@es-labs/esm/t4t-fe' // Reference - https://github.com/es-labs/jscommon/blob/main/libs/esm/t4t-fe.js
