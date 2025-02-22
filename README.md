@@ -52,17 +52,14 @@ git pull upstream <branch or tag> --no-rebase
 npm i
 cd apps
 npm i
-# Note your custom development folder is `<project root>/src/apps/web-sample`
 
-npm run sample # run 1st sample web application
-```
+npm run sample # run 1st sample web application in <project root>/apps/web-sample
+# Visit `http://127.0.0.1:8080` to view application
 
-Visit `http://127.0.0.1:8080` or to view application
+npm run sample2 # run 2nd sample web application in <project root>/apps/web-sample2
+# Visit `http://127.0.0.1:8081` to view application
 
-
-```bash
-# TBD
-npm run local:mocked # run locally with mock service worker (many other API calls will fail because they are not mocked)
+# Note your custom development folder is `<project root>/apps/<your-custom-web-app>`
 ```
 
 **Note For Login**
@@ -77,7 +74,7 @@ Login using one of the following:
   - OTP (if enabled - e.g. USE_OTP=TEST): use 111111 as otp pin, already prefilled, click on OTP button
 - Enterprise SSO (SAML2, OIDC) refer to [https://github.com/es-labs/express-template#saml-oidc-oauth]() for info
 
-E2E Tests:
+[TODO] E2E Tests:
 
 ```bash
 npx playwright install chromium
@@ -87,11 +84,18 @@ cd apps
 npm run test:e2e
 ```
 
+[TODO] Run with MockServiceWorker
+
+```bash
+# TBD
+npm run local:mocked # run locally with mock service worker (many other API calls will fail because they are not mocked)
+```
+
+---
+
 ## Project Structure And Features
 
 See [apps/README.md]()
-
----
 
 ## Frontend Custom Application Notes
 
