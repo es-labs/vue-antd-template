@@ -1,1 +1,1 @@
-your custom views here
+your custom views (pages) here

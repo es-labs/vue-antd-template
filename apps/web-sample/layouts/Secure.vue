@@ -36,8 +36,9 @@
 // :key="$route.fullPath" // this is causing problems
 import { onMounted, onUnmounted, onBeforeUnmount, ref, reactive, computed } from 'vue'
 import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons-vue'
-import { useMainStore } from '../store'
-import { SECURE_ROUTES, onLogin, onLogout } from '../config.js'
+import { useMainStore } from '../store.js'
+import { SECURE_ROUTES } from '../setups/routes.js'
+import { onLogin, onLogout } from '../setups/events.js'
 
 import idleTimer from '@es-labs/esm/idle.js'
 

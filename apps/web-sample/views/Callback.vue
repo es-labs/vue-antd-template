@@ -9,8 +9,9 @@
 <script>
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { INITIAL_SECURE_PATH } from '../config.js'
 import { useMainStore } from '../store.js'
+
+const { VITE_INITIAL_SECURE_PATH } = import.meta.env
 
 export default {
   name: 'CallBack',
@@ -39,7 +40,7 @@ export default {
       if (hash.value === 'mocked') {
         alert('re-directing to callback')
         _setMockUser()
-        router.push(INITIAL_SECURE_PATH) // still needed or does _setUser() handle this? TODO!
+        router.push(VITE_INITIAL_SECURE_PATH) // still needed or does _setUser() handle this? TODO!
       }
     })
 

@@ -1,5 +1,5 @@
-import { useMainStore, useAppStore } from '../store'
-import { ws } from '../plugins/ws.js'
+import { useMainStore, useAppStore } from '../store.js'
+import { ws } from '../../common/plugins/ws.js'
 const { VITE_WS_URL } = import.meta.env
 
 const wsDefaultMsgHandler = (e) => {

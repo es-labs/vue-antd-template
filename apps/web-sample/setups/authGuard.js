@@ -1,5 +1,5 @@
 import { useMainStore } from '../store'
-import { http } from '../plugins/fetch'
+import { http } from '../../common/plugins/fetch'
 const { VITE_API_URL } = import.meta.env
 
 // const permissions = {
@@ -13,9 +13,7 @@ const { VITE_API_URL } = import.meta.env
 //   '/test': ['TestGroup'] //
 // }
 
-export const INITIAL_PUBLIC_PATH = '/signin'
-
-export const INITIAL_SECURE_PATH = '/dashboard'
+const { VITE_INITIAL_SECURE_PATH, VITE_INITIAL_PUBLIC_PATH } = import.meta.env
 
 export const authGuard = async (to, from, next) => {
   const store = useMainStore()
@@ -60,10 +58,10 @@ export const authGuard = async (to, from, next) => {
     if (result) {
       next()
     } else {
-      next(INITIAL_PUBLIC_PATH)
+      next(VITE_INITIAL_PUBLIC_PATH)
     }
   } else if (loggedIn && !requiresAuth) {
-    next(INITIAL_SECURE_PATH)
+    next(VITE_INITIAL_SECURE_PATH)
   } else {
     // should not get here
     console.log('router should not get here', loggedIn, requiresAuth)
