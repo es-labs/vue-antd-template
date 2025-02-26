@@ -23,12 +23,6 @@
   background: rgba(255, 255, 255, 0.3);
   margin: 16px;
   background-image: url('https://via.placeholder.com/168x32.png?text=A+Logo');
-  /*
-  background-image: url('/src/web-sample/assets/sample-logo.png');
-   width: 126px;
-   background-size: 126px 40px; 
-   margin: 11px;
-  */
 }
 
 .ant-layout-sider-children .sider-menu {

@@ -114,11 +114,12 @@ Setting up your custom frontend
     - paths
       - '~/xxx.js' from **<project>/src** folder
       - '/xxx.js' from **<project>** folder
-- When you create a new application
+- **IMPORTANT NOTE** When you create a new application
   - create it in the `apps` folder
   - add folder entry to `apps/.gitignore` so that the folder can be included in git
   - add new entry in the package.json folder to run the application
     - e.g. npx vite build --config apps/<your-app-name>/vite.config.js --mode <environment>
+  - update vite.config.js `root` property folder name to be <your-app-name>
 
 ### Sample Deployment - WIP
 
