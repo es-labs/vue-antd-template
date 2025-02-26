@@ -1,14 +1,18 @@
 # This workflow deploys front end application to a object store bucket
 # Supported buckets:
-# - [to test] Aliyun OSS
+# - Aliyun OSS
 # - [to test] AWS S3
 #
-# Setup the following vars
+# Setup the following github action repo secrets
 # - ACCESS_KEY_ID
 # - ACCESS_KEY_SECRET
+# Setup the following github action repo vars
 # - ENDPOINT
 # Specify the following during build
+# - provider (aws, oss)
 # - tag
+# - app (the web app folder in apps folder)
+# - bucket (bucket name - e.g. test-www-dev)
 # - env (dev, uat, prd)
 #
 name: Deploy To Bucket
