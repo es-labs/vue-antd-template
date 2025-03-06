@@ -29,7 +29,7 @@ export const SECURE_ROUTES = [
   { path: '/t4t-subject', name: 'T4t - Subject', component: async () => import('../views/T4t.vue'), props: { tableName: 'subject' } },
   { path: '/audit-logs', name: 'T4t - Audit Logs', component: async () => import('../views/T4t.vue'), props: { tableName:'audit_logs' } },
   
-  { path: '/visuals/g2-chart1', name: 'G2 Chart1', component: async () => import('../views/Visuals/DemoChart1.vue') },
+  { path: '/visuals/g2-chart1', name: 'Demo Chart1', component: async () => import('../views/Visuals/DemoChart1.vue') },
   { path: '/visuals/leaflet-map', name: 'Leaflet', component: () => import('../views/Visuals/DemoLeaflet.vue') },
 
   { path: '/data-entry/form', name: 'Form', component: async () => import('../views/DataEntry/DemoForm.vue') },
