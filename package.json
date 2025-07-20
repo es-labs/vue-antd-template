@@ -21,19 +21,19 @@
     "@ant-design/icons-vue": "^7.0.1",
     "@es-labs/esm": "^0.0.32",
     "ant-design-vue": "^4.2.6",
-    "pinia": "^3.0.2",
+    "pinia": "^3.0.3",
     "vue": "^3.3.8",
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
-    "@playwright/test": "^1.52.0",
-    "@vitejs/plugin-vue": "^5.2.3",
-    "dotenv": "^16.5.0",
-    "eslint": "^9.26.0",
-    "eslint-plugin-vue": "^10.1.0",
-    "msw": "^2.7.5",
-    "prettier": "^3.5.3",
-    "vite": "^6.3.4"
+    "@playwright/test": "^1.54.1",
+    "@vitejs/plugin-vue": "^6.0.0",
+    "dotenv": "^17.2.0",
+    "eslint": "^9.31.0",
+    "eslint-plugin-vue": "^10.3.0",
+    "msw": "^2.10.4",
+    "prettier": "^3.6.2",
+    "vite": "^7.0.5"
   },
   "msw": {
     "workerDirectory": "public"

@@ -15,8 +15,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@sentry/vue": "^9.15.0",
-    "chart.js": "^4.4.9",
+    "@sentry/vue": "^9.40.0",
+    "chart.js": "^4.5.0",
     "leaflet": "^1.9.4",
     "null": "^2.0.0",
     "redoc": "^2.5.0",
