@@ -15,7 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@sentry/vue": "^10.32.1",
+    "@sentry/vue": "^10.39.0",
     "chart.js": "^4.5.1",
     "leaflet": "^1.9.4",
     "null": "^2.0.0",
