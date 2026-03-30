@@ -48,7 +48,7 @@ export default ({ command, mode }) => {
       alias: {
         // https://github.com/vitejs/vite/issues/279#issuecomment-636110354
         // '@': path.resolve(__dirname, 'apps') // import aa from '@/esm/aaa.js',
-        // '/@es-labs/esm': require('path').join(__dirname, '@es-labs', 'esm')
+        // '/@es-labs/node': require('path').join(__dirname, '@es-labs', 'esm')
       }
     },
     server: {

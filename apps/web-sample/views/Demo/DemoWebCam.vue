@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import '@es-labs/esm/web-cam.js' // served from express /esm static route
+import '@es-labs/node/web/web-cam' // served from express /esm static route
 
 const snappedFn = (e) => {
   alert('see console log for snapped picture data')
