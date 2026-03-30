@@ -1,7 +1,7 @@
 {
   "name": "vue-antd-template",
   "description": "vue SPA + antdv + vite template",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "private": true,
   "author": "aaronjxz@gmail.com",
   "license": "MIT",
@@ -19,21 +19,21 @@
   },
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",
-    "@es-labs/esm": "^0.0.32",
+    "@es-labs/node": "^0.0.55",
     "ant-design-vue": "^4.2.6",
     "pinia": "^3.0.4",
     "vue": "^3.3.8",
-    "vue-router": "^5.0.3"
+    "vue-router": "^5.0.4"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2",
-    "@vitejs/plugin-vue": "^6.0.4",
+    "@vitejs/plugin-vue": "^6.0.5",
     "dotenv": "^17.3.1",
-    "eslint": "^10.0.2",
+    "eslint": "^10.1.0",
     "eslint-plugin-vue": "^10.8.0",
-    "msw": "^2.12.10",
+    "msw": "^2.12.14",
     "prettier": "^3.8.1",
-    "vite": "^7.3.1"
+    "vite": "^8.0.3"
   },
   "msw": {
     "workerDirectory": "public"
