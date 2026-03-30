@@ -1,4 +1,4 @@
-import Fetch from '@es-labs/node/iso/fetch'
+import Fetch from '@es-labs/jslib/iso/fetch'
 const { VITE_WITH_CREDENTIALS, VITE_API_URL, VITE_REFRESH_URL } = import.meta.env
 // console.log('plugins/fetch', VITE_API_URL)
 

@@ -9,7 +9,7 @@ import '../common/msw.js' // msw
 import '../common/pwa.js' // pwa
 import createSentry from '../common/sentry.js' // sentry
 
-import '@es-labs/node/web/bwc-loading-overlay' // our own web components
+import '@es-labs/jslib/web/bwc-loading-overlay' // our own web components
 
 import { version } from '../package.json'
 console.log(`V${version}`)

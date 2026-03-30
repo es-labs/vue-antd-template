@@ -113,9 +113,9 @@ import { useRouter } from 'vue-router'
 import { http } from '../../common/plugins/fetch.js'
 import { useMainStore } from '../store.js'
 
-import * as t4tFe from '@es-labs/node/web/t4t-fe' // Reference - https://github.com/es-labs/jscommon/blob/main/libs/esm/t4t-fe.js
-import { jsonToCsv, downloadData, debounce } from '@es-labs/node/web/util'
-import { getLocaleDateTimeTzISO, getTzOffsetISO, getYmdhmsUtc } from '@es-labs/node/iso/datetime'
+import * as t4tFe from '@es-labs/jslib/web/t4t-fe' // Reference - https://github.com/es-labs/jscommon/blob/main/libs/esm/t4t-fe.js
+import { jsonToCsv, downloadData, debounce } from '@es-labs/jslib/web/util'
+import { getLocaleDateTimeTzISO, getTzOffsetISO, getYmdhmsUtc } from '@es-labs/jslib/iso/datetime'
 
 const FILTER_TEMPLATE = { col: '', op: '=', andOr: 'and', val: '' }
 const DEFAULT_PAGE_SIZE = 10

@@ -40,7 +40,7 @@ import { useMainStore } from '../store.js'
 import { SECURE_ROUTES } from '../setups/routes.js'
 import { onLogin, onLogout } from '../setups/events.js'
 
-import idleTimer from '@es-labs/node/web/idle'
+import idleTimer from '@es-labs/jslib/web/idle'
 
 const store = useMainStore()
 // const loading = store.loading

@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-import '@es-labs/node/web/sign-pad'
+import '@es-labs/jslib/web/sign-pad'
 import { ref, onMounted } from 'vue'
 
 const imageDataUrl = ref('')

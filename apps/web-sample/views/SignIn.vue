@@ -33,7 +33,7 @@ import { useMainStore } from '../store.js'
 import { useRoute } from 'vue-router'
 import { useMediaQuery } from '../../common/plugins/useMediaQuery'
 
-import parseJwt from '@es-labs/node/web/parse-jwt'
+import parseJwt from '@es-labs/jslib/web/parse-jwt'
 
 import { http } from '../../common/plugins/fetch.js'
 import { useI18n } from '../../common/plugins/i18n.js'

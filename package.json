@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",
-    "@es-labs/node": "^0.0.55",
+    "@es-labs/jslib": "^0.0.1",
     "ant-design-vue": "^4.2.6",
     "pinia": "^3.0.4",
     "vue": "^3.3.8",
